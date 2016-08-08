@@ -23,6 +23,8 @@ namespace UNIARS.Windows
             InitializeComponent();
 
             txtLoginUsername.Text = App.User.Name;
+
+
         }
 
         private void btnLogoutClick(object sender, RoutedEventArgs e)
