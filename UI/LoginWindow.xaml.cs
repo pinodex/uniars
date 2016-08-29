@@ -18,7 +18,7 @@ using Uniars.Data;
 using Uniars.Data.Entity;
 using Uniars.Core.Auth;
 
-namespace Uniars.Windows
+namespace Uniars.UI
 {
     public partial class LoginWindow : Window
     {

@@ -22,6 +22,19 @@ namespace Uniars.Data
             return String.Format("server={0};uid={1};password={2};database={3}", host, username, password, name);
         }
 
+        public bool IsConnected()
+        {
+            try
+            {
+                this.Database.Connection.Open();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public DbSet<Entity.User> User { get; set; }
     }
 }

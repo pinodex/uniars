@@ -1,4 +1,4 @@
-﻿<Window x:Class="Uniars.Windows.MainWindow"
+﻿<Window x:Class="Uniars.UI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Main Window - UNIARS" Height="582" Width="1022" WindowState="Maximized" WindowStartupLocation="CenterScreen" Icon="/UNIARS;component/Resources/Images/IconMaskedWhite.ico" WindowStyle="SingleBorderWindow" Topmost="False" MinWidth="1024" MinHeight="600">
