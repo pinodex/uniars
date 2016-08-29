@@ -1,7 +1,7 @@
-﻿<Application x:Class="UNIARS.App"
+﻿<Application x:Class="Uniars.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="Windows\LoginWindow.xaml">
+             StartupUri="UI\LoginWindow.xaml">
     <Application.Resources>
          
     </Application.Resources>

@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Config>
+  <Database Host="127.0.0.1" Username="root" Password="root" Name="uniars" />
+</Config>

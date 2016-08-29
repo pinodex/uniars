@@ -10,7 +10,7 @@ using System.Windows;
 [assembly: AssemblyTitle("UNIARS")]
 [assembly: AssemblyDescription("Unified Airline Reservation System")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Marco-nation")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("UNIARS")]
 [assembly: AssemblyCopyright("Copyright © 2016")]
 [assembly: AssemblyTrademark("")]

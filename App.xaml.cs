@@ -1,20 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
+﻿using System.Data;
 using System.Windows;
-using UNIARS.Auth;
+using Uniars.Data;
+using Uniars.Core;
 
-namespace UNIARS
+namespace Uniars
 {
     public partial class App : Application
     {
-        public static User User = new User();
+        public static Data.Entity.User CurrentUser;
+
+        public static Config Config;
+
+        public static Entities Entities;
 
         public App()
         {
-            
+            App.Config = new Config("Config.xml");
+            App.Entities = new Entities();
         }
     }
 }
