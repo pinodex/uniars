@@ -12,6 +12,7 @@ namespace Uniars.Core
 
         protected Dictionary<String, String> values;
 
+        /// <param name="path">Path to config file</param>
         public Config(String path)
         {
             this.path = path;
@@ -20,6 +21,9 @@ namespace Uniars.Core
             LoadConfig();
         }
 
+        /// <summary>
+        /// Load config to memory
+        /// </summary>
         public void LoadConfig()
         {
             XmlDocument xDoc = new XmlDocument();
@@ -43,6 +47,10 @@ namespace Uniars.Core
             return defaultValue;
         }
 
+        /// <summary>
+        /// Recurse nodes to the childmost
+        /// </summary>
+        /// <param name="parent">Parent node</param>
         private void RecurseNodes(XmlNode parent)
         {
             foreach (XmlNode node in parent.ChildNodes)

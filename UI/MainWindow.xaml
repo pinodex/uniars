@@ -37,43 +37,20 @@
             <Rectangle HorizontalAlignment="Stretch" Name="rectangle1" Stroke="{x:Null}" VerticalAlignment="Stretch" Fill="DarkSlateGray" />
             <Image Height="100" HorizontalAlignment="Center" Stretch="UniformToFill" VerticalAlignment="Top" Width="100" Source="/UNIARS;component/Resources/Images/IconMaskedWhite.ico" />
 
-            <RadioButton Content="Overview" Height="40" Margin="0,100,0,0" VerticalAlignment="Top" Foreground="AliceBlue" IsChecked="True" />
-            <RadioButton Content="Reports" Height="40" Margin="0,140,0,0" VerticalAlignment="Top" Foreground="AliceBlue" />
-            <RadioButton Content="Booking" Height="40" Margin="0,180,0,0" VerticalAlignment="Top" Foreground="AliceBlue" />
-            <RadioButton Content="Flights" Height="40" Margin="0,220,0,0" VerticalAlignment="Top" Foreground="AliceBlue" />
-            <RadioButton Content="Passengers" Height="40" Margin="0,260,0,0" VerticalAlignment="Top" Foreground="AliceBlue" />
-            <RadioButton Content="Promos" Height="40" Margin="0,300,0,0" VerticalAlignment="Top" Foreground="AliceBlue" />
+            <RadioButton Content="Overview" Height="40" Margin="0,100,0,0" VerticalAlignment="Top" Foreground="AliceBlue" Checked="navigationClick" IsChecked="true" />
+            <RadioButton Content="Reports" Height="40" Margin="0,140,0,0" VerticalAlignment="Top" Foreground="AliceBlue" Checked="navigationClick" />
+            <RadioButton Content="Booking" Height="40" Margin="0,180,0,0" VerticalAlignment="Top" Foreground="AliceBlue" Checked="navigationClick" />
+            <RadioButton Content="Flights" Height="40" Margin="0,220,0,0" VerticalAlignment="Top" Foreground="AliceBlue" Checked="navigationClick" />
+            <RadioButton Content="Passengers" Height="40" Margin="0,260,0,0" VerticalAlignment="Top" Foreground="AliceBlue" Checked="navigationClick" />
+            <RadioButton Content="Promos" Height="40" Margin="0,300,0,0" VerticalAlignment="Top" Foreground="AliceBlue" Checked="navigationClick" />
             
-            <TextBlock Grid.Column="1" Height="70" HorizontalAlignment="Left" Text="Overview" VerticalAlignment="Top" Width="200" FontSize="32" Padding="0" Margin="20" />
-            
-            <GroupBox Grid.Column="1" Header="Active Flights" Height="100" HorizontalAlignment="Left" Margin="20,100,0,0" Name="groupBox1" VerticalAlignment="Top" Width="200">
-                <Grid>
-                    <TextBlock Name="txtActiveFlights" HorizontalAlignment="Stretch" Text="32" VerticalAlignment="Stretch" FontSize="40" TextAlignment="Center" Padding="10" />
-                </Grid>
-            </GroupBox>
-            
-            <GroupBox Header="On-going Flights" Height="100" HorizontalAlignment="Left" Margin="245,100,0,0" Name="groupBox2" VerticalAlignment="Top" Width="200" Grid.Column="1">
-                <Grid>
-                    <TextBlock Name="txtOngoingFlights" FontSize="40" HorizontalAlignment="Stretch" Padding="10" Text="11" TextAlignment="Center" VerticalAlignment="Stretch" />
-                </Grid>
-            </GroupBox>
-            
-            <GroupBox Header="Delayed Flights" Height="100" HorizontalAlignment="Left" Margin="20,231,0,0" Name="groupBox3" VerticalAlignment="Top" Width="200" Grid.Column="1">
-                <Grid>
-                    <TextBlock Name="txtDelayedFlights" FontSize="40" HorizontalAlignment="Stretch" Padding="10" Text="2" TextAlignment="Center" VerticalAlignment="Stretch" />
-                </Grid>
-            </GroupBox>
-            
-            <GroupBox Header="Canceled Flights" Height="100" HorizontalAlignment="Left" Margin="245,231,0,0" Name="groupBox4" VerticalAlignment="Top" Width="200" Grid.Column="1">
-                <Grid>
-                    <TextBlock Name="txtCanceledFlights" FontSize="40" HorizontalAlignment="Stretch" Padding="10" Text="3" TextAlignment="Center" VerticalAlignment="Stretch" />
-                </Grid>
-            </GroupBox>
+            <TextBlock Grid.Column="1" Height="70" HorizontalAlignment="Left" Name="txtPageTitle" Text="Overview" VerticalAlignment="Top" Width="200" FontSize="32" Padding="0" Margin="20" />
+            <Frame Grid.Column="1" HorizontalAlignment="Stretch" Margin="20,78,0,0" Name="mainFrame" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Source="{Binding}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
         </Grid>
         
-        <TextBlock Height="23" HorizontalAlignment="Right" Margin="0,20,20,0" Text="Logged in as" VerticalAlignment="Top" />
-        <TextBlock Height="32" HorizontalAlignment="Right" Margin="0,35,20,0" Name="txtLoginUsername" Text="Username" VerticalAlignment="Top" FontSize="20" />
+        <TextBlock Height="23" HorizontalAlignment="Right" Margin="0,2,15,0" Text="Logged in as" VerticalAlignment="Top" />
+        <TextBlock Height="32" HorizontalAlignment="Right" Margin="0,17,15,0" Name="txtLoginUsername" Text="Username" VerticalAlignment="Top" FontSize="20" />
         
-        <Button Content="Logout" Height="20" HorizontalAlignment="Right" Margin="0,70,20,0" Name="btnLogout" VerticalAlignment="Top" Width="75" Click="btnLogoutClick" />
+        <Button Content="Logout" Height="20" HorizontalAlignment="Right" Margin="0,52,15,0" Name="btnLogout" VerticalAlignment="Top" Width="75" Click="btnLogoutClick" />
     </Grid>
 </Window>

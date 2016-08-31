@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
 using System.Windows;
 using Uniars.Core;
 using Uniars.Data;
+using Uniars.Data.Entity;
 using Uniars.UI;
 using System.Threading;
 
@@ -22,10 +24,10 @@ namespace Uniars
             Config = new Config("Config.xml");
             Entities = new Entities();
 
-            while (!Entities.IsConnected())
+            while (!Entities.OpenConnection())
             {
                 MessageBoxResult result = MessageBox.Show(
-                    "Unable to connect to database. Retry connection?",
+                    "Database connection failed. Retry?",
                     "Error",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Error
@@ -38,9 +40,47 @@ namespace Uniars
             }
 
             Application app = new Application();
-            app.Run(new LoginWindow());
+            Window startupWindow;
 
+            switch (Config.Get("Application.MockMode"))
+            {
+                case "true":
+                    SetUpMockUser();
+                    startupWindow = new MainWindow();
+
+                    break;
+
+                default:
+                    startupWindow = new LoginWindow();
+                    break;
+            }
+
+            app.Run(startupWindow);
             return 0;
+        }
+
+        private static void SetUpMockUser()
+        {
+            IQueryable<User> testUserQuery = Entities.User.Take(1).Where(User => User.Username == "test");
+
+            if (testUserQuery.Count() == 0)
+            {
+                User testUser = new User()
+                {
+                    Username = "test",
+                    Name = "Test User",
+                    Password = Hash.Make("test"),
+                    Role = "admin",
+                };
+
+                Entities.User.Add(testUser);
+                Entities.SaveChanges();
+
+                CurrentUser = testUser;
+                return;
+            }
+
+            CurrentUser = testUserQuery.ToArray().First();
         }
     }
 }

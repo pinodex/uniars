@@ -10,6 +10,9 @@ namespace Uniars.Data
     {
         public Entities() : base(GetConnectionString()) {}
 
+        /// <summary>
+        /// Get database connection string
+        /// </summary>
         protected static String GetConnectionString()
         {
             String host, username, password, name;
@@ -22,7 +25,11 @@ namespace Uniars.Data
             return String.Format("server={0};uid={1};password={2};database={3}", host, username, password, name);
         }
 
-        public bool IsConnected()
+        /// <summary>
+        /// Try to open connection to database
+        /// </summary>
+        /// <returns>Connection status</returns>
+        public bool OpenConnection()
         {
             try
             {

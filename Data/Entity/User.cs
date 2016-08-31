@@ -6,10 +6,6 @@ namespace Uniars.Data.Entity
     [Table("users")]
     public class User
     {
-        public const String ROLE_ADMIN = "admin";
-
-        public const String ROLE_USER = "user";
-
         public Int32 Id { get; set; }
 
         public String Name { get; set; }

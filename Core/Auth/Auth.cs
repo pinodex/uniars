@@ -11,8 +11,8 @@ namespace Uniars.Core.Auth
         /// </summary>
         /// <param name="username">Username</param>
         /// <param name="password">Password</param>
-        /// <returns>User</returns>
-        public static Data.Entity.User Login(string username, string password)
+        /// <returns>Logged in user</returns>
+        public static Data.Entity.User Login(String username, String password)
         {
             IQueryable<Data.Entity.User> result = App.Entities.User.Take(1).Where(User => User.Username == username);
 
