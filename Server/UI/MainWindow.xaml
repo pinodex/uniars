@@ -1,0 +1,8 @@
+﻿<Window x:Class="Uniars.Server.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="UNIARS Server" Height="300" Width="300">
+    <Grid>
+        <Button Content="Server Configuration" Height="23" Margin="12,12,124,0" Name="button1" VerticalAlignment="Top" Click="button1_Click" />
+    </Grid>
+</Window>

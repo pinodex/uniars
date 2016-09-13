@@ -1,0 +1,33 @@
+﻿<Page x:Class="Uniars.Client.UI.Pages.Main.Overview"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" Title="Overview">
+
+    <Grid>
+        <GroupBox Grid.Column="1" Header="Active Flights" Height="100" HorizontalAlignment="Left" Margin="0,0,0,0" Name="groupBox1" VerticalAlignment="Top" Width="200">
+            <Grid>
+                <TextBlock Name="txtActiveFlights" HorizontalAlignment="Stretch" Text="32" VerticalAlignment="Stretch" FontSize="40" TextAlignment="Center" Padding="10" />
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Header="On-going Flights" Height="100" HorizontalAlignment="Left" Margin="245,0,0,0" Name="groupBox2" VerticalAlignment="Top" Width="200" Grid.Column="1">
+            <Grid>
+                <TextBlock Name="txtOngoingFlights" FontSize="40" HorizontalAlignment="Stretch" Padding="10" Text="11" TextAlignment="Center" VerticalAlignment="Stretch" />
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Header="Delayed Flights" Height="100" HorizontalAlignment="Left" Margin="0,131,0,0" Name="groupBox3" VerticalAlignment="Top" Width="200" Grid.Column="1">
+            <Grid>
+                <TextBlock Name="txtDelayedFlights" FontSize="40" HorizontalAlignment="Stretch" Padding="10" Text="2" TextAlignment="Center" VerticalAlignment="Stretch" />
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Header="Canceled Flights" Height="100" HorizontalAlignment="Left" Margin="245,131,0,0" Name="groupBox4" VerticalAlignment="Top" Width="200" Grid.Column="1">
+            <Grid>
+                <TextBlock Name="txtCanceledFlights" FontSize="40" HorizontalAlignment="Stretch" Padding="10" Text="3" TextAlignment="Center" VerticalAlignment="Stretch" />
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Page>

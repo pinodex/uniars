@@ -1,0 +1,52 @@
+﻿<Window x:Class="Uniars.Server.UI.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Settings - UNIARS Server" Height="400" Width="350" ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True">
+    
+    <Window.Resources>
+        <ResourceDictionary Source="/UI/Theme.xaml" />
+    </Window.Resources>
+    
+    <Grid Background="WhiteSmoke">
+        <TabControl Margin="12,12,12,41" Width="Auto">
+            <TabItem Header="Server">
+                <Grid>
+                    <Label Content="IP Address" Height="23" VerticalAlignment="Top" Margin="0,19,212,0" VerticalContentAlignment="Center" Padding="0" Width="86" HorizontalContentAlignment="Right" HorizontalAlignment="Left" />
+                    <TextBox Height="23" HorizontalAlignment="Right" Margin="0,19,6,0" Name="txtServerIpAddress" VerticalAlignment="Top" Width="200" VerticalContentAlignment="Center" />
+                    
+                    <Label Content="Port" Height="23" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="0,48,0,0" Padding="0" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="86" />
+                    <TextBox Height="23" HorizontalAlignment="Right" Margin="0,48,6,0" Name="txtServerPort" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="200" />
+                    
+                    <Button Content="Test Binding" Height="23" HorizontalAlignment="Right" Margin="0,77,6,0" Name="btnServerTestBinding" VerticalAlignment="Top" Width="80" />
+                </Grid>
+            </TabItem>
+            
+            <TabItem Header="Database">
+                <Grid>
+                    <Label Content="Host" Height="23" VerticalAlignment="Top" Margin="0,19,212,0" VerticalContentAlignment="Center" Padding="0" Width="86" HorizontalContentAlignment="Right" HorizontalAlignment="Left" />
+                    <TextBox Height="23" HorizontalAlignment="Right" Margin="0,19,6,0" Name="txtDatabaseHost" VerticalAlignment="Top" Width="200" VerticalContentAlignment="Center" />
+
+                    <Label Content="Username" Height="23" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="0,48,0,0" Padding="0" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="86" />
+                    <TextBox Height="23" HorizontalAlignment="Right" Margin="0,48,6,0" Name="txtDatabaseUsername" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="200" />
+                    
+                    <Label Content="Password" Height="23" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="0,77,0,0" Padding="0" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="86" />
+                    <PasswordBox Height="23" HorizontalAlignment="Right" Margin="0,77,6,0" Name="txtDatabasePassword" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="200" />
+                    
+                    <Label Content="Name" Height="23" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="0,106,0,0" Padding="0" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="86" />
+                    <TextBox Height="23" HorizontalAlignment="Right" Margin="0,106,6,0" Name="txtDatabaseName" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="200" />
+                    
+                    <Button Content="Test Connection" Height="23" HorizontalAlignment="Right" Margin="0,135,6,0" Name="btnServerTestConnection" VerticalAlignment="Top" Width="100" />
+                </Grid>
+            </TabItem>
+            
+            <TabItem Header="Authentication">
+                <Grid>
+                    
+                </Grid>
+            </TabItem>
+        </TabControl>
+        
+        <Button Content="Cancel" Height="23" HorizontalAlignment="Right" Margin="0,0,12,12" Name="btnCancel" VerticalAlignment="Bottom" Width="75" Click="btnCancel_Click" />
+        <Button Content="OK" Height="23" HorizontalAlignment="Right" Margin="0,0,93,12" Name="btnOk" VerticalAlignment="Bottom" Width="75" />
+    </Grid>
+</Window>
