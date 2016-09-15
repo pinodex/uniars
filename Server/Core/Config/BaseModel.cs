@@ -11,5 +11,7 @@ namespace Uniars.Server.Core.Config
         public DatabaseModel Database { get; set; }
 
         public ServerModel Server { get; set; }
+
+        public string CertificateFile { get; set; }
     }
 }

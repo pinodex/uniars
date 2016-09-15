@@ -13,7 +13,7 @@ namespace Uniars.Shared.Foundation.Config
         /// Load JSON config file
         /// </summary>
         /// <typeparam name="T">Config model that implements IConfigModel</typeparam>
-        /// <param name="filePath">Path config file</param>
+        /// <param name="filePath">Path to config file</param>
         /// <returns>Instance of config model</returns>
         public static IConfigModel Load<T>(string filePath) where T : IConfigModel
         {
@@ -26,6 +26,16 @@ namespace Uniars.Shared.Foundation.Config
             catch {}
 
             return JsonConvert.DeserializeObject<T>(jsonString);
+        }
+
+        /// <summary>
+        /// Write config to file
+        /// </summary>
+        /// <param name="filePath">Path to config file</param>
+        /// <param name="model">Instance of config model</param>
+        public static void Write(string filePath, IConfigModel model)
+        {
+            File.WriteAllText(filePath, JsonConvert.SerializeObject(model, Formatting.Indented));
         }
     }
 }

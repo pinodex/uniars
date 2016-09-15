@@ -8,7 +8,7 @@ namespace Uniars.Server.Core.Config
 {
     public class ServerModel : IConfigModel
     {
-        public string IPAddress { get; set; }
+        public string Host { get; set; }
 
         public uint Port { get; set; }
     }

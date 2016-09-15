@@ -11,32 +11,30 @@ using Uniars.Server.Database;
 using Uniars.Server.UI;
 using Uniars.Server.Core.Config;
 using Uniars.Shared.Foundation.Config;
+using SWF = System.Windows.Forms;
+using System.Reflection;
 
 namespace Uniars.Server
 {
     public class App : Application
     {
-        public const string VERSION = "1.0.0";
+        public static readonly string Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+        public const string CONFIG_FILE = "Config.json";
 
         public static BaseModel Config;
+
+        public static Http.Server Server;
 
         public static Entities Entities;
 
         [STAThread]
         public static int Main()
         {
-            /*
-            HostConfiguration config = new HostConfiguration();
-            config.UrlReservations.CreateAutomatically = true;
+            Config = (BaseModel) JsonConfig.Load<BaseModel>(CONFIG_FILE);
 
-            NancyHost host = new NancyHost(config, new Uri("http://localhost:8000"));
-
-            host.Start();
-
+            Server = new Http.Server(App.Config.Server.Host, App.Config.Server.Port);
             Entities = new Entities();
-            */
-
-            Config = (BaseModel) JsonConfig.Load<BaseModel>("Config.json");
 
             Application app = new Application();
             app.Run(new MainWindow());

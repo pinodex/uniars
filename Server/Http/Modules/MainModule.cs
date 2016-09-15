@@ -13,7 +13,7 @@ namespace Uniars.Server.Http.Modules
         {
             Get["/"] = parameters =>
             {
-                return Response.AsText(string.Format("UNIARS-Server/{0}", App.VERSION), "text/plain");
+                return Response.AsText(string.Format("UNIARS-Server/{0}", App.Version), "text/plain");
             };
 
             Get["/users"] = parameters =>

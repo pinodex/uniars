@@ -37,7 +37,9 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\IconMaskedWhite.ico" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="Foundation\Config\IConfigModel.cs" />
     <Compile Include="Foundation\Hash.cs" />
@@ -53,6 +55,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\LogoHorizontal.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
