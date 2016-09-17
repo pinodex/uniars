@@ -2,7 +2,7 @@
 	"Database": {
 		"Host": "localhost",
 		"Username": "root",
-		"Password": "",
+		"Password": "root",
 		"Name": "uniars"
 	},
 

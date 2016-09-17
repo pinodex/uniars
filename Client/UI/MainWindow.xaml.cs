@@ -29,17 +29,9 @@ namespace Uniars.Client.UI
 
         public MainWindow()
         {
-            if (App.CurrentUser == null)
-            {
-                this.Close();
-                return;
-            }
-
             InitializeComponent();
-            txtLoginUsername.Text = App.CurrentUser.Name;
 
             mainFrame.Content = NavigationPages.ElementAt(0).Value;
-
             DeferNavigation = false;
         }
 

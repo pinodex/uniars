@@ -14,9 +14,6 @@ using System.Windows.Shapes;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
-using Uniars.Client.Data;
-using Uniars.Client.Data.Entity;
-using Uniars.Client.Core.Auth;
 
 namespace Uniars.Client.UI
 {
@@ -72,19 +69,6 @@ namespace Uniars.Client.UI
             txtLoginError.Visibility = Visibility.Hidden;
             btnLogin.Content = "Logging in";
             windowLogin.IsEnabled = false;
-
-            User user = Auth.Login(txtUsername.Text, txtPassword.Password);
-
-            if (user == null)
-            {
-                txtLoginError.Visibility = Visibility.Visible;
-                btnLogin.Content = "Login";
-                windowLogin.IsEnabled = true;
-
-                return;
-            }
-
-            App.CurrentUser = user;
 
             new MainWindow().Show();
             this.Close();

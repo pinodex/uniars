@@ -1,20 +1,22 @@
 ﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shared="Uniars.Shared"
         x:Class="Uniars.Client.UI.LoginWindow"
         Name="windowLogin"
-        Title="Login"
+        Title="Login - UNIARS"
         Height="350"
         Width="600"
         ResizeMode="CanMinimize"
-        WindowStartupLocation="CenterScreen" BorderBrush="{x:Null}" Loaded="WindowLoaded" WindowStyle="SingleBorderWindow" Icon="/UNIARS_Client;component/Resources/IconMaskedWhite.ico">
+        Icon="/UNIARS;component/Resources/IconMaskedWhite.ico"
+        WindowStartupLocation="CenterScreen" BorderBrush="{x:Null}" Loaded="WindowLoaded" WindowStyle="SingleBorderWindow">
     
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="313*" />
             <ColumnDefinition Width="265*" />
         </Grid.ColumnDefinitions>
-        
-        <Image Height="101" HorizontalAlignment="Center" Margin="12,20,21,190" Stretch="Uniform" VerticalAlignment="Center" Width="280" Source="/UNIARS_Client;component/Resources/LogoHorizontal.png" />
+
+        <Image Height="101" HorizontalAlignment="Center" Margin="12,20,21,190" Stretch="Uniform" VerticalAlignment="Center" Width="280" Source="/UNIARS;component/Resources/LogoHorizontal.png" />
         <TextBlock Height="23" HorizontalAlignment="Left" Margin="12,127,0,0" Text="Unified Airline Reservation System" VerticalAlignment="Top" Foreground="#FF383838" />
         
         <Border BorderBrush="Silver" BorderThickness="1,0,0,0" Height="350" HorizontalAlignment="Left" VerticalAlignment="Top" Width="1" Margin="312,-26,0,0" />

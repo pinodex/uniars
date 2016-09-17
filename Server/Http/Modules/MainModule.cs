@@ -15,13 +15,6 @@ namespace Uniars.Server.Http.Modules
             {
                 return Response.AsText(string.Format("UNIARS-Server/{0}", App.Version), "text/plain");
             };
-
-            Get["/users"] = parameters =>
-            {
-                IQueryable users = App.Entities.User.Where(User => User.Name != null);
-                return JsonConvert.SerializeObject(users);
-                //return "lol";
-            };
         }
     }
 }

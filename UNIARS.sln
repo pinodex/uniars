@@ -2,6 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C# Express 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{3E5773B9-8373-424A-BB0B-ED3592E9003D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{357C1829-C388-4683-96B8-2850E25C624B} = {357C1829-C388-4683-96B8-2850E25C624B}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{357C1829-C388-4683-96B8-2850E25C624B}"
 EndProject

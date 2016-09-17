@@ -17,7 +17,7 @@ namespace Uniars.Server.Http
         /// <summary>
         /// Instance of Nancy Binay
         /// </summary>
-        protected NancyHost Nancy;
+        private NancyHost Nancy;
 
         /// <summary>
         /// Fired when the server has started
