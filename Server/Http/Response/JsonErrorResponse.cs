@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using Newtonsoft.Json;
 using Nancy;
 
-namespace Uniars.Server.Http
+namespace Uniars.Server.Http.Response
 {
-    public class ErrorJsonResponse : Response
+    public class JsonErrorResponse : Nancy.Response
     {
-        public ErrorJsonResponse(int httpCode, int code, string message, object data = null)
+        public JsonErrorResponse(int httpCode, int code, string message, object data = null)
         {
             this.StatusCode = (HttpStatusCode)httpCode;
             this.ContentType = "text/json";

@@ -29,8 +29,14 @@ namespace Uniars.Shared.Database
             }
         }
 
-        public DbSet<Entity.User> User { get; set; }
+        public DbSet<Entity.User> Users { get; set; }
 
-        public DbSet<Entity.Flyer> Flyer { get; set; }
+        public DbSet<Entity.Flyer> Flyers { get; set; }
+
+        public DbSet<Entity.Airline> Airlines { get; set; }
+
+        public DbSet<Entity.Airport> Airports { get; set; }
+
+        public DbSet<Entity.Route> Routes { get; set; }
     }
 }

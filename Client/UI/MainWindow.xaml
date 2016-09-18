@@ -41,7 +41,7 @@
             <RadioButton Content="Reports" Height="40" Margin="0,140,0,0" VerticalAlignment="Top" Foreground="AliceBlue" Checked="navigationClick" />
             <RadioButton Content="Booking" Height="40" Margin="0,180,0,0" VerticalAlignment="Top" Foreground="AliceBlue" Checked="navigationClick" />
             <RadioButton Content="Flights" Height="40" Margin="0,220,0,0" VerticalAlignment="Top" Foreground="AliceBlue" Checked="navigationClick" />
-            <RadioButton Content="Passengers" Height="40" Margin="0,260,0,0" VerticalAlignment="Top" Foreground="AliceBlue" Checked="navigationClick" />
+            <RadioButton Content="Flyers" Height="40" Margin="0,260,0,0" VerticalAlignment="Top" Foreground="AliceBlue" Checked="navigationClick" />
             <RadioButton Content="Promos" Height="40" Margin="0,300,0,0" VerticalAlignment="Top" Foreground="AliceBlue" Checked="navigationClick" />
             
             <TextBlock Grid.Column="1" Height="70" HorizontalAlignment="Left" Name="txtPageTitle" Text="Overview" VerticalAlignment="Top" Width="200" FontSize="32" Padding="0" Margin="20" />

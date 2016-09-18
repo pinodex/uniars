@@ -70,10 +70,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libraries\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="MySql.Data.Entity, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Libraries\MySql.Data.Entity.dll</HintPath>
-    </Reference>
     <Reference Include="MySql.Data.Entity.EF6, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libraries\MySql.Data.Entity.EF6.dll</HintPath>
@@ -81,6 +77,9 @@
     <Reference Include="Nancy, Version=1.4.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libraries\Nancy.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.Authentication.Basic">
+      <HintPath>..\Libraries\Nancy.Authentication.Basic.dll</HintPath>
     </Reference>
     <Reference Include="Nancy.Hosting.Self, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -111,6 +110,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Resource>
+    <ApplicationDefinition Include="App.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </ApplicationDefinition>
     <Page Include="UI\MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -119,14 +122,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Properties\App.cs" />
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Http\Auth\UserIdentity.cs" />
+    <Compile Include="Http\Auth\UserValidator.cs" />
+    <Compile Include="Http\Bootstrapper.cs" />
+    <Compile Include="Http\Module\AirlineModule.cs" />
+    <Compile Include="Http\Module\AirportModule.cs" />
     <Compile Include="Core\Config\BaseModel.cs" />
     <Compile Include="Core\Config\DatabaseModel.cs" />
     <Compile Include="Core\Config\ServerModel.cs" />
-    <Compile Include="Http\ErrorJsonResponse.cs" />
-    <Compile Include="Http\Modules\FlyerModule.cs" />
-    <Compile Include="Http\Modules\MainModule.cs" />
-    <Compile Include="Http\Modules\UserModule.cs" />
+    <Compile Include="Http\Response\JsonErrorResponse.cs" />
+    <Compile Include="Http\Module\FlyerModule.cs" />
+    <Compile Include="Http\Module\MainModule.cs" />
+    <Compile Include="Http\Module\UserModule.cs" />
     <Compile Include="Http\Server.cs" />
     <Compile Include="UI\AboutBox.cs">
       <SubType>Form</SubType>
@@ -176,6 +186,7 @@
   <ItemGroup>
     <Resource Include="Icon.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

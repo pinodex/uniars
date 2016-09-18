@@ -22,22 +22,31 @@ namespace Uniars.Client.UI
         {
             {"Overview", new Pages.Main.Overview()},
             {"Reports", new Pages.Main.Reports()},
-            {"Booking", new Pages.Main.Booking()}
+            {"Booking", new Pages.Main.Booking()},
+            {"Flyers", new Pages.Main.Flyers()}
         };
 
-        protected Boolean DeferNavigation = true;
+        protected Boolean deferNavigation = true;
 
         public MainWindow()
         {
             InitializeComponent();
 
+            if (App.Client.CurrentUser == null)
+            {
+                this.Close();
+                return;
+            }
+
             mainFrame.Content = NavigationPages.ElementAt(0).Value;
-            DeferNavigation = false;
+            txtLoginUsername.Text = App.Client.CurrentUser.Name;
+
+            deferNavigation = false;
         }
 
         private void navigationClick(object sender, RoutedEventArgs e)
         {
-            if (DeferNavigation)
+            if (deferNavigation)
             {
                 return;
             }
@@ -60,8 +69,9 @@ namespace Uniars.Client.UI
         {
             this.IsEnabled = false;
 
-            new LoginWindow().Show();
+            App.Client.Logout();
 
+            new LoginWindow().Show();
             this.Close();
         }
     }

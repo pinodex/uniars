@@ -14,6 +14,10 @@ using System.Windows.Shapes;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+using Uniars.Client.Http;
+using Uniars.Shared.Database.Entity;
+using MahApps.Metro.Controls;
+using System.Windows.Media.Animation;
 
 namespace Uniars.Client.UI
 {
@@ -29,49 +33,79 @@ namespace Uniars.Client.UI
             txtUsername.Focus();
         }
 
-        public void menuTabCliked(object sender, RoutedEventArgs e)
-        {
-            Button button = (Button)sender;
-
-            switch (button.Tag.ToString())
-            {
-                case "tabBookingManager":
-                    borderBookingManager.BorderBrush = Brushes.Silver;
-                    borderBookingManager.Background = Brushes.White;
-
-                    borderSystemAdministration.BorderBrush = null;
-                    borderSystemAdministration.Background = null;
-
-                    break;
-
-                case "tabSystemAdministration":
-                    borderSystemAdministration.BorderBrush = Brushes.Silver;
-                    borderSystemAdministration.Background = Brushes.White;
-
-                    borderBookingManager.BorderBrush = null;
-                    borderBookingManager.Background = null;
-
-                    break;
-            }
-
-            tbkLoginAction.Text = button.Content.ToString();
-        }
-
         private void btnLoginClick(object sender, RoutedEventArgs e)
         {
-            if (txtUsername.Text == string.Empty || txtPassword.Password == string.Empty)
+            if (txtUsername.Text == "/exit")
             {
-                txtLoginError.Visibility = Visibility.Visible;
-
+                this.Close();
                 return;
             }
 
             txtLoginError.Visibility = Visibility.Hidden;
-            btnLogin.Content = "Logging in";
+            btnLogin.IsEnabled = false;
             windowLogin.IsEnabled = false;
 
-            new MainWindow().Show();
-            this.Close();
+            App.Client.LoginAsync(txtUsername.Text, txtPassword.Password, (isOk, user) =>
+            {
+                if (!isOk || user == null)
+                {
+                    this.Dispatcher.Invoke(new Action(() =>
+                    {
+                        this.ResetLoginForm();
+                        this.AlertInvalidLogin();
+                    }));
+                    return;
+                }
+
+                this.Dispatcher.Invoke(new Action(() =>
+                    {
+                        new MainWindow().Show();
+                        this.Close();
+                    }
+                ));
+            });
+        }
+
+        protected void AlertInvalidLogin()
+        {
+            txtLoginError.Visibility = Visibility.Visible;
+
+            errorBox.Opacity = 1;
+
+            DoubleAnimation errorBoxAnimation = new DoubleAnimation
+            {
+                To = 0,
+                BeginTime = TimeSpan.FromSeconds(1),
+                Duration = TimeSpan.FromSeconds(5),
+                FillBehavior = FillBehavior.Stop
+            };
+
+            DoubleAnimation windowAnimation = new DoubleAnimation
+            {
+
+            };
+
+            errorBoxAnimation.Completed += (s, a) => errorBox.Opacity = 0;
+            errorBox.BeginAnimation(UIElement.OpacityProperty, errorBoxAnimation);
+        }
+
+        protected void ResetLoginForm()
+        {
+            txtPassword.Password = "";
+            
+            txtLoginError.Visibility = Visibility.Hidden;
+            btnLogin.IsEnabled = true;
+            windowLogin.IsEnabled = true;
+
+            txtUsername.Focus();
+        }
+
+        private void windowLogin_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.System && e.SystemKey == Key.F4)
+            {
+                e.Handled = true;
+            }
         }
     }
 }

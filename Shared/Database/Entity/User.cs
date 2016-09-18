@@ -15,8 +15,5 @@ namespace Uniars.Shared.Database.Entity
         public string Password { get; set; }
 
         public string Role { get; set; }
-
-        [Column("last_login")]
-        public DateTime? LastLogin { get; set; }
     }
 }

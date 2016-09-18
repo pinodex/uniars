@@ -70,7 +70,9 @@ namespace Uniars.Server.Http
                 }
             };
 
-            Nancy = new NancyHost(configuration, new Uri(binding));
+            Bootstrapper bootstrapper = new Bootstrapper();
+
+            Nancy = new NancyHost(bootstrapper, configuration, new Uri(binding));
         }
 
         /// <summary>

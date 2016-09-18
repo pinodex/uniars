@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using Uniars.Shared.Database.Entity;
 using Uniars.Shared.Foundation;
-using Newtonsoft.Json;
 using Nancy;
+using Nancy.Security;
 using Nancy.ModelBinding;
+using Uniars.Server.Http.Response;
 
 namespace Uniars.Server.Http.Modules
 {
@@ -15,6 +16,8 @@ namespace Uniars.Server.Http.Modules
         public FlyerModule()
             : base("/flyers")
         {
+            this.RequiresAuthentication();
+
             Get["/"] = Index;
             Get["/{id:int}"] = Single;
             Get["/{id}"] = SinglePublic;
@@ -27,45 +30,45 @@ namespace Uniars.Server.Http.Modules
 
         protected object Index(dynamic parameters)
         {
-            List<Flyer> flyers = App.Entities.Flyer.ToList();
+            List<Flyer> flyers = App.Entities.Flyers.ToList();
 
             return flyers;
         }
 
         protected object Single(dynamic parameters)
         {
-            Flyer flyer = App.Entities.Flyer.Find((int)parameters.id);
+            Flyer model = App.Entities.Flyers.Find((int)parameters.id);
 
-            if (flyer == null)
+            if (model == null)
             {
-                return new ErrorJsonResponse(404, 404, "Flyer not found");
+                return new JsonErrorResponse(404, 404, "Flyer not found");
             }
 
-            return flyer;
+            return model;
         }
 
         protected object SinglePublic(dynamic parameters)
         {
             string id = parameters.id;
 
-            Flyer flyer = App.Entities.Flyer.First(Flyer => Flyer.PublicId == id);
+            Flyer model = App.Entities.Flyers.First(Flyer => Flyer.PublicId == id);
 
-            if (flyer == null)
+            if (model == null)
             {
-                return new ErrorJsonResponse(404, 404, "Flyer not found");
+                return new JsonErrorResponse(404, 404, "Flyer not found");
             }
 
-            return flyer;
+            return model;
         }
 
         protected object Search(dynamic parameters)
         {
-            string query = this.Request.Query["query"];
+            string name = this.Request.Query["name"];
 
-            List<Flyer> flyers = new List<Flyer>();
-            flyers = App.Entities.Flyer.Where(Flyer => Flyer.Name.Contains(query)).ToList();
+            List<Flyer> models = new List<Flyer>();
+            models = App.Entities.Flyers.Where(Flyer => Flyer.Name.Contains(name)).ToList();
 
-            return flyers;
+            return models;
         }
 
         protected object CreateModel(dynamic parameters)
@@ -74,7 +77,7 @@ namespace Uniars.Server.Http.Modules
 
             model.PublicId = Helper.GetRandomAlphaNumeric();
 
-            App.Entities.Flyer.Add(model);
+            App.Entities.Flyers.Add(model);
             App.Entities.SaveChanges();
 
             return model;
@@ -84,7 +87,7 @@ namespace Uniars.Server.Http.Modules
         {
             var model = Single(parameters);
 
-            if (model.GetType() == typeof(ErrorJsonResponse))
+            if (model.GetType() == typeof(JsonErrorResponse))
             {
                 return model;
             }
@@ -100,12 +103,12 @@ namespace Uniars.Server.Http.Modules
         {
             var model = Single(parameters);
 
-            if (model.GetType() == typeof(ErrorJsonResponse))
+            if (model.GetType() == typeof(JsonErrorResponse))
             {
                 return model;
             }
 
-            App.Entities.Flyer.Remove(model);
+            App.Entities.Flyers.Remove(model);
             App.Entities.SaveChanges();
 
             return HttpStatusCode.OK;
