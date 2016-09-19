@@ -25,7 +25,7 @@ namespace Uniars.Server
     {
         public static readonly string Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-        public const string CONFIG_FILE = "Config.json";
+        public const string CONFIG_FILE = "ServerConfig.json";
 
         public static BaseModel Config;
 

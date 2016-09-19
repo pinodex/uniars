@@ -12,6 +12,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Uniars.Client.UI;
 using Uniars.Client.Http;
+using Uniars.Client.Core.Config;
+using Uniars.Shared.Foundation.Config;
 
 namespace Uniars.Client
 {
@@ -22,11 +24,16 @@ namespace Uniars.Client
     {
         public static ApiClient Client;
 
+        public const string CONFIG_FILE = "ClientConfig.json";
+
+        public static BaseModel Config;
+
         public App()
         {
             InitializeComponent();
 
-            Client = new ApiClient("http://localhost:8080");
+            Config = (BaseModel)JsonConfig.Load<BaseModel>(CONFIG_FILE);
+            Client = new ApiClient(Config.ServerAddress);
         }
     }
 }

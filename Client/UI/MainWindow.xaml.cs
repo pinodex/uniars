@@ -10,23 +10,24 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
+using System.Threading.Tasks;
 
 namespace Uniars.Client.UI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : MetroWindow
     {
-        protected Dictionary<String, Page> NavigationPages = new Dictionary<String, Page>()
+        protected Dictionary<string, Page> map = new Dictionary<string, Page>
         {
             {"Overview", new Pages.Main.Overview()},
-            {"Reports", new Pages.Main.Reports()},
-            {"Booking", new Pages.Main.Booking()},
-            {"Flyers", new Pages.Main.Flyers()}
+            {"Flyers", new Pages.Main.Flyers()},
         };
 
-        protected Boolean deferNavigation = true;
+        private bool deferMenuSelectionChange = true;
 
         public MainWindow()
         {
@@ -38,41 +39,88 @@ namespace Uniars.Client.UI
                 return;
             }
 
-            mainFrame.Content = NavigationPages.ElementAt(0).Value;
-            txtLoginUsername.Text = App.Client.CurrentUser.Name;
+            txtUsername.Text = App.Client.CurrentUser.Name;
 
-            deferNavigation = false;
+            this.Loaded += (s, e) =>
+            {
+                mainFrame.Content = map.ElementAt(0).Value;
+                this.deferMenuSelectionChange = false;
+            };
+
+            this.KeyDown += (s, e) =>
+            {
+                if (e.Key == Key.System && e.SystemKey == Key.F4)
+                {
+                    this.btnSignOut_Click(s, e);
+                    e.Handled = true;
+                }
+            };
         }
 
-        private void navigationClick(object sender, RoutedEventArgs e)
+        private void Logout()
         {
-            if (deferNavigation)
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                this.IsEnabled = false;
+                App.Client.Logout();
+                this.Close();
+            }));
+        }
+
+        private void menu_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.deferMenuSelectionChange)
             {
                 return;
             }
 
-            RadioButton button = (RadioButton)sender;
-            String key = button.Content.ToString();
+            ListBox menu = (ListBox)sender;
 
-            if (NavigationPages.ContainsKey(key))
+            if (menu.SelectedItem == null)
             {
-                Page page;
-
-                NavigationPages.TryGetValue(key, out page);
-                mainFrame.Content = page;
+                return;
             }
 
-            txtPageTitle.Text = key;
+            ListBoxItem item = menu.SelectedItem as ListBoxItem;
+
+            if (item.Tag == null)
+            {
+                return;
+            }
+
+            string key = item.Tag.ToString();
+
+            Page content;
+
+            if (map.ContainsKey(key))
+            {
+                map.TryGetValue(key, out content);
+
+                mainFrame.Content = content;
+            }
         }
 
-        private void btnLogoutClick(object sender, RoutedEventArgs e)
+        private void btnAccountSettings_Click(object sender, RoutedEventArgs e)
         {
-            this.IsEnabled = false;
+            this.ShowMessageAsync("Coming soon", "Feature not yet ready.");
+        }
 
-            App.Client.Logout();
+        private void btnSignOut_Click(object sender, RoutedEventArgs e)
+        {
+            MetroDialogSettings settings = new MetroDialogSettings
+            {
+                AffirmativeButtonText = "Sign out"
+            };
 
-            new LoginWindow().Show();
-            this.Close();
+            Task<MessageDialogResult> messageTask = this.ShowMessageAsync("Sign out", "Are you sure you want to sign out?", MessageDialogStyle.AffirmativeAndNegative, settings);
+            
+            messageTask.ContinueWith(task =>
+            {
+                if (task.Result == MessageDialogResult.Affirmative)
+                {
+                    this.Logout();
+                }
+            });
         }
     }
 }

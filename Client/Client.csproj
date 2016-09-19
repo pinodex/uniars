@@ -107,7 +107,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\Config\BaseModel.cs" />
     <Compile Include="Http\ApiClient.cs" />
+    <Compile Include="Http\ApiClientEventArgs.cs" />
     <Compile Include="Http\ApiRequest.cs" />
     <Compile Include="Http\AuthException.cs" />
     <Compile Include="UI\Interface.cs" />
@@ -164,10 +166,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Theme.xaml">
+    <Resource Include="UI\Theme.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="UI\MainWindow.xaml.cs">
@@ -181,6 +183,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Copy\ClientConfig.json" />
     <None Include="Properties\App.config">
       <SubType>Designer</SubType>
     </None>

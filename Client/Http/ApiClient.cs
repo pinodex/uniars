@@ -12,9 +12,21 @@ namespace Uniars.Client.Http
     {
         public User CurrentUser { get; private set; }
 
+        protected string authString;
+
         public ApiClient(string baseUri)
             : base(baseUri)
         {
+        }
+
+        /// <summary>
+        /// Check if the client can connect to server
+        /// </summary>
+        /// <returns></returns>
+        public void TestConnect(Action<IRestResponse> response)
+        {
+            ApiRequest request = new ApiRequest("/health", Method.GET);
+            this.ExecuteAsync(request, response);
         }
 
         /// <summary>
@@ -25,8 +37,10 @@ namespace Uniars.Client.Http
         /// <returns>Instance of logged in user</returns>
         public User Login(string username, string password)
         {
+            this.authString = GetAuthenticationString(username, password);
+
             RestRequest request = new RestRequest("auth");
-            request.AddHeader("Authorization", GetAuthenticationString(username, password));
+            request.AddHeader("Authorization", authString);
 
             IRestResponse<User> response = this.Execute<User>(request);
 
@@ -45,16 +59,17 @@ namespace Uniars.Client.Http
         /// <param name="username">Username</param>
         /// <param name="password">Password</param>
         /// <param name="callback">Callback containing the boolean status of login and User object</param>
-        public void LoginAsync(string username, string password, Action<bool, User> callback)
+        public void LoginAsync(string username, string password, Action<IRestResponse<User>> callback)
         {
+            this.authString = GetAuthenticationString(username, password);
+
             RestRequest request = new RestRequest("auth");
-            request.AddHeader("Authorization", GetAuthenticationString(username, password));
+            request.AddHeader("Authorization", authString);
 
             this.ExecuteAsync<User>(request, response =>
             {
                 this.CurrentUser = response.Data;
-                
-                callback(response.StatusCode == HttpStatusCode.OK, response.Data);
+                callback(response);
             });
         }
 
@@ -64,6 +79,30 @@ namespace Uniars.Client.Http
         public void Logout()
         {
             this.CurrentUser = null;
+        }
+
+        public override IRestResponse<T> Execute<T>(IRestRequest request)
+        {
+            request.AddHeader("Authorization", authString);
+            return base.Execute<T>(request);
+        }
+
+        public override RestRequestAsyncHandle ExecuteAsync<T>(IRestRequest request, Action<IRestResponse<T>, RestRequestAsyncHandle> callback)
+        {
+            request.AddHeader("Authorization", authString);
+            return base.ExecuteAsync<T>(request, callback);
+        }
+
+        public override IRestResponse Execute(IRestRequest request)
+        {
+            request.AddHeader("Authorization", authString);
+            return base.Execute(request);
+        }
+
+        public override RestRequestAsyncHandle ExecuteAsync(IRestRequest request, Action<IRestResponse, RestRequestAsyncHandle> callback)
+        {
+            request.AddHeader("Authorization", authString);
+            return base.ExecuteAsync(request, callback);
         }
 
         /// <summary>

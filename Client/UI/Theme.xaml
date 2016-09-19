@@ -4,51 +4,43 @@
     <Style TargetType="TabControl">
         <Setter Property="BorderBrush" Value="#FFDEDEDE" />
     </Style>
+
+    <Style TargetType="ListBoxItem" x:Key="MenuListBoxItem">
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="15,10" />
+    </Style>
+
+    <Style TargetType="ListBox" x:Key="MenuListBox">
+        <Setter Property="ItemContainerStyle" Value="{StaticResource MenuListBoxItem}" />
+        <Setter Property="Background" Value="{x:Null}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
     
-    <Style TargetType="TabItem">
+    <Style x:Key="MenuButton" TargetType="Button">
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="FontSize" Value="14" />
+
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="White" />
+        
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type TabItem}">
-                    <Grid>
-                        <Border 
-                            Name="Border"
-                            Margin="-1,0,0,-1"
-                            Background="{x:Static Brushes.WhiteSmoke}"
-                            BorderBrush="#FFDEDEDE" 
-                            BorderThickness="1">
-
-                            <ContentPresenter x:Name="ContentSite"
-                                ContentSource="Header"
-                                Margin="10,1,10,1"
-                                RecognizesAccessKey="True"/>
-                        </Border>
-                    </Grid>
-                    
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Panel.ZIndex" Value="100" />
-                            <Setter TargetName="Border" Property="Background" Value="{x:Static Brushes.White}" />
-                            <Setter TargetName="Border" Property="BorderThickness" Value="1,1,1,0" />
-                        </Trigger>
-
-                        <Trigger Property="IsSelected" Value="False">
-                            <Setter TargetName="Border" Property="Margin" Value="-1,2,0,-1" />
-                        </Trigger>
-                        
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsSelected" Value="False" />
-                                <Condition Property="IsMouseOver" Value="True" />
-                            </MultiTrigger.Conditions>
-                            
-                            <MultiTrigger.Setters>
-                                <Setter TargetName="Border" Property="Background" Value="{x:Static Brushes.Azure}" />
-                            </MultiTrigger.Setters>
-                        </MultiTrigger>
-                    </ControlTemplate.Triggers>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderThickness="0"
+                            Padding="10">
+                        <ContentPresenter />
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#60000000" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style x:Key="LinkButton" TargetType="Button">

@@ -13,24 +13,42 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Net;
 using System.Xml;
 using Uniars.Client.Http;
 using Uniars.Shared.Database.Entity;
 using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using System.Windows.Media.Animation;
 
 namespace Uniars.Client.UI
 {
-    public partial class LoginWindow : Window
+    public partial class LoginWindow : MetroWindow
     {
         public LoginWindow()
         {
             InitializeComponent();
-        }
 
-        private void WindowLoaded(object sender, RoutedEventArgs e)
-        {
-            txtUsername.Focus();
+            this.Loaded += (s, e) =>
+            {
+                txtUsername.Focus();
+
+                App.Client.TestConnect(response =>
+                {
+                    if (response.ResponseStatus != RestSharp.ResponseStatus.Completed)
+                    {
+                        ShowConnectErrorDialog();
+                    }
+                });
+            };
+
+            this.KeyDown += (s, e) =>
+            {
+                if (e.Key == Key.System && e.SystemKey == Key.F4)
+                {
+                    e.Handled = true;
+                }
+            };
         }
 
         private void btnLoginClick(object sender, RoutedEventArgs e)
@@ -45,67 +63,81 @@ namespace Uniars.Client.UI
             btnLogin.IsEnabled = false;
             windowLogin.IsEnabled = false;
 
-            App.Client.LoginAsync(txtUsername.Text, txtPassword.Password, (isOk, user) =>
+            App.Client.LoginAsync(txtUsername.Text, txtPassword.Password, (response) =>
             {
-                if (!isOk || user == null)
+                if (response.ResponseStatus != RestSharp.ResponseStatus.Completed)
                 {
-                    this.Dispatcher.Invoke(new Action(() =>
-                    {
-                        this.ResetLoginForm();
-                        this.AlertInvalidLogin();
-                    }));
+                    this.ResetLoginForm();
+                    this.ShowConnectErrorDialog();
+
+                    return;
+                }
+                
+                if (response.StatusCode != HttpStatusCode.OK || response.Data == null)
+                {
+                    this.ResetLoginForm();
+                    this.AlertInvalidLogin();
+
                     return;
                 }
 
+                this.ResetLoginForm(true);
+
                 this.Dispatcher.Invoke(new Action(() =>
                     {
-                        new MainWindow().Show();
-                        this.Close();
+                        Window mainWindow = new MainWindow();
+                        mainWindow.Show();
                     }
                 ));
             });
         }
 
+        protected void ShowConnectErrorDialog()
+        {
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                this.ShowMessageAsync("Error", "Cannot establish connection to server");
+            }));
+        }
+
         protected void AlertInvalidLogin()
         {
-            txtLoginError.Visibility = Visibility.Visible;
-
-            errorBox.Opacity = 1;
-
-            DoubleAnimation errorBoxAnimation = new DoubleAnimation
+            this.Dispatcher.Invoke(new Action(() =>
             {
-                To = 0,
-                BeginTime = TimeSpan.FromSeconds(1),
-                Duration = TimeSpan.FromSeconds(5),
-                FillBehavior = FillBehavior.Stop
-            };
+                txtLoginError.Visibility = Visibility.Visible;
 
-            DoubleAnimation windowAnimation = new DoubleAnimation
-            {
+                errorBox.Opacity = 1;
 
-            };
+                DoubleAnimation errorBoxAnimation = new DoubleAnimation
+                {
+                    To = 0,
+                    BeginTime = TimeSpan.FromSeconds(1),
+                    Duration = TimeSpan.FromSeconds(5),
+                    FillBehavior = FillBehavior.Stop
+                };
 
-            errorBoxAnimation.Completed += (s, a) => errorBox.Opacity = 0;
-            errorBox.BeginAnimation(UIElement.OpacityProperty, errorBoxAnimation);
+                errorBoxAnimation.Completed += (s, a) => errorBox.Opacity = 0;
+                errorBox.BeginAnimation(UIElement.OpacityProperty, errorBoxAnimation);
+            }));
         }
 
-        protected void ResetLoginForm()
+        protected void ResetLoginForm(bool all = false)
         {
-            txtPassword.Password = "";
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                if (all)
+                {
+                    txtUsername.Text = "";
+                }
+
+                txtPassword.Password = "";
             
-            txtLoginError.Visibility = Visibility.Hidden;
-            btnLogin.IsEnabled = true;
-            windowLogin.IsEnabled = true;
+                txtLoginError.Visibility = Visibility.Hidden;
+                btnLogin.IsEnabled = true;
+                windowLogin.IsEnabled = true;
 
-            txtUsername.Focus();
-        }
-
-        private void windowLogin_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.System && e.SystemKey == Key.F4)
-            {
-                e.Handled = true;
-            }
+                txtUsername.Focus();
+            }));
         }
     }
 }

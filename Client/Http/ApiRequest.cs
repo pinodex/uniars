@@ -12,5 +12,10 @@ namespace Uniars.Client.Http
             : base(uri, method)
         {
         }
+
+        public ApiRequest(string uri)
+            : base(uri)
+        {
+        }
     }
 }

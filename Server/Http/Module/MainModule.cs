@@ -13,10 +13,9 @@ namespace Uniars.Server.Http.Modules
     {
         public MainModule() : base("/")
         {
-            this.RequiresAuthentication();
-
             Get["/"] = Index;
             Get["/auth"] = Auth;
+            Get["/health"] = Health;
         }
 
         public object Index(dynamic parameters)
@@ -32,6 +31,11 @@ namespace Uniars.Server.Http.Modules
             }
 
             return HttpStatusCode.Unauthorized;
+        }
+
+        public object Health(dynamic parameters)
+        {
+            return HttpStatusCode.OK;
         }
     }
 }
