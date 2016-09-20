@@ -24,16 +24,27 @@ namespace Uniars.Client
     {
         public static ApiClient Client;
 
-        public const string CONFIG_FILE = "ClientConfig.json";
+        public const string CONFIG_FILE = "config\\client.json";
 
         public static BaseModel Config;
 
         public App()
         {
-            InitializeComponent();
+            try
+            {
+                Config = (BaseModel)JsonConfig.Load<BaseModel>(CONFIG_FILE);
+            }
+            catch
+            {
+                MessageBox.Show(string.Format("Unable to read configuration file from \"{0}{1}\"",
+                    AppDomain.CurrentDomain.BaseDirectory, CONFIG_FILE));
 
-            Config = (BaseModel)JsonConfig.Load<BaseModel>(CONFIG_FILE);
+                Environment.Exit(1);
+            }
+
             Client = new ApiClient(Config.ServerAddress);
+
+            InitializeComponent();
         }
     }
 }

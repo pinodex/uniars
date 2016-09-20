@@ -25,7 +25,7 @@ namespace Uniars.Server
     {
         public static readonly string Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-        public const string CONFIG_FILE = "ServerConfig.json";
+        public const string CONFIG_FILE = "config\\server.json";
 
         public static BaseModel Config;
 
@@ -35,9 +35,17 @@ namespace Uniars.Server
 
         public App()
         {
-            InitializeComponent();
+            try
+            {
+                Config = (BaseModel)JsonConfig.Load<BaseModel>(CONFIG_FILE);
+            }
+            catch
+            {
+                MessageBox.Show(string.Format("Unable to read configuration file from \"{0}{1}\"",
+                    AppDomain.CurrentDomain.BaseDirectory, CONFIG_FILE));
 
-            Config = (BaseModel)JsonConfig.Load<BaseModel>(CONFIG_FILE);
+                Environment.Exit(1);
+            }
 
             string connectionString = string.Format("Server={0};Uid={1};Password={2};Database={3}",
                 App.Config.Database.Host,
@@ -48,6 +56,8 @@ namespace Uniars.Server
 
             Server = new Http.Server(App.Config.Server.Host, App.Config.Server.Port);
             Entities = new Entities(connectionString);
+
+            InitializeComponent();
         }
     }
 }

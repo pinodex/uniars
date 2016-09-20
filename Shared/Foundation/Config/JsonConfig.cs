@@ -17,13 +17,7 @@ namespace Uniars.Shared.Foundation.Config
         /// <returns>Instance of config model</returns>
         public static IConfigModel Load<T>(string filePath) where T : IConfigModel
         {
-            string jsonString = "{}";
-
-            try
-            {
-                jsonString = File.ReadAllText(filePath);
-            }
-            catch {}
+            string jsonString = File.ReadAllText(filePath);
 
             return JsonConvert.DeserializeObject<T>(jsonString);
         }
