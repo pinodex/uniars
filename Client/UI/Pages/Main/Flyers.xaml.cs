@@ -34,14 +34,14 @@ namespace Uniars.Client.UI.Pages.Main
         {
             ApiRequest request = new ApiRequest("/flyers");
 
-            App.Client.ExecuteAsync<List<Flyer>>(request, response =>
+            App.Client.ExecuteAsync<List<Passenger>>(request, response =>
             {
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
                     return;
                 }
 
-                List<Flyer> flyers = response.Data;
+                List<Passenger> flyers = response.Data;
 
                 this.Dispatcher.Invoke(new Action(() =>
                 {

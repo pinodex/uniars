@@ -121,7 +121,6 @@
     </Compile>
     <Compile Include="Core\Config\BaseModel.cs" />
     <Compile Include="Http\ApiClient.cs" />
-    <Compile Include="Http\ApiClientEventArgs.cs" />
     <Compile Include="Http\ApiRequest.cs" />
     <Compile Include="Http\AuthException.cs" />
     <Compile Include="UI\Interface.cs" />

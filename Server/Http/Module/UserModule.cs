@@ -6,10 +6,11 @@ using Uniars.Shared.Database.Entity;
 using Nancy;
 using Nancy.Security;
 using Uniars.Server.Http.Response;
+using Uniars.Shared.Database;
 
-namespace Uniars.Server.Http.Modules
+namespace Uniars.Server.Http.Module
 {
-    public class UserModule : NancyModule
+    public class UserModule : BaseModule
     {
         public UserModule() : base("/users")
         {
@@ -22,9 +23,9 @@ namespace Uniars.Server.Http.Modules
 
         protected object Index(dynamic parameters)
         {
-            List<User> models = App.Entities.Users.ToList();
+            IQueryable<User> db = App.Entities.Users.OrderBy(User => User.Id);
 
-            return models;
+            return new PaginatedResult<User>(db, this.perPage, this.GetCurrentPage());
         }
 
         protected object Single(dynamic parameters)
@@ -56,7 +57,9 @@ namespace Uniars.Server.Http.Modules
                 db = App.Entities.Users.Where(User => User.Name.Contains(name));
             }
 
-            return db.ToList();
+            db = db.OrderBy(User => User.Id);
+
+            return new PaginatedResult<User>(db, this.perPage, this.GetCurrentPage());
         }
     }
 }

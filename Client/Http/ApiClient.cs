@@ -25,7 +25,7 @@ namespace Uniars.Client.Http
         /// <returns></returns>
         public void TestConnect(Action<IRestResponse> response)
         {
-            ApiRequest request = new ApiRequest("/health", Method.GET);
+            ApiRequest request = new ApiRequest("health", Method.GET);
             this.ExecuteAsync(request, response);
         }
 

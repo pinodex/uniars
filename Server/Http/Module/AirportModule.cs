@@ -10,12 +10,10 @@ using Nancy.Security;
 using Nancy.ModelBinding;
 using Uniars.Server.Http.Response;
 
-namespace Uniars.Server.Http.Modules
+namespace Uniars.Server.Http.Module
 {
-    public class AirportModule : NancyModule
+    public class AirportModule : BaseModule
     {
-        protected int perPage = 100;
-
         public AirportModule()
             : base("/airports")
         {
@@ -28,17 +26,9 @@ namespace Uniars.Server.Http.Modules
 
         public object Index(dynamic parameter)
         {
-            int page = 1;
-
-            try
-            {
-                page = int.Parse(this.Request.Query["page"]);
-            }
-            catch { }
-
             IQueryable<Airport> db = App.Entities.Airports.OrderBy(Airline => Airline.Id);
 
-            return new PaginatedResult<Airport>(db, perPage, page);
+            return new PaginatedResult<Airport>(db, this.perPage, this.GetCurrentPage());
         }
 
         public object Single(dynamic parameters)
@@ -82,17 +72,9 @@ namespace Uniars.Server.Http.Modules
                 db = db.Where(Flyer => Flyer.Timezone.Contains(timezone));
             }
 
-            int page = 1;
-
-            try
-            {
-                page = int.Parse(this.Request.Query["page"]);
-            }
-            catch { }
-
             db = db.OrderBy(Airline => Airline.Id);
 
-            return new PaginatedResult<Airport>(db, perPage, page);
+            return new PaginatedResult<Airport>(db, this.perPage, this.GetCurrentPage());
         }
     }
 }

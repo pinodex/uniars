@@ -7,7 +7,7 @@ using Nancy.Security;
 using Uniars.Server.Http.Auth;
 
 
-namespace Uniars.Server.Http.Modules
+namespace Uniars.Server.Http.Module
 {
     public class MainModule : NancyModule
     {
