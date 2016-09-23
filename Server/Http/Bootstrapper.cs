@@ -16,6 +16,9 @@ namespace Uniars.Server.Http
         {
             base.ApplicationStartup(container, pipelines);
 
+            StaticConfiguration.Caching.EnableRuntimeViewDiscovery = true;
+            StaticConfiguration.Caching.EnableRuntimeViewUpdates = true;
+
             pipelines.EnableBasicAuthentication(new BasicAuthenticationConfiguration(                   
                 container.Resolve<UserValidator>(), "UNIARS Server", UserPromptBehaviour.Always)
             );

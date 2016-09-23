@@ -6,7 +6,7 @@ using MySql.Data.Entity;
 namespace Uniars.Shared.Database
 {
     [DbConfigurationType(typeof(MySqlEFConfiguration))]
-    public class Entities : DbContext
+    public class Context : DbContext
     {
         public DbSet<Entity.User> Users { get; set; }
 
@@ -22,7 +22,7 @@ namespace Uniars.Shared.Database
 
         public DbSet<Entity.Route> Routes { get; set; }
 
-        public Entities(string connectionString) : base(connectionString)
+        public Context(string connectionString) : base(connectionString)
         {
             this.Configuration.LazyLoadingEnabled = false;
         }
@@ -31,11 +31,8 @@ namespace Uniars.Shared.Database
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Entity.Passenger>()
-                .HasRequired(p => p.Address);
-
             modelBuilder.Entity<Entity.PassengerAddress>()
-                .HasRequired(p => p.Country);
+                .HasKey(p => p.PassengerId);
         }
 
         /// <summary>

@@ -25,13 +25,15 @@ namespace Uniars.Server
     {
         public static readonly string Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
+        public static string ConnectionString;
+
         public const string CONFIG_FILE = "config\\server.json";
 
         public static BaseModel Config;
 
         public static Http.Server Server;
 
-        public static Entities Entities;
+        public static Context Entities;
 
         public App()
         {
@@ -47,7 +49,7 @@ namespace Uniars.Server
                 Environment.Exit(1);
             }
 
-            string connectionString = string.Format("Server={0};Uid={1};Password={2};Database={3}",
+            ConnectionString = string.Format("Server={0};Uid={1};Password={2};Database={3}",
                 App.Config.Database.Host,
                 App.Config.Database.Username,
                 App.Config.Database.Password,
@@ -55,7 +57,7 @@ namespace Uniars.Server
             );
 
             Server = new Http.Server(App.Config.Server.Host, App.Config.Server.Port);
-            Entities = new Entities(connectionString);
+            Entities = new Context(ConnectionString);
 
             InitializeComponent();
         }

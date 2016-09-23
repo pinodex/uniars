@@ -6,7 +6,8 @@ namespace Uniars.Shared.Database.Entity
     [Table("passenger_addresses")]
     public class PassengerAddress
     {
-        public int Id { get; set; }
+        [Column("passenger_id")]
+        public int PassengerId { get; set; }
 
         [Column("line_1")]
         public string Line1 { get; set; }

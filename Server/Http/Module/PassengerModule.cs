@@ -23,6 +23,7 @@ namespace Uniars.Server.Http.Module
 
             Get["/"] = Index;
             Get["/{id:int}"] = Single;
+            Get["/{code}"] = SingleCode;
             Get["/search"] = Search;
 
             Post["/"] = CreateModel;
@@ -32,81 +33,175 @@ namespace Uniars.Server.Http.Module
 
         protected object Index(dynamic parameters)
         {
-            IQueryable<Passenger> db = App.Entities.Passengers
-                .Include(p => p.Address)
-                .Include(p => p.Address.Country)
-                .OrderBy(Passenger => Passenger.Id);
+            using (Context context = new Context(App.ConnectionString))
+            {
+                IQueryable<Passenger> db = context.Passengers
+                    .Include(p => p.Address)
+                    .Include(p => p.Address.Country)
+                    .OrderBy(Passenger => Passenger.Id);
 
-            return new PaginatedResult<Passenger>(db, this.perPage, this.GetCurrentPage());
+                return new PaginatedResult<Passenger>(db, this.perPage, this.GetCurrentPage());
+            }
         }
 
         protected object Single(dynamic parameters)
         {
             int id = (int)parameters.id;
 
-            Passenger model = App.Entities.Passengers
-                .Include(m => m.Address)
-                .Include(m => m.Address.Country)
-                .FirstOrDefault(m => m.Id == id);
-
-            if (model == null)
+            using (Context context = new Context(App.ConnectionString))
             {
-                return new JsonErrorResponse(404, 404, "Flyer not found");
-            }
+                Passenger model = context.Passengers
+                    .Include(m => m.Address)
+                    .Include(m => m.Address.Country)
+                    .FirstOrDefault(m => m.Id == id);
 
-            return model;
+                if (model == null)
+                {
+                    return new JsonErrorResponse(404, 404, "Passenger not found");
+                }
+
+                return model;
+            }
+        }
+
+        protected object SingleCode(dynamic parameters)
+        {
+            string code = (string)parameters.code;
+
+            using (Context context = new Context(App.ConnectionString))
+            {
+                Passenger model = context.Passengers
+                    .Include(m => m.Address)
+                    .Include(m => m.Address.Country)
+                    .FirstOrDefault(m => m.Code == code);
+
+                if (model == null)
+                {
+                    return new JsonErrorResponse(404, 404, "Passenger not found");
+                }
+
+                return model;
+            }
         }
 
         protected object Search(dynamic parameters)
         {
-            string name = this.Request.Query["name"];
+            string givenName = this.Request.Query["given_name"];
+            string familyName = this.Request.Query["family_name"];
+            string middleName = this.Request.Query["middle_name"];
+            string displayName = this.Request.Query["display_name"];
 
-            IQueryable<Passenger> db = App.Entities.Passengers
-                .Include(p => p.Address)
-                .Include(p => p.Address.Country)
-                .Where(Flyer => Flyer.DisplayName.Contains(name))
-                .OrderBy(Passenger => Passenger.Id);
+            using (Context context = new Context(App.ConnectionString))
+            {
+                IQueryable<Passenger> db = App.Entities.Passengers
+                    .Include(p => p.Address)
+                    .Include(p => p.Address.Country);
 
-            return new PaginatedResult<Passenger>(db, this.perPage, this.GetCurrentPage());
+                if (givenName != null)
+                {
+                    db = db.Where(Model => Model.GivenName.Contains(givenName));
+                }
+
+                if (familyName != null)
+                {
+                    db = db.Where(Model => Model.FamilyName.Contains(familyName));
+                }
+
+                if (middleName != null)
+                {
+                    db = db.Where(Model => Model.MiddleName.Contains(familyName));
+                }
+
+                if (displayName != null)
+                {
+                    db = db.Where(Model => Model.DisplayName.Contains(displayName));
+                }
+
+                db = db.OrderBy(Passenger => Passenger.Id);
+
+                return new PaginatedResult<Passenger>(db, this.perPage, this.GetCurrentPage());
+            }
         }
 
         protected object CreateModel(dynamic parameters)
         {
-            Passenger model = this.Bind<Passenger>();
+            using (Context context = new Context(App.ConnectionString))
+            {
+                Passenger model = this.Bind<Passenger>(
+                    m => m.Id,
+                    m => m.Code,
+                    m => m.Address.PassengerId,
+                    m => m.Address.Country,
+                    m => m.CreatedAt
+                );
 
-            App.Entities.Passengers.Add(model);
-            App.Entities.SaveChanges();
+                if (model.Address != null && model.Address.Country != null)
+                {
+                    model.Address.Country = context.Countries.Find(model.Address.Country.Id);
+                }
 
-            return model;
+                model.GenerateCode();
+                model.CreatedAt = DateTime.Now;
+
+                context.Passengers.Add(model);
+                context.SaveChanges();
+
+                return model;
+            }
         }
 
         protected object UpdateModel(dynamic parameters)
         {
-            var model = Single(parameters);
+            int id = (int)parameters.id;
 
-            if (model.GetType() == typeof(JsonErrorResponse))
+            using (Context context = new Context(App.ConnectionString))
             {
+                Passenger model = context.Passengers
+                    .Include(m => m.Address)
+                    .Include(m => m.Address.Country)
+                    .FirstOrDefault(m => m.Id == id);
+
+                if (model == null)
+                {
+                    return new JsonErrorResponse(404, 404, "Passenger not found");
+                }
+
+                this.BindTo((Passenger)model,
+                    m => m.Id,
+                    m => m.Code,
+                    m => m.Address,
+                    m => m.Address.PassengerId,
+                    m => m.Address.Country,
+                    m => m.CreatedAt
+                );
+
+                if (model.Address != null && model.Address.Country != null)
+                {
+                    model.Address.Country = context.Countries.Find(model.Address.Country.Id);
+                }
+
+                context.SaveChanges();
+
                 return model;
             }
-
-            this.BindTo((Passenger)model);
-
-            App.Entities.SaveChanges();
-
-            return model;
         }
 
         protected object DeleteModel(dynamic parameters)
         {
-            var model = Single(parameters);
+            int id = (int)parameters.id;
 
-            if (model.GetType() == typeof(JsonErrorResponse))
+            using (Context context = new Context(App.ConnectionString))
             {
-                return model;
-            }
+                Passenger model = context.Passengers.FirstOrDefault(m => m.Id == id);
 
-            App.Entities.Passengers.Remove(model);
-            App.Entities.SaveChanges();
+                if (model == null)
+                {
+                    return new JsonErrorResponse(404, 404, "Passenger not found");
+                }
+
+                context.Passengers.Remove(model);
+                context.SaveChanges();
+            }
 
             return HttpStatusCode.OK;
         }

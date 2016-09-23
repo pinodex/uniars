@@ -54,22 +54,22 @@ namespace Uniars.Server.Http.Module
 
             if (name != null)
             {
-                db = db.Where(Flyer => Flyer.Name.Contains(name));
+                db = db.Where(Model => Model.Name.Contains(name));
             }
 
             if (country != null)
             {
-                db = db.Where(Flyer => Flyer.Country.Contains(country));
+                db = db.Where(Model => Model.Country.Contains(country));
             }
 
             if (city != null)
             {
-                db = db.Where(Flyer => Flyer.City.Contains(city));
+                db = db.Where(Model => Model.City.Contains(city));
             }
 
             if (timezone != null)
             {
-                db = db.Where(Flyer => Flyer.Timezone.Contains(timezone));
+                db = db.Where(Model => Model.Timezone.Contains(timezone));
             }
 
             db = db.OrderBy(Airline => Airline.Id);

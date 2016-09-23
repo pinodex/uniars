@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using Uniars.Shared.Foundation;
 
 namespace Uniars.Shared.Database.Entity
 {
@@ -28,9 +29,22 @@ namespace Uniars.Shared.Database.Entity
 
         public int Gender { get; set; }
 
+        [ForeignKey("Id")]
         public PassengerAddress Address { get; set; }
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
+
+        public string GenerateCode()
+        {
+            DateTime now = DateTime.Now;
+
+            string year = now.Year.ToString();
+            string month = now.Month.ToString().PadLeft(2, '0');
+
+            this.Code = string.Format("{0}-{1}-{2}", year, month, Helper.GetSecureRandomAlphaNumeric(6).ToUpper());
+
+            return this.Code;
+        }
     }
 }

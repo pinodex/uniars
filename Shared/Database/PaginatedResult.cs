@@ -7,10 +7,22 @@ namespace Uniars.Shared.Database
 {
     public class PaginatedResult<T>
     {
+        /// <summary>
+        /// Paginated content
+        /// </summary>
         public List<T> Data { get; set; }
 
+        /// <summary>
+        /// Pagination info
+        /// </summary>
         public InfoModel Info { get; set; }
 
+        /// <summary>
+        /// Paginates an IQueryable
+        /// </summary>
+        /// <param name="db">IQueryable</param>
+        /// <param name="perPage">Number of entries per page</param>
+        /// <param name="currentPage">Current page selected</param>
         public PaginatedResult(IQueryable<T> db, int perPage, int currentPage)
         {
             int total = db.Count();
