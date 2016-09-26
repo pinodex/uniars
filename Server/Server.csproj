@@ -137,6 +137,7 @@
     <Compile Include="Core\Config\DatabaseModel.cs" />
     <Compile Include="Core\Config\ServerModel.cs" />
     <Compile Include="Http\Module\BaseModule.cs" />
+    <Compile Include="Http\Module\PassengerContactModule.cs" />
     <Compile Include="Http\Response\JsonErrorResponse.cs" />
     <Compile Include="Http\Module\PassengerModule.cs" />
     <Compile Include="Http\Module\MainModule.cs" />

@@ -46,8 +46,9 @@
     <Compile Include="Database\Entity\Airline.cs" />
     <Compile Include="Database\Entity\Airport.cs" />
     <Compile Include="Database\Entity\Country.cs" />
+    <Compile Include="Database\ITrackedEntity.cs" />
     <Compile Include="Database\Entity\Passenger.cs" />
-    <Compile Include="Database\Entity\PassengerAddress.cs" />
+    <Compile Include="Database\Entity\PassengerContact.cs" />
     <Compile Include="Database\Entity\Route.cs" />
     <Compile Include="Database\Entity\User.cs" />
     <Compile Include="Database\PaginatedResult.cs" />

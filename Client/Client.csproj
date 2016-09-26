@@ -119,6 +119,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\Collections\CollectionRepopulation.cs" />
     <Compile Include="Core\Config\BaseModel.cs" />
     <Compile Include="Http\ApiClient.cs" />
     <Compile Include="Http\ApiRequest.cs" />
@@ -132,8 +133,8 @@
     <Compile Include="UI\Pages\Main\Booking.xaml.cs">
       <DependentUpon>Booking.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Pages\Main\Flyers.xaml.cs">
-      <DependentUpon>Flyers.xaml</DependentUpon>
+    <Compile Include="UI\Pages\Main\Passengers.xaml.cs">
+      <DependentUpon>Passengers.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Pages\Main\Overview.xaml.cs">
       <DependentUpon>Overview.xaml</DependentUpon>
@@ -165,7 +166,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Pages\Main\Flyers.xaml">
+    <Page Include="UI\Pages\Main\Passengers.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

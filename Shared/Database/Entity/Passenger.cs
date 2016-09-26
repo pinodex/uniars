@@ -1,11 +1,12 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using Uniars.Shared.Foundation;
+using System.Collections.Generic;
 
 namespace Uniars.Shared.Database.Entity
 {
     [Table("passengers")]
-    public class Passenger
+    public class Passenger : ITrackedEntity
     {
         public int Id { get; set; }
 
@@ -29,11 +30,13 @@ namespace Uniars.Shared.Database.Entity
 
         public int Gender { get; set; }
 
-        [ForeignKey("Id")]
-        public PassengerAddress Address { get; set; }
+        public List<PassengerContact> Contacts { get; set; }
 
         [Column("created_at")]
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
+
+        [Column("updated_at")]
+        public DateTime? UpdatedAt { get; set; }
 
         public string GenerateCode()
         {

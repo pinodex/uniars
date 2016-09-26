@@ -36,9 +36,8 @@ namespace Uniars.Server.Http.Module
             using (Context context = new Context(App.ConnectionString))
             {
                 IQueryable<Passenger> db = context.Passengers
-                    .Include(p => p.Address)
-                    .Include(p => p.Address.Country)
-                    .OrderBy(Passenger => Passenger.Id);
+                    .Include(m => m.Contacts)
+                    .OrderBy(m => m.Id);
 
                 return new PaginatedResult<Passenger>(db, this.perPage, this.GetCurrentPage());
             }
@@ -50,17 +49,16 @@ namespace Uniars.Server.Http.Module
 
             using (Context context = new Context(App.ConnectionString))
             {
-                Passenger model = context.Passengers
-                    .Include(m => m.Address)
-                    .Include(m => m.Address.Country)
+                Passenger passenger = context.Passengers
+                    .Include(m => m.Contacts)
                     .FirstOrDefault(m => m.Id == id);
 
-                if (model == null)
+                if (passenger == null)
                 {
                     return new JsonErrorResponse(404, 404, "Passenger not found");
                 }
 
-                return model;
+                return passenger;
             }
         }
 
@@ -70,17 +68,16 @@ namespace Uniars.Server.Http.Module
 
             using (Context context = new Context(App.ConnectionString))
             {
-                Passenger model = context.Passengers
-                    .Include(m => m.Address)
-                    .Include(m => m.Address.Country)
+                Passenger passenger = context.Passengers
+                    .Include(m => m.Contacts)
                     .FirstOrDefault(m => m.Code == code);
 
-                if (model == null)
+                if (passenger == null)
                 {
                     return new JsonErrorResponse(404, 404, "Passenger not found");
                 }
 
-                return model;
+                return passenger;
             }
         }
 
@@ -94,8 +91,7 @@ namespace Uniars.Server.Http.Module
             using (Context context = new Context(App.ConnectionString))
             {
                 IQueryable<Passenger> db = App.Entities.Passengers
-                    .Include(p => p.Address)
-                    .Include(p => p.Address.Country);
+                    .Include(m => m.Contacts);
 
                 if (givenName != null)
                 {
@@ -109,7 +105,7 @@ namespace Uniars.Server.Http.Module
 
                 if (middleName != null)
                 {
-                    db = db.Where(Model => Model.MiddleName.Contains(familyName));
+                    db = db.Where(Model => Model.MiddleName.Contains(middleName));
                 }
 
                 if (displayName != null)
@@ -127,26 +123,17 @@ namespace Uniars.Server.Http.Module
         {
             using (Context context = new Context(App.ConnectionString))
             {
-                Passenger model = this.Bind<Passenger>(
+                Passenger passenger = this.Bind<Passenger>(
                     m => m.Id,
-                    m => m.Code,
-                    m => m.Address.PassengerId,
-                    m => m.Address.Country,
-                    m => m.CreatedAt
+                    m => m.Code
                 );
 
-                if (model.Address != null && model.Address.Country != null)
-                {
-                    model.Address.Country = context.Countries.Find(model.Address.Country.Id);
-                }
+                passenger.GenerateCode();
 
-                model.GenerateCode();
-                model.CreatedAt = DateTime.Now;
-
-                context.Passengers.Add(model);
+                context.Passengers.Add(passenger);
                 context.SaveChanges();
 
-                return model;
+                return passenger;
             }
         }
 
@@ -156,33 +143,22 @@ namespace Uniars.Server.Http.Module
 
             using (Context context = new Context(App.ConnectionString))
             {
-                Passenger model = context.Passengers
-                    .Include(m => m.Address)
-                    .Include(m => m.Address.Country)
-                    .FirstOrDefault(m => m.Id == id);
+                Passenger passenger = context.Passengers.FirstOrDefault(m => m.Id == id);
 
-                if (model == null)
+                if (passenger == null)
                 {
                     return new JsonErrorResponse(404, 404, "Passenger not found");
                 }
 
-                this.BindTo((Passenger)model,
+                this.BindTo(passenger,
                     m => m.Id,
                     m => m.Code,
-                    m => m.Address,
-                    m => m.Address.PassengerId,
-                    m => m.Address.Country,
                     m => m.CreatedAt
                 );
 
-                if (model.Address != null && model.Address.Country != null)
-                {
-                    model.Address.Country = context.Countries.Find(model.Address.Country.Id);
-                }
-
                 context.SaveChanges();
 
-                return model;
+                return passenger;
             }
         }
 
@@ -192,14 +168,14 @@ namespace Uniars.Server.Http.Module
 
             using (Context context = new Context(App.ConnectionString))
             {
-                Passenger model = context.Passengers.FirstOrDefault(m => m.Id == id);
+                Passenger passenger = context.Passengers.FirstOrDefault(m => m.Id == id);
 
-                if (model == null)
+                if (passenger == null)
                 {
                     return new JsonErrorResponse(404, 404, "Passenger not found");
                 }
 
-                context.Passengers.Remove(model);
+                context.Passengers.Remove(passenger);
                 context.SaveChanges();
             }
 

@@ -17,6 +17,10 @@ namespace Uniars.Shared.Database
         /// </summary>
         public InfoModel Info { get; set; }
 
+        public PaginatedResult()
+        {
+        }
+
         /// <summary>
         /// Paginates an IQueryable
         /// </summary>

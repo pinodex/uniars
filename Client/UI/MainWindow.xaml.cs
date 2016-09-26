@@ -21,11 +21,7 @@ namespace Uniars.Client.UI
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        protected Dictionary<string, Page> map = new Dictionary<string, Page>
-        {
-            {"Overview", new Pages.Main.Overview()},
-            {"Flyers", new Pages.Main.Flyers()},
-        };
+        protected Dictionary<string, Page> map;
 
         private bool deferMenuSelectionChange = true;
 
@@ -38,6 +34,12 @@ namespace Uniars.Client.UI
                 this.Close();
                 return;
             }
+
+            map = new Dictionary<string, Page>
+            {
+                {"Overview", new Pages.Main.Overview()},
+                {"Passengers", new Pages.Main.Passengers(this)},
+            };
 
             txtUsername.Text = App.Client.CurrentUser.Name;
 

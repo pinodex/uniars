@@ -35,10 +35,10 @@
                         </Grid>
                     </ListBoxItem>
 
-                    <ListBoxItem FontSize="14" Tag="Flyers">
+                    <ListBoxItem FontSize="14" Tag="Passengers">
                         <Grid>
                             <fa:FontAwesome Icon="Users" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                            <TextBlock Text="Flyers" Margin="24,0,0,0" />
+                            <TextBlock Text="Passengers" Margin="24,0,0,0" />
                         </Grid>
                     </ListBoxItem>
 
