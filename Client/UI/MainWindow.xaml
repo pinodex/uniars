@@ -16,7 +16,15 @@
         Width="1022"
                       
         Icon="/UNIARS;component/Resources/IconMaskedWhite.ico">
-    
+
+    <Controls:MetroWindow.Flyouts>
+        <Controls:FlyoutsControl>
+            <Controls:Flyout Name="mainFlyout" Position="Right" Width="500">
+                <Frame Name="mainFlyoutFrame" NavigationUIVisibility="Hidden" Padding="15" />
+            </Controls:Flyout>
+        </Controls:FlyoutsControl>
+    </Controls:MetroWindow.Flyouts>
+
     <Grid>
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.ColumnDefinitions>

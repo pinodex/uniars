@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using Uniars.Shared.Database;
 using Uniars.Shared.Database.Entity;
 using Uniars.Client.Core.Collections;
+using Uniars.Client.UI.Pages.Flyout;
 using Uniars.Client.Http;
 using RestSharp;
 using System.Net;
@@ -30,28 +31,32 @@ namespace Uniars.Client.UI.Pages.Main
     /// </summary>
     public partial class Passengers : Page
     {
-        private MetroWindow parentWindow;
+        private MainWindow parentWindow;
 
         private BindingList<Passenger> passengerList = new BindingList<Passenger>();
 
-        public Passengers(MetroWindow parentWindow)
+        public Passengers(MainWindow parentWindow)
         {
             InitializeComponent();
 
             this.parentWindow = parentWindow;
-            this.passengersTable.DataContext = passengerList;
+            this.passengersTable.ItemsSource = passengerList;
 
             this.LoadPassengerList();
+            this.UpdateLastUpdatedTime("N/A");
+        }
 
-            /*
-            this.passengersTable.LoadingRow += (s, e) =>
+        private void UpdateLastUpdatedTime(string newValue = null)
+        {
+            if (newValue == null)
             {
-                string header = this.passengerListBox.Header.ToString();
-                string updatedHeader = string.Format(header, DateTime.Now);
+                newValue = DateTime.Now.ToString();
+            }
 
-                this.passengerListBox.Header = updatedHeader;
-            };
-            */
+            string header = this.passengerListBox.Header.ToString();
+            string updatedHeader = string.Format(header, newValue);
+
+            this.passengerListBox.Header = updatedHeader;
         }
 
         private void LoadPassengerList()
@@ -76,6 +81,8 @@ namespace Uniars.Client.UI.Pages.Main
 
         private void SearchPassenger(string code)
         {
+            this.passengerLoader.IsActive = true;
+
             ApiRequest request = new ApiRequest("passengers/" + code);
 
             App.Client.ExecuteAsync<Passenger>(request, response =>
@@ -98,12 +105,16 @@ namespace Uniars.Client.UI.Pages.Main
                     {
                         passenger
                     });
+
+                    this.passengerLoader.IsActive = false;
                 }));
             });
         }
 
         private void SearchPassenger(Dictionary<string, string> queries)
         {
+            this.passengerLoader.IsActive = true;
+
             ApiRequest request = new ApiRequest("passengers/search");
 
             foreach (KeyValuePair<string, string> query in queries)
@@ -123,8 +134,25 @@ namespace Uniars.Client.UI.Pages.Main
                 this.Dispatcher.Invoke(new Action(() =>
                 {
                     this.passengerList.Repopulate<Passenger>(passengers.Data);
+                    this.passengerLoader.IsActive = false;
                 }));
             });
+        }
+
+        private void PassengerListRowDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            DataGridRow row = ItemsControl.ContainerFromElement(
+                sender as DataGrid, e.OriginalSource as DependencyObject) as DataGridRow;
+            
+            if (row == null)
+            {
+                return;
+            }
+
+            Passenger passenger = (Passenger)this.passengersTable.SelectedItem;
+
+            parentWindow.SetFlyoutContent("Passenger", new PassengerView(passenger));
+            parentWindow.OpenFlyout();
         }
 
         private void SearchCodeButtonClicked(object sender, RoutedEventArgs e)

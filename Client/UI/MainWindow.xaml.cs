@@ -69,6 +69,22 @@ namespace Uniars.Client.UI
             }));
         }
 
+        public void SetFlyoutContent(string header, Page content)
+        {
+            this.mainFlyout.Header = header;
+            this.mainFlyoutFrame.Content = content;
+        }
+
+        public void OpenFlyout()
+        {
+            this.mainFlyout.IsOpen = true;
+        }
+
+        public void CloseFlyout()
+        {
+            this.mainFlyout.IsOpen = false;
+        }
+
         private void menu_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (this.deferMenuSelectionChange)

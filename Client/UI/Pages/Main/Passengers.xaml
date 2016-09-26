@@ -19,14 +19,18 @@
 
                         <Grid Grid.Column="0">
                             <GroupBox Name="passengerListBox" Header="Passenger List (Last updated {0})">
-                                <DataGrid Name="passengersTable" Margin="-5" CanUserSortColumns="False" CanUserReorderColumns="False" AutoGenerateColumns="False" ItemsSource="{Binding}" ColumnHeaderHeight="50" CanUserResizeRows="False" MinRowHeight="30" RowHeight="30" SelectionMode="Single" CanUserResizeColumns="False" Focusable="False">
-                                    <DataGrid.Columns>
-                                        <DataGridTextColumn Header="Code" Binding="{Binding Code}" Width="150" IsReadOnly="True" />
-                                        <DataGridTextColumn Header="Name" Binding="{Binding DisplayName}" Width="*" IsReadOnly="True" />
-                                        <DataGridTextColumn Header="Date Created" Binding="{Binding CreatedAt}" Width="130" IsReadOnly="True" />
-                                        <DataGridTextColumn Header="Date Modified" Binding="{Binding UpdatedAt}" Width="130" IsReadOnly="True" />
-                                    </DataGrid.Columns>
-                                </DataGrid>
+                                <Grid>
+                                    <DataGrid Name="passengersTable" CanUserSortColumns="False" CanUserReorderColumns="False" AutoGenerateColumns="False" ItemsSource="{Binding}" ColumnHeaderHeight="50" CanUserResizeRows="False" MinRowHeight="30" RowHeight="30" SelectionMode="Single" CanUserResizeColumns="False" Focusable="False" Margin="-5" MouseDoubleClick="PassengerListRowDoubleClick">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Code" Binding="{Binding Code}" Width="150" IsReadOnly="True" />
+                                            <DataGridTextColumn Header="Name" Binding="{Binding DisplayName}" Width="*" IsReadOnly="True" />
+                                            <DataGridTextColumn Header="Date Created" Binding="{Binding CreatedAt}" Width="130" IsReadOnly="True" />
+                                            <DataGridTextColumn Header="Date Modified" Binding="{Binding UpdatedAt}" Width="130" IsReadOnly="True" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+
+                                    <Controls:ProgressRing Name="passengerLoader" IsActive="False" Foreground="CornflowerBlue" />
+                                </Grid>
                             </GroupBox>
                         </Grid>
 
