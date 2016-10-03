@@ -125,6 +125,7 @@
     <Compile Include="Http\ApiRequest.cs" />
     <Compile Include="Http\AuthException.cs" />
     <Compile Include="UI\Interface.cs" />
+    <Compile Include="UI\MainWindowModel.cs" />
     <Compile Include="UI\Modals\Booking\SelectSource.xaml.cs">
       <DependentUpon>SelectSource.xaml</DependentUpon>
     </Compile>
@@ -142,6 +143,7 @@
     <Compile Include="UI\Pages\Main\Overview.xaml.cs">
       <DependentUpon>Overview.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Pages\Main\PassengersModel.cs" />
     <Compile Include="UI\Pages\Main\Reports.xaml.cs">
       <DependentUpon>Reports.xaml</DependentUpon>
     </Compile>

@@ -13,6 +13,7 @@ using System.Windows.Shapes;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace Uniars.Client.UI
 {
@@ -25,6 +26,8 @@ namespace Uniars.Client.UI
 
         private bool deferMenuSelectionChange = true;
 
+        private MainWindowModel model = new MainWindowModel();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -35,13 +38,21 @@ namespace Uniars.Client.UI
                 return;
             }
 
+            this.DataContext = model;
+
+            DispatcherTimer clock = new DispatcherTimer();
+            
+            clock.Tick += (sender, e) => model.CurrentDateTime = DateTime.Now;
+            clock.Interval = new TimeSpan(0, 0, 1);
+            clock.Start();
+
+            model.Username = App.Client.CurrentUser.Name;
+
             map = new Dictionary<string, Page>
             {
                 {"Overview", new Pages.Main.Overview()},
                 {"Passengers", new Pages.Main.Passengers(this)},
             };
-
-            txtUsername.Text = App.Client.CurrentUser.Name;
 
             this.Loaded += (s, e) =>
             {

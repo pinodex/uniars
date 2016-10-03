@@ -20,7 +20,7 @@
     <Controls:MetroWindow.Flyouts>
         <Controls:FlyoutsControl>
             <Controls:Flyout Name="mainFlyout" Position="Right" Width="500">
-                <Frame Name="mainFlyoutFrame" NavigationUIVisibility="Hidden" Padding="15" />
+                <Frame Name="mainFlyoutFrame" NavigationUIVisibility="Hidden" Padding="5" Focusable="False" />
             </Controls:Flyout>
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>
@@ -72,71 +72,82 @@
                     </ListBoxItem>
                 </ListBox>
 
-                <Grid Name="userArea" VerticalAlignment="Bottom" Background="CornflowerBlue" Margin="0,100,0,0">
-                    <fa:FontAwesome Icon="User" Foreground="White" FontSize="48" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15" />
-                    <fa:FontAwesome Icon="AngleUp" Foreground="SteelBlue" FontSize="48" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="15" Name="userAreaAngleIcon" />
-                    
-                    <TextBlock Name="txtUsername" Text="Username" FontSize="20" Margin="60,25,15,0" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="White" />
-                    
-                    <Grid Background="#50000000" Margin="0,80,0,0">
-                        <ItemsControl>
-                            <Button Style="{StaticResource MenuButton}" Name="btnAccountSettings" Click="btnAccountSettings_Click">
-                                <Grid>
-                                    <fa:FontAwesome Icon="Cog" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                                    <TextBlock Text="Account Settings" Margin="24,0,0,0" />
-                                </Grid>
-                            </Button>
-                            
-                            <Button Style="{StaticResource MenuButton}" Name="btnSignOut" Click="btnSignOut_Click">
-                                <Grid>
-                                    <fa:FontAwesome Icon="SignOut" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                                    <TextBlock Text="Sign Out" Margin="24,0,0,0" />
-                                </Grid>
-                            </Button>
-                        </ItemsControl>
+                <Grid Name="userArea" VerticalAlignment="Bottom" Margin="0,100,0,0">
+                    <Grid Margin="15" VerticalAlignment="Top">
+                        <fa:FontAwesome Icon="ClockOutline" HorizontalAlignment="Left" VerticalAlignment="Stretch" Foreground="White" FontSize="38" />
+                        
+                        <StackPanel Focusable="False" Margin="40,0,0,0">
+                            <TextBlock Text="{Binding CurrentDateTime, StringFormat='\{0:HH:mm:ss}'}" Foreground="White" FontSize="16" FontWeight="Bold" />
+                            <TextBlock Text="{Binding CurrentDateTime, StringFormat='\{0:MMMM dd, yyyy}'}" Foreground="Gray" FontSize="11" FontWeight="Bold" />
+                        </StackPanel>
                     </Grid>
 
-                    <Grid.Style>
-                        <Style TargetType="{x:Type Grid}">
-                            <Setter Property="Height" Value="80" />
+                    <Grid Background="CornflowerBlue" Margin="0,70,0,0">
+                        <fa:FontAwesome Icon="User" Foreground="White" FontSize="48" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15" />
+                        <fa:FontAwesome Icon="AngleUp" Foreground="SteelBlue" FontSize="48" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="15" Name="userAreaAngleIcon" />
+                    
+                        <TextBlock Text="{Binding Username}" FontSize="20" Margin="60,25,15,0" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="White" />
+                    
+                        <Grid Background="#50000000" Margin="0,80,0,0">
+                            <StackPanel>
+                                <Button Style="{StaticResource MenuButton}" Name="btnAccountSettings" Click="btnAccountSettings_Click">
+                                    <Grid>
+                                        <fa:FontAwesome Icon="Cog" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                        <TextBlock Text="Account Settings" Margin="24,0,0,0" />
+                                    </Grid>
+                                </Button>
+                            
+                                <Button Style="{StaticResource MenuButton}" Name="btnSignOut" Click="btnSignOut_Click">
+                                    <Grid>
+                                        <fa:FontAwesome Icon="SignOut" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                        <TextBlock Text="Sign Out" Margin="24,0,0,0" />
+                                    </Grid>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
 
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Trigger.EnterActions>
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <DoubleAnimation
-                                                    Duration="0:0:0.25"
-                                                    Storyboard.TargetProperty="Height"
-                                                    To="200">
+                        <Grid.Style>
+                            <Style TargetType="{x:Type Grid}">
+                                <Setter Property="Height" Value="80" />
 
-                                                    <DoubleAnimation.EasingFunction>
-                                                        <QuinticEase EasingMode="EaseOut" />
-                                                    </DoubleAnimation.EasingFunction>
-                                                </DoubleAnimation>
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </Trigger.EnterActions>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Trigger.EnterActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation
+                                                        Duration="0:0:0.25"
+                                                        Storyboard.TargetProperty="Height"
+                                                        To="200">
 
-                                    <Trigger.ExitActions>
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <DoubleAnimation
-                                                    Duration="0:0:0.25"
-                                                    Storyboard.TargetProperty="Height"
-                                                    To="80">
+                                                        <DoubleAnimation.EasingFunction>
+                                                            <QuinticEase EasingMode="EaseOut" />
+                                                        </DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </Trigger.EnterActions>
 
-                                                    <DoubleAnimation.EasingFunction>
-                                                        <CircleEase EasingMode="EaseOut" />
-                                                    </DoubleAnimation.EasingFunction>
-                                                </DoubleAnimation>
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </Trigger.ExitActions>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Grid.Style>
+                                        <Trigger.ExitActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation
+                                                        Duration="0:0:0.25"
+                                                        Storyboard.TargetProperty="Height"
+                                                        To="80">
+
+                                                        <DoubleAnimation.EasingFunction>
+                                                            <CircleEase EasingMode="EaseOut" />
+                                                        </DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </Trigger.ExitActions>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                    </Grid>
                 </Grid>
             </Grid>
 

@@ -23,6 +23,7 @@ using System.Threading;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace Uniars.Client.UI.Pages.Main
 {
@@ -33,33 +34,42 @@ namespace Uniars.Client.UI.Pages.Main
     {
         private MainWindow parentWindow;
 
-        private BindingList<Passenger> passengerList = new BindingList<Passenger>();
+        private PassengersModel model = new PassengersModel
+        {
+            IsLoadingActive = false
+        };
+
+        private bool deferAutoRefresh = false;
 
         public Passengers(MainWindow parentWindow)
         {
             InitializeComponent();
 
+            this.DataContext = model;
             this.parentWindow = parentWindow;
-            this.passengersTable.ItemsSource = passengerList;
+
+            model.PassengerList.ListChanged += (sender, e) =>
+            {
+                model.LastUpdateTime = DateTime.Now;
+            };
 
             this.LoadPassengerList();
-            this.UpdateLastUpdatedTime("N/A");
-        }
 
-        private void UpdateLastUpdatedTime(string newValue = null)
-        {
-            if (newValue == null)
+            DispatcherTimer listTimer = new DispatcherTimer();
+
+            listTimer.Tick += (sender, e) =>
             {
-                newValue = DateTime.Now.ToString();
-            }
+                if (!deferAutoRefresh)
+                {
+                    this.LoadPassengerList();
+                }
+            };
 
-            string header = this.passengerListBox.Header.ToString();
-            string updatedHeader = string.Format(header, newValue);
-
-            this.passengerListBox.Header = updatedHeader;
+            listTimer.Interval = new TimeSpan(0, 0, 5);
+            listTimer.Start();
         }
 
-        private void LoadPassengerList()
+        protected void LoadPassengerList()
         {
             ApiRequest request = new ApiRequest("passengers");
 
@@ -72,48 +82,29 @@ namespace Uniars.Client.UI.Pages.Main
 
                 PaginatedResult<Passenger> passengers = response.Data;
 
-                this.Dispatcher.Invoke(new Action(() =>
-                {
-                    this.passengerList.Repopulate<Passenger>(passengers.Data);
-                }));
+                this.Dispatcher.Invoke(new Action(() => model.PassengerList.Repopulate<Passenger>(passengers.Data)));
             });
         }
 
-        private void SearchPassenger(string code)
+        protected void OpenPassengerFlyout(Passenger passenger)
         {
-            this.passengerLoader.IsActive = true;
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                parentWindow.SetFlyoutContent("Passenger", new PassengerView(passenger));
+                parentWindow.OpenFlyout();
+            }));
+        }
 
+        private void SearchPassenger(string code, Action<Passenger> result)
+        {
             ApiRequest request = new ApiRequest("passengers/" + code);
 
-            App.Client.ExecuteAsync<Passenger>(request, response =>
-            {
-                if (response.StatusCode != HttpStatusCode.OK)
-                {
-                    this.Dispatcher.Invoke(new Action(() =>
-                    {
-                        parentWindow.ShowMessageAsync("Search Passenger", "Cannot find passenger with the given code");
-                    }));
-
-                    return;
-                }
-
-                Passenger passenger = response.Data;
-
-                this.Dispatcher.Invoke(new Action(() =>
-                {
-                    this.passengerList.Repopulate<Passenger>(new List<Passenger>
-                    {
-                        passenger
-                    });
-
-                    this.passengerLoader.IsActive = false;
-                }));
-            });
+            App.Client.ExecuteAsync<Passenger>(request, response => result(response.Data));
         }
 
-        private void SearchPassenger(Dictionary<string, string> queries)
+        private void SearchPassenger(Dictionary<string, string> queries, Action<PaginatedResult<Passenger>> result)
         {
-            this.passengerLoader.IsActive = true;
+            model.IsLoadingActive = true;
 
             ApiRequest request = new ApiRequest("passengers/search");
 
@@ -129,13 +120,7 @@ namespace Uniars.Client.UI.Pages.Main
                     return;
                 }
 
-                PaginatedResult<Passenger> passengers = response.Data;
-
-                this.Dispatcher.Invoke(new Action(() =>
-                {
-                    this.passengerList.Repopulate<Passenger>(passengers.Data);
-                    this.passengerLoader.IsActive = false;
-                }));
+                result(response.Data);
             });
         }
 
@@ -143,16 +128,60 @@ namespace Uniars.Client.UI.Pages.Main
         {
             DataGridRow row = ItemsControl.ContainerFromElement(
                 sender as DataGrid, e.OriginalSource as DependencyObject) as DataGridRow;
-            
+
             if (row == null)
             {
                 return;
             }
 
-            Passenger passenger = (Passenger)this.passengersTable.SelectedItem;
+            this.OpenPassengerFlyout(this.passengersTable.SelectedItem as Passenger);
 
-            parentWindow.SetFlyoutContent("Passenger", new PassengerView(passenger));
-            parentWindow.OpenFlyout();
+            e.Handled = true;
+        }
+
+        private void PassengerListKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                this.OpenPassengerFlyout(this.passengersTable.SelectedItem as Passenger);
+
+                e.Handled = true;
+            }
+        }
+
+        private void SearchTextBoxKeyDown(object sender, KeyEventArgs e)
+        {
+            string tag = (sender as TextBox).Tag.ToString();
+
+            if (e.Key == Key.Enter)
+            {
+                switch (tag)
+                {
+                    case "CodeSearch":
+                        this.SearchCodeButtonClicked(null, null);
+                        break;
+
+                    case "NameSearch":
+                        this.SearchNameButtonClicked(null, null);
+                        break;
+                }
+            }
+
+            if (e.Key == Key.Escape)
+            {
+                switch (tag)
+                {
+                    case "CodeSearch":
+                        searchCodeText.Text = string.Empty;
+
+                        break;
+
+                    case "NameSearch":
+                        this.ClearSearchButtonClicked(null, null);
+
+                        break;
+                }
+            }
         }
 
         private void SearchCodeButtonClicked(object sender, RoutedEventArgs e)
@@ -165,7 +194,18 @@ namespace Uniars.Client.UI.Pages.Main
                 return;
             }
 
-            this.SearchPassenger(code);
+            model.IsCodeSearchEnabled = false;
+
+            this.SearchPassenger(code, passenger =>
+            {
+                this.OpenPassengerFlyout(passenger);
+
+                this.Dispatcher.Invoke(new Action(() =>
+                {
+                    model.IsCodeSearchEnabled = true;
+                    searchCodeText.Text = string.Empty;
+                }));
+            });
         }
 
         private void SearchNameButtonClicked(object sender, RoutedEventArgs e)
@@ -180,21 +220,33 @@ namespace Uniars.Client.UI.Pages.Main
                 return;
             }
 
-            this.SearchPassenger(new Dictionary<string, string>
+            model.IsNameSearchEnabled = false;
+            this.deferAutoRefresh = true;
+
+            Dictionary<string, string> query = new Dictionary<string, string>
             {
                 {"given_name", givenName},
                 {"family_name", familyName},
                 {"middle_name", middleName}
-            });
+            };
+
+            this.SearchPassenger(query, result => this.Dispatcher.Invoke(new Action(() =>
+                {
+                    model.PassengerList.Repopulate<Passenger>(result.Data);
+                    
+                    model.IsLoadingActive = false;
+                    model.IsNameSearchEnabled = true;
+                }))
+            );
         }
 
         private void ClearSearchButtonClicked(object sender, RoutedEventArgs e)
         {
-            searchCodeText.Text = string.Empty;
             searchGivenNameText.Text = string.Empty;
             searchFamilyNameText.Text = string.Empty;
             searchMiddleNameText.Text = string.Empty;
 
+            this.deferAutoRefresh = false;
             this.LoadPassengerList();
         }
     }

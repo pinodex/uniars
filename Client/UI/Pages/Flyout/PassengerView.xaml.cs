@@ -20,14 +20,11 @@ namespace Uniars.Client.UI.Pages.Flyout
     /// </summary>
     public partial class PassengerView : Page
     {
-        private Passenger passenger;
-
         public PassengerView(Passenger passenger)
         {
             InitializeComponent();
 
-            this.passenger = passenger;
-            this.passengerName.Text = passenger.DisplayName;
+            this.DataContext = passenger;
         }
     }
 }
