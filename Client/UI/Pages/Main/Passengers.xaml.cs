@@ -32,28 +32,31 @@ namespace Uniars.Client.UI.Pages.Main
     /// </summary>
     public partial class Passengers : Page
     {
-        private MainWindow parentWindow;
+        public MainWindow parent;
 
-        private PassengersModel model = new PassengersModel
+        public PassengersModel model = new PassengersModel
         {
             IsLoadingActive = false
         };
 
-        private bool deferAutoRefresh = false;
+        public bool deferAutoRefresh = false;
 
         public Passengers(MainWindow parentWindow)
         {
             InitializeComponent();
 
             this.DataContext = model;
-            this.parentWindow = parentWindow;
+            this.parent = parentWindow;
 
             model.PassengerList.ListChanged += (sender, e) =>
             {
                 model.LastUpdateTime = DateTime.Now;
             };
 
+            model.PassengerEditor = this.CreateDefaultPassenger();
+
             this.LoadPassengerList();
+            this.LoadCountries();
 
             DispatcherTimer listTimer = new DispatcherTimer();
 
@@ -69,9 +72,20 @@ namespace Uniars.Client.UI.Pages.Main
             listTimer.Start();
         }
 
-        protected void LoadPassengerList()
+        public Passenger CreateDefaultPassenger()
         {
-            ApiRequest request = new ApiRequest("passengers");
+            return new Passenger
+            {
+                Contacts = new List<PassengerContact>
+                {
+                    new PassengerContact()
+                }
+            };
+        }
+
+        public void LoadPassengerList()
+        {
+            ApiRequest request = new ApiRequest(Url.PASSENGERS);
 
             App.Client.ExecuteAsync<PaginatedResult<Passenger>>(request, response =>
             {
@@ -86,18 +100,38 @@ namespace Uniars.Client.UI.Pages.Main
             });
         }
 
-        protected void OpenPassengerFlyout(Passenger passenger)
+        public void LoadCountries()
+        {
+            ApiRequest request = new ApiRequest(Url.COUNTRIES_ALL);
+
+            App.Client.ExecuteAsync<List<Country>>(request, response =>
+            {
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    return;
+                }
+
+                this.Dispatcher.Invoke(new Action(() => model.Countries = response.Data));
+            });
+        }
+
+        public void SetActiveTab(int index)
+        {
+            tabs.SelectedIndex = index;
+        }
+
+        public void OpenPassengerFlyout(Passenger passenger)
         {
             this.Dispatcher.Invoke(new Action(() =>
             {
-                parentWindow.SetFlyoutContent("Passenger", new PassengerView(passenger));
-                parentWindow.OpenFlyout();
+                parent.SetFlyoutContent("Passenger", new PassengerView(this, passenger));
+                parent.OpenFlyout();
             }));
         }
 
         private void SearchPassenger(string code, Action<Passenger> result)
         {
-            ApiRequest request = new ApiRequest("passengers/" + code);
+            ApiRequest request = new ApiRequest(Url.PASSENGERS + "/" + code);
 
             App.Client.ExecuteAsync<Passenger>(request, response => result(response.Data));
         }
@@ -106,7 +140,7 @@ namespace Uniars.Client.UI.Pages.Main
         {
             model.IsLoadingActive = true;
 
-            ApiRequest request = new ApiRequest("passengers/search");
+            ApiRequest request = new ApiRequest(Url.PASSENGER_SEARCH);
 
             foreach (KeyValuePair<string, string> query in queries)
             {
@@ -190,7 +224,7 @@ namespace Uniars.Client.UI.Pages.Main
 
             if (code == string.Empty)
             {
-                parentWindow.ShowMessageAsync("Error", "Code cannot be empty.");
+                parent.ShowMessageAsync("Error", "Code cannot be empty.");
                 return;
             }
 
@@ -216,7 +250,7 @@ namespace Uniars.Client.UI.Pages.Main
 
             if (givenName == string.Empty && familyName == string.Empty && middleName == string.Empty)
             {
-                parentWindow.ShowMessageAsync("Error", "Please fill at least one search criteria.");
+                parent.ShowMessageAsync("Error", "Please fill at least one search criteria.");
                 return;
             }
 
@@ -248,6 +282,58 @@ namespace Uniars.Client.UI.Pages.Main
 
             this.deferAutoRefresh = false;
             this.LoadPassengerList();
+        }
+
+        private void SavePassengerButtonClicked(object sender, RoutedEventArgs e)
+        {
+            model.IsEditorEnabled = false;
+
+            string url = Url.PASSENGERS;
+            Method method = Method.POST;
+
+            if (model.PassengerEditor.Id != 0)
+            {
+                url += "/" + model.PassengerEditor.Id;
+                method = Method.PUT;
+            }
+
+            ApiRequest request = new ApiRequest(url, method);
+            request.RequestFormat = RestSharp.DataFormat.Json;
+            request.AddBody(model.PassengerEditor);
+
+            App.Client.ExecuteAsync<Passenger>(request, response =>
+            {
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    this.Dispatcher.Invoke(new Action(() => parent.ShowMessageAsync("Error", "Unable to save passenger information.")));
+
+                    return;
+                }
+
+                this.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.LoadPassengerList();
+                    this.OpenPassengerFlyout(response.Data);
+                    this.SetActiveTab(0);
+
+                    model.PassengerEditor = this.CreateDefaultPassenger();
+                    model.IsEditorEnabled = true;
+                    model.IsEditMode = false;
+                }));
+            });
+        }
+
+        private void EditorClearButtonClicked(object sender, RoutedEventArgs e)
+        {
+            model.PassengerEditor = this.CreateDefaultPassenger();
+        }
+
+        private void EditorDiscardButtonClicked(object sender, RoutedEventArgs e)
+        {
+            model.PassengerEditor = this.CreateDefaultPassenger();
+            model.IsEditMode = false;
+
+            this.SetActiveTab(0);
         }
     }
 }

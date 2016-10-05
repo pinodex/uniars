@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Uniars.Shared.Database.Entity;
+using Uniars.Client.UI.Pages.Main;
 
 namespace Uniars.Client.UI.Pages.Flyout
 {
@@ -20,11 +21,24 @@ namespace Uniars.Client.UI.Pages.Flyout
     /// </summary>
     public partial class PassengerView : Page
     {
-        public PassengerView(Passenger passenger)
+        private Passengers parent;
+
+        public PassengerView(Passengers parent, Passenger passenger)
         {
             InitializeComponent();
 
             this.DataContext = passenger;
+            this.parent = parent;
+        }
+
+        public void EditPassengerButtonClick(object sender, RoutedEventArgs e)
+        {
+            this.parent.parent.CloseFlyout();
+
+            this.parent.model.IsEditMode = true;
+            this.parent.model.PassengerEditor = this.DataContext as Passenger;
+
+            this.parent.SetActiveTab(1);
         }
     }
 }

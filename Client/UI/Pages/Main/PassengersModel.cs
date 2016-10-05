@@ -15,9 +15,17 @@ namespace Uniars.Client.UI.Pages.Main
 
         public const string P_IS_NAME_SEARCH_ENABLED = "IsNameSearchEnabled";
 
+        public const string P_IS_EDITOR_ENABLED = "IsEditorEnabled";
+
+        public const string P_IS_EDIT_MODE = "IsEditMode";
+
         public const string P_PASSENGER_LIST = "PassengerList";
 
         public const string P_LAST_UPDATE_TIME = "LastUpdateTime";
+
+        public const string P_PASSENGER_EDITOR = "PassengerEditor";
+
+        public const string P_COUNTRIES = "Countries";
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -27,9 +35,17 @@ namespace Uniars.Client.UI.Pages.Main
 
         private bool _isNameSearchEnabled = true;
 
+        private bool _isEditorEnabled = true;
+
+        private bool _isEditMode = false;
+
         private BindingList<Passenger> _passengerList = new BindingList<Passenger>();
 
         private DateTime _lastUpdateTime = DateTime.Now;
+
+        private Passenger _passengerEditor;
+
+        private List<Country> _countries = new List<Country>();
 
         public bool IsLoadingActive
         {
@@ -76,6 +92,36 @@ namespace Uniars.Client.UI.Pages.Main
             }
         }
 
+        public bool IsEditorEnabled
+        {
+            get
+            {
+                return _isEditorEnabled;
+            }
+
+            set
+            {
+                _isEditorEnabled = value;
+
+                OnPropertyChanged(P_IS_EDITOR_ENABLED);
+            }
+        }
+
+        public bool IsEditMode
+        {
+            get
+            {
+                return _isEditMode;
+            }
+
+            set
+            {
+                _isEditMode = value;
+
+                OnPropertyChanged(P_IS_EDIT_MODE);
+            }
+        }
+
         public BindingList<Passenger> PassengerList
         {
             get
@@ -103,6 +149,36 @@ namespace Uniars.Client.UI.Pages.Main
                 _lastUpdateTime = value;
 
                 OnPropertyChanged(P_LAST_UPDATE_TIME);
+            }
+        }
+
+        public Passenger PassengerEditor
+        {
+            get
+            {
+                return _passengerEditor;
+            }
+
+            set
+            {
+                _passengerEditor = value;
+
+                OnPropertyChanged(P_PASSENGER_EDITOR);
+            }
+        }
+
+        public List<Country> Countries
+        {
+            get
+            {
+                return _countries;
+            }
+
+            set
+            {
+                _countries = value;
+
+                OnPropertyChanged(P_COUNTRIES);
             }
         }
 

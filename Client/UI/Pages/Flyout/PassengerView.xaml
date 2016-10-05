@@ -6,7 +6,7 @@
       xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
       xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
       mc:Ignorable="d" 
-      d:DesignHeight="536" d:DesignWidth="463"
+      d:DesignHeight="614" d:DesignWidth="497"
 	Title="Passenger">
 
     <Grid Margin="10">
@@ -15,25 +15,93 @@
         </Grid>
 
         <StackPanel Margin="0,0,110,0" VerticalAlignment="Top">
-            <TextBlock Text="{Binding DisplayName, TargetNullValue='Not Found'}" FontSize="28" VerticalAlignment="Top" />
+            <TextBlock Text="{Binding DisplayName, TargetNullValue='Not Found'}" FontSize="28" FontWeight="Bold" VerticalAlignment="Top" />
             <TextBlock Text="{Binding Code, TargetNullValue='Passenger Not Found'}" Margin="0,0,0,10" />
             
             <StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Vertical" Margin="0,5">
                     <TextBlock Text="GIVEN NAME" Foreground="Gray" FontSize="10" />
-                    <TextBlock Text="{Binding GivenName, TargetNullValue='N/A'}" FontWeight="Bold" />
+                    <TextBlock Text="{Binding GivenName, TargetNullValue='N/A'}" FontSize="14" FontWeight="Bold" />
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Margin="0,5">
                     <TextBlock Text="FAMILY NAME" Foreground="Gray" FontSize="10" />
-                    <TextBlock Text="{Binding FamilyName, TargetNullValue='N/A'}" FontWeight="Bold" />
+                    <TextBlock Text="{Binding FamilyName, TargetNullValue='N/A'}" FontSize="14" FontWeight="Bold" />
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Margin="0,5">
                     <TextBlock Text="MIDDLE NAME" Foreground="Gray" FontSize="10" />
-                    <TextBlock Text="{Binding MiddleName, TargetNullValue='N/A'}" FontWeight="Bold" />
+                    <TextBlock Text="{Binding MiddleName, TargetNullValue='N/A'}" FontSize="14" FontWeight="Bold" />
                 </StackPanel>
             </StackPanel>
         </StackPanel>
+        
+        <TextBlock Text="contact information" Margin="0,200,0,0" FontWeight="Light" FontSize="28" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <Rectangle Margin="240,222,0,0" StrokeThickness="1" VerticalAlignment="Top" Stroke="White" />
+        
+        <ScrollViewer Margin="0,250,0,0">
+            <StackPanel>
+                <GroupBox Header="Address" VerticalAlignment="Top" Foreground="White" Background="DarkSlateGray" BorderBrush="DarkSlateGray">
+                    <StackPanel DataContext="{Binding Contacts[0]}">
+                        <StackPanel Orientation="Vertical" Margin="0,0,5,0">
+                            <TextBlock Text="Line 1" Foreground="Gray" FontSize="11" />
+                            <TextBlock Text="{Binding Line1, TargetNullValue='N/A'}" FontSize="14" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Vertical" Margin="0,5">
+                            <TextBlock Text="Line 2" Foreground="Gray" FontSize="11" />
+                            <TextBlock Text="{Binding Line2, TargetNullValue='N/A'}" FontSize="14" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Vertical" Margin="0,5">
+                            <TextBlock Text="Line 3" Foreground="Gray" FontSize="11" />
+                            <TextBlock Text="{Binding Line3, TargetNullValue='N/A'}" FontSize="14" />
+                        </StackPanel>
+
+                        <Grid Margin="0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Orientation="Vertical" Grid.Column="0">
+                                <TextBlock Text="City" Foreground="Gray" FontSize="11" />
+                                <TextBlock Text="{Binding City, TargetNullValue='N/A'}" FontSize="14" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Vertical" Grid.Column="1">
+                                <TextBlock Text="State" Foreground="Gray" FontSize="11" />
+                                <TextBlock Text="{Binding State, TargetNullValue='N/A'}" FontSize="14" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Vertical" Grid.Column="2">
+                                <TextBlock Text="Province" Foreground="Gray" FontSize="11" />
+                                <TextBlock Text="{Binding Province, TargetNullValue='N/A'}" FontSize="14" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Margin="0,5,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Orientation="Vertical" Grid.Column="0">
+                                <TextBlock Text="Country" Foreground="Gray" FontSize="11" />
+                                <TextBlock Text="{Binding CountryId, TargetNullValue='N/A'}" FontSize="14" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Vertical" Grid.Column="1">
+                                <TextBlock Text="Postal Code" Foreground="Gray" FontSize="11" />
+                                <TextBlock Text="{Binding PostalCode, TargetNullValue='N/A'}" FontSize="14" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+        
+        <Button Style="{StaticResource AccentedSquareButtonStyle}" Content="Edit Passenger" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Padding="10" Margin="0,0,15,0" Click="EditPassengerButtonClick" />
     </Grid>
 </Page>

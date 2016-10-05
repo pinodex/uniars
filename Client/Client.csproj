@@ -124,6 +124,9 @@
     <Compile Include="Http\ApiClient.cs" />
     <Compile Include="Http\ApiRequest.cs" />
     <Compile Include="Http\AuthException.cs" />
+    <Compile Include="Http\Url.cs" />
+    <Compile Include="UI\Converter\BooleanToStringConverter.cs" />
+    <Compile Include="UI\Converter\InverseBooleanToVisiblityConverter.cs" />
     <Compile Include="UI\Interface.cs" />
     <Compile Include="UI\MainWindowModel.cs" />
     <Compile Include="UI\Modals\Booking\SelectSource.xaml.cs">
@@ -243,9 +246,7 @@
       <Name>Shared</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="UI\Converter\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

@@ -67,6 +67,13 @@ namespace Uniars.Client.UI
                     this.btnSignOut_Click(s, e);
                     e.Handled = true;
                 }
+
+#if DEBUG
+                if (e.Key == Key.F12)
+                {
+                    Application.Current.Shutdown();
+                }
+#endif
             };
         }
 

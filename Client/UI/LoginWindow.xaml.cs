@@ -49,6 +49,13 @@ namespace Uniars.Client.UI
                     e.Handled = true;
                 }
             };
+
+#if DEBUG
+            txtUsername.Text = "admin";
+            txtPassword.Password = "admin";
+
+            btnLoginClick(null, null);
+#endif
         }
 
         private void btnLoginClick(object sender, RoutedEventArgs e)

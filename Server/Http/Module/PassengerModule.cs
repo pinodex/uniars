@@ -153,7 +153,8 @@ namespace Uniars.Server.Http.Module
                 this.BindTo(passenger,
                     m => m.Id,
                     m => m.Code,
-                    m => m.CreatedAt
+                    m => m.CreatedAt,
+                    m => m.UpdatedAt
                 );
 
                 context.SaveChanges();
