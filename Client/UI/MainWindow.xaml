@@ -50,7 +50,7 @@
                         </Grid>
                     </ListBoxItem>
 
-                    <ListBoxItem FontSize="14">
+                    <ListBoxItem FontSize="14" Tag="Airlines" >
                         <Grid>
                             <fa:FontAwesome Icon="Plane" HorizontalAlignment="Left" VerticalAlignment="Center" />
                             <TextBlock Text="Airlines" Margin="24,0,0,0" />

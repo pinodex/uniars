@@ -11,7 +11,9 @@
     
     <Page.Resources>
         <converter:BooleanToStringConverter x:Key="BooleanToStringConverter" />
+        <converter:RoleToVisibilityConverter x:Key="RoleToVisibilityConverter" />
         <converter:InverseBooleanToVisiblityConverter x:Key="InverseBooleanToVisiblityConverter" />
+        <converter:BooleanInverter x:Key="BooleanInverter" />
     </Page.Resources>
 
     <Controls:MetroContentControl>
@@ -25,12 +27,12 @@
                         </Grid.ColumnDefinitions>
 
                         <Grid Grid.Column="0">
-                            <GroupBox>
+                            <GroupBox Margin="5,5,5,35">
                                 <GroupBox.Header>
                                     <TextBlock Text="{Binding LastUpdateTime, StringFormat='PASSENGER LIST (Updated {0})', TargetNullValue='N/A'}" Foreground="White" />
                                 </GroupBox.Header>
                                 <Grid>
-                                    <DataGrid Name="passengersTable" CanUserSortColumns="False" CanUserReorderColumns="False" AutoGenerateColumns="False" ItemsSource="{Binding PassengerList}" ColumnHeaderHeight="50" CanUserResizeRows="False" MinRowHeight="30" RowHeight="30" SelectionMode="Single" CanUserResizeColumns="False" Focusable="False" Margin="-5" MouseDoubleClick="PassengerListRowDoubleClick" PreviewKeyDown="PassengerListKeyDown">
+                                    <DataGrid Name="passengersTable" IsEnabled="{Binding IsLoadingActive, Converter={StaticResource BooleanInverter}}" AutoGenerateColumns="False" ItemsSource="{Binding PassengerList}" ColumnHeaderHeight="50" CanUserResizeRows="False" MinRowHeight="30" RowHeight="30" SelectionMode="Single" CanUserResizeColumns="False" Focusable="False" Margin="-5" MouseDoubleClick="PassengerListRowDoubleClick" PreviewKeyDown="PassengerListKeyDown">
                                         <DataGrid.Columns>
                                             <DataGridTextColumn Header="Code" Binding="{Binding Code}" Width="150" IsReadOnly="True" />
                                             <DataGridTextColumn Header="Name" Binding="{Binding DisplayName}" Width="*" IsReadOnly="True" />
@@ -39,13 +41,18 @@
                                         </DataGrid.Columns>
                                     </DataGrid>
 
-                                    <Controls:ProgressRing Name="passengerLoader" IsActive="{Binding IsLoadingActive}" Foreground="CornflowerBlue" />
+                                    <Controls:ProgressRing IsActive="{Binding IsLoadingActive}" Foreground="CornflowerBlue" />
                                 </Grid>
                             </GroupBox>
+
+                            <StackPanel Margin="5" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                                <TextBlock Text="Page" Margin="0,0,5,0" FontSize="16" />
+                                <ComboBox VerticalAlignment="Bottom" ItemsSource="{Binding Pages}" SelectedItem="{Binding CurrentPage}" />
+                            </StackPanel>
                         </Grid>
 
                         <StackPanel Grid.Column="1" Orientation="Vertical">
-                            <GroupBox Header="Search by Passenger Code" VerticalAlignment="Top" IsEnabled="{Binding IsCodeSearchEnabled}">
+                            <GroupBox Header="Search by Passenger Code" VerticalAlignment="Top" IsEnabled="{Binding IsLoadingActive, Converter={StaticResource BooleanInverter}}">
                                 <StackPanel Margin="5">
                                     <Label Content="Code" Padding="0,0,5,5" />
                                     <TextBox Name="searchCodeText" Tag="CodeSearch" FontSize="16" Controls:TextBoxHelper.Watermark="2016-09-XXXXXX" KeyDown="SearchTextBoxKeyDown" />
@@ -59,7 +66,7 @@
                                 </StackPanel>
                             </GroupBox>
 
-                            <GroupBox Header="Search by Name" VerticalAlignment="Top" IsEnabled="{Binding IsNameSearchEnabled}">
+                            <GroupBox Header="Search by Name" VerticalAlignment="Top" IsEnabled="{Binding IsLoadingActive, Converter={StaticResource BooleanInverter}}">
                                 <StackPanel Margin="5">
                                     <Label Content="Given Name" Padding="0,0,5,5" />
                                     <TextBox Name="searchGivenNameText" Tag="NameSearch" FontSize="16" Controls:TextBoxHelper.Watermark="John" KeyDown="SearchTextBoxKeyDown" />
@@ -86,184 +93,192 @@
                     </Grid>
                 </TabItem>
 
-                <TabItem Header="{Binding ElementName=Root, Path=DataContext.IsEditMode, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='Edit Passenger|Add Passenger'}" DataContext="{Binding PassengerEditor}" IsEnabled="{Binding IsEditorEnabled}">
-                    <Grid Margin="15">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
+                <TabItem Header="{Binding ElementName=Root, Path=DataContext.IsEditMode, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='Edit Passenger|Add Passenger'}" DataContext="{Binding PassengerEditor}">
+                    <Grid>
+                        <Grid Margin="15" IsEnabled="{Binding ElementName=Root, Path=DataContext.IsEditorEnabled}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
 
-                        <Grid Margin="0,0,10,0" Grid.Column="0">
-                            <StackPanel>
-                                <TextBlock Text="personal information" FontWeight="Light" FontSize="24" />
-                                <Rectangle StrokeThickness="1" VerticalAlignment="Top" Stroke="Black" Margin="220,-12,0,0" />
-                                
-                                <StackPanel Margin="0,10,0,0">
+                            <Grid Margin="0,0,10,0" Grid.Column="0">
+                                <StackPanel>
+                                    <TextBlock Text="personal information" FontWeight="Light" FontSize="24" />
+                                    <Rectangle StrokeThickness="1" VerticalAlignment="Top" Stroke="Black" Margin="220,-12,0,0" />
+
+                                    <StackPanel Margin="0,10,0,0">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0">
+                                                <Label Content="Name Prefix" />
+                                                <TextBox Text="{Binding Prefix}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="Mr." />
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                                <Label>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="Given Name" />
+                                                        <TextBlock Text="(required)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
+                                                    </StackPanel>
+                                                </Label>
+
+                                                <TextBox Text="{Binding GivenName}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="John" />
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <Grid Margin="0,10,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="100" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0">
+                                                <Label>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="Family Name" />
+                                                        <TextBlock Text="(required)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
+                                                    </StackPanel>
+                                                </Label>
+
+                                                <TextBox Text="{Binding FamilyName}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="Doe" />
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                                <Label>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="Middle Name" />
+                                                        <TextBlock Text="(optional)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
+                                                    </StackPanel>
+                                                </Label>
+
+                                                <TextBox Text="{Binding MiddleName}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="Cena" />
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="2" Margin="10,0,0,0">
+                                                <Label Content="Name Suffix" />
+                                                <TextBox Text="{Binding Suffix}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="III" />
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <StackPanel Margin="0,10,0,0">
+                                            <Label Content="Display Name" />
+                                            <TextBox Text="{Binding DisplayName}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="Mr. John Doe III" />
+                                        </StackPanel>
+
+                                        <StackPanel Margin="0,10,0,0">
+                                            <Label Content="Gender" />
+                                            <ComboBox FontSize="24" Foreground="Black" SelectedValue="{Binding Gender}" SelectedValuePath="Tag">
+                                                <ComboBoxItem Tag="9">
+                                                    <Grid>
+                                                        <fa:FontAwesome Icon="Genderless" Foreground="Black" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" />
+                                                        <TextBlock Text="Unspecified" Foreground="Black" Margin="25,0,0,0" />
+                                                    </Grid>
+                                                </ComboBoxItem>
+                                                <ComboBoxItem Tag="0">
+                                                    <Grid>
+                                                        <fa:FontAwesome Icon="Male" Foreground="Black" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" />
+                                                        <TextBlock Text="Male" Foreground="Black" Margin="25,0,0,0" />
+                                                    </Grid>
+                                                </ComboBoxItem>
+                                                <ComboBoxItem Tag="1">
+                                                    <Grid>
+                                                        <fa:FontAwesome Icon="Female" Foreground="Black" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" />
+                                                        <TextBlock Text="Female" Foreground="Black" Margin="25,0,0,0" />
+                                                    </Grid>
+                                                </ComboBoxItem>
+                                            </ComboBox>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid Margin="10,0,0,0" Grid.Column="1" DataContext="{Binding Contacts[0]}">
+                                <StackPanel>
+                                    <TextBlock Text="address" FontWeight="Light" FontSize="24" />
+                                    <Rectangle StrokeThickness="1" VerticalAlignment="Top" Stroke="Black" Margin="90,-12,0,0" />
+
+                                    <StackPanel Margin="0,10,0,0">
+                                        <StackPanel>
+                                            <Label Content="Line 1" />
+                                            <TextBox Text="{Binding Line1}" FontSize="24" BorderThickness="0,0,0,2" />
+                                        </StackPanel>
+
+                                        <StackPanel Margin="0,10,0,0">
+                                            <Label Content="Line 2" />
+                                            <TextBox Text="{Binding Line2}" FontSize="24" BorderThickness="0,0,0,2" />
+                                        </StackPanel>
+
+                                        <StackPanel Margin="0,10,0,0">
+                                            <Label Content="Line 3" />
+                                            <TextBox Text="{Binding Line3}" FontSize="24" BorderThickness="0,0,0,2" />
+                                        </StackPanel>
+
+                                        <Grid Margin="0,10,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0" Margin="0,0,5,0">
+                                                <Label Content="City" />
+                                                <TextBox Text="{Binding City}" FontSize="24" BorderThickness="0,0,0,2" />
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="1" Margin="5,0,5,0">
+                                                <Label Content="State" />
+                                                <TextBox Text="{Binding State}" FontSize="24" BorderThickness="0,0,0,2" />
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="2" Margin="5,0,0,0">
+                                                <Label Content="Province" />
+                                                <TextBox Text="{Binding Province}" FontSize="24" BorderThickness="0,0,0,2" />
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <Grid Margin="0,10,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0" Margin="5,0,5,0">
+                                                <Label Content="Postal Code" />
+                                                <TextBox Text="{Binding PostalCode}" FontSize="24" BorderThickness="0,0,0,2" />
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="1" Margin="5,0,0,0">
+                                                <Label Content="Country" />
+                                                <ComboBox FontSize="26" ItemsSource="{Binding ElementName=Root, Path=DataContext.CountryList}" SelectedValue="{Binding CountryId}" DisplayMemberPath="Name" SelectedValuePath="Id"></ComboBox>
+                                            </StackPanel>
+                                        </Grid>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+
+                            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal" Grid.Column="0" Visibility="{Binding Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter=admin}">
+                                <Button Content="Delete Passenger" FontSize="16" Click="EditorDeleteButtonClicked" Visibility="{Binding ElementName=Root, Path=DataContext.IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" Background="Firebrick" Foreground="White" />
+                            </StackPanel>
+
+                            <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" Grid.Column="1">
+                                <Button Content="Clear" FontSize="16" Margin="0,0,10,0" Click="EditorClearButtonClicked" Visibility="{Binding ElementName=Root, Path=DataContext.IsEditMode, Converter={StaticResource InverseBooleanToVisiblityConverter}}" />
+                                <Button Content="Discard edits" FontSize="16" Margin="0,0,10,0" Click="EditorDiscardButtonClicked" Visibility="{Binding ElementName=Root, Path=DataContext.IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                                <Button Click="SavePassengerButtonClicked">
                                     <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="100" />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        
-                                        <StackPanel Grid.Column="0">
-                                            <Label Content="Name Prefix" />
-                                            <TextBox Text="{Binding Prefix}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="Mr." />
-                                        </StackPanel>
-
-                                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                                            <Label>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="Given Name" />
-                                                    <TextBlock Text="(required)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
-                                                </StackPanel>
-                                            </Label>
-
-                                            <TextBox Text="{Binding GivenName}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="John" />
-                                        </StackPanel>
+                                        <fa:FontAwesome Icon="Save" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                        <TextBlock Text="{Binding ElementName=Root, Path=DataContext.IsEditMode, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='Save changes|Add passenger'}" FontSize="16" Margin="24,0,0,0" />
                                     </Grid>
-
-                                    <Grid Margin="0,10,0,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition />
-                                            <ColumnDefinition />
-                                            <ColumnDefinition Width="100" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <StackPanel Grid.Column="0">
-                                            <Label>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="Family Name" />
-                                                    <TextBlock Text="(required)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
-                                                </StackPanel>
-                                            </Label>
-
-                                            <TextBox Text="{Binding FamilyName}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="Doe" />
-                                        </StackPanel>
-
-                                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                                            <Label>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="Middle Name" />
-                                                    <TextBlock Text="(optional)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
-                                                </StackPanel>
-                                            </Label>
-
-                                            <TextBox Text="{Binding MiddleName}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="Cena" />
-                                        </StackPanel>
-
-                                        <StackPanel Grid.Column="2" Margin="10,0,0,0">
-                                            <Label Content="Name Suffix" />
-                                            <TextBox Text="{Binding Suffix}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="III" />
-                                        </StackPanel>
-                                    </Grid>
-
-                                    <StackPanel Margin="0,10,0,0">
-                                        <Label Content="Display Name" />
-                                        <TextBox Text="{Binding DisplayName}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="Mr. John Doe III" />
-                                    </StackPanel>
-
-                                    <StackPanel Margin="0,10,0,0">
-                                        <Label Content="Gender" />
-                                        <ComboBox FontSize="24" Foreground="Black" SelectedValue="{Binding Gender}" SelectedValuePath="Tag">
-                                            <ComboBoxItem Tag="9">
-                                                <Grid>
-                                                    <fa:FontAwesome Icon="Genderless" Foreground="Black" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" />
-                                                    <TextBlock Text="Unspecified" Foreground="Black" Margin="25,0,0,0" />
-                                                </Grid>
-                                            </ComboBoxItem>
-                                            <ComboBoxItem Tag="0">
-                                                <Grid>
-                                                    <fa:FontAwesome Icon="Male" Foreground="Black" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" />
-                                                    <TextBlock Text="Male" Foreground="Black" Margin="25,0,0,0" />
-                                                </Grid>
-                                            </ComboBoxItem>
-                                            <ComboBoxItem Tag="1">
-                                                <Grid>
-                                                    <fa:FontAwesome Icon="Female" Foreground="Black" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" />
-                                                    <TextBlock Text="Female" Foreground="Black" Margin="25,0,0,0" />
-                                                </Grid>
-                                            </ComboBoxItem>
-                                        </ComboBox>
-                                    </StackPanel>
-                                </StackPanel>
+                                </Button>
                             </StackPanel>
                         </Grid>
 
-                        <Grid Margin="10,0,0,0" Grid.Column="1" DataContext="{Binding Contacts[0]}">
-                            <StackPanel>
-                                <TextBlock Text="address" FontWeight="Light" FontSize="24" />
-                                <Rectangle StrokeThickness="1" VerticalAlignment="Top" Stroke="Black" Margin="90,-12,0,0" />
-
-                                <StackPanel Margin="0,10,0,0">
-                                    <StackPanel>
-                                        <Label Content="Line 1" />
-                                        <TextBox Text="{Binding Line1}" FontSize="24" BorderThickness="0,0,0,2" />
-                                    </StackPanel>
-
-                                    <StackPanel Margin="0,10,0,0">
-                                        <Label Content="Line 2" />
-                                        <TextBox Text="{Binding Line2}" FontSize="24" BorderThickness="0,0,0,2" />
-                                    </StackPanel>
-
-                                    <StackPanel Margin="0,10,0,0">
-                                        <Label Content="Line 3" />
-                                        <TextBox Text="{Binding Line3}" FontSize="24" BorderThickness="0,0,0,2" />
-                                    </StackPanel>
-                                    
-                                    <Grid Margin="0,10,0,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition />
-                                            <ColumnDefinition />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-
-                                        <StackPanel Grid.Column="0" Margin="0,0,5,0">
-                                            <Label Content="City" />
-                                            <TextBox Text="{Binding City}" FontSize="24" BorderThickness="0,0,0,2" />
-                                        </StackPanel>
-
-                                        <StackPanel Grid.Column="1" Margin="5,0,5,0">
-                                            <Label Content="State" />
-                                            <TextBox Text="{Binding State}" FontSize="24" BorderThickness="0,0,0,2" />
-                                        </StackPanel>
-
-                                        <StackPanel Grid.Column="2" Margin="5,0,0,0">
-                                            <Label Content="Province" />
-                                            <TextBox Text="{Binding Province}" FontSize="24" BorderThickness="0,0,0,2" />
-                                        </StackPanel>
-                                    </Grid>
-
-                                    <Grid Margin="0,10,0,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="100" />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-
-                                        <StackPanel Grid.Column="0" Margin="5,0,5,0">
-                                            <Label Content="Postal Code" />
-                                            <TextBox Text="{Binding PostalCode}" FontSize="24" BorderThickness="0,0,0,2" />
-                                        </StackPanel>
-
-                                        <StackPanel Grid.Column="1" Margin="5,0,0,0">
-                                            <Label Content="Country" />
-                                            <ComboBox FontSize="26" ItemsSource="{Binding ElementName=Root, Path=DataContext.Countries}" SelectedValue="{Binding CountryId}" DisplayMemberPath="Name" SelectedValuePath="Id"></ComboBox>
-                                        </StackPanel>
-                                    </Grid>
-                                </StackPanel>
-                            </StackPanel>
-                        </Grid>
-
-                        <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" Grid.Column="1">
-                            <Button Content="Clear" FontSize="20" Margin="0,0,10,0" Click="EditorClearButtonClicked" Visibility="{Binding ElementName=Root, Path=DataContext.IsEditMode, Converter={StaticResource InverseBooleanToVisiblityConverter}}" />
-                            <Button Content="Discard edits" FontSize="20" Margin="0,0,10,0" Click="EditorDiscardButtonClicked" Visibility="{Binding ElementName=Root, Path=DataContext.IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            
-                            <Button Click="SavePassengerButtonClicked">
-                                <Grid>
-                                    <fa:FontAwesome Icon="Save" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                                    <TextBlock Text="{Binding ElementName=Root, Path=DataContext.IsEditMode, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='Save changes|Add passenger'}" FontSize="20" Margin="24,0,0,0" />
-                                </Grid>
-                            </Button>
-                        </StackPanel>
+                        <Controls:ProgressRing IsActive="{Binding ElementName=Root, Path=DataContext.IsEditorEnabled, Converter={StaticResource BooleanInverter}}" />
                     </Grid>
                 </TabItem>
             </TabControl>

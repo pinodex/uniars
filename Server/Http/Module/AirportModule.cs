@@ -9,6 +9,7 @@ using Nancy;
 using Nancy.Security;
 using Nancy.ModelBinding;
 using Uniars.Server.Http.Response;
+using Uniars.Server.Http.Auth;
 
 namespace Uniars.Server.Http.Module
 {
@@ -22,25 +23,35 @@ namespace Uniars.Server.Http.Module
             Get["/"] = Index;
             Get["/{id:int}"] = Single;
             Get["/search"] = Search;
+
+            Post["/"] = CreateModel;
+            Put["/{id:int}"] = UpdateModel;
+            Delete["/{id:int}"] = DeleteModel;
         }
 
         public object Index(dynamic parameter)
         {
-            IQueryable<Airport> db = App.Entities.Airports.OrderBy(Airline => Airline.Id);
+            using (Context context = new Context(App.ConnectionString))
+            {
+                IQueryable<Airport> db = context.Airports.OrderBy(Airline => Airline.Id);
 
-            return new PaginatedResult<Airport>(db, this.perPage, this.GetCurrentPage());
+                return new PaginatedResult<Airport>(db, this.perPage, this.GetCurrentPage());
+            }
         }
 
         public object Single(dynamic parameters)
         {
-            Airport model = App.Entities.Airports.Find((int)parameters.id);
-
-            if (model == null)
+            using (Context context = new Context(App.ConnectionString))
             {
-                return new JsonErrorResponse(404, 404, "Airline not found");
-            }
+                Airport model = context.Airports.Find((int)parameters.id);
 
-            return model;
+                if (model == null)
+                {
+                    return new JsonErrorResponse(404, 404, "Airline not found");
+                }
+
+                return model;
+            }
         }
 
         protected object Search(dynamic parameters)
@@ -50,31 +61,94 @@ namespace Uniars.Server.Http.Module
             string city = this.Request.Query["city"];
             string timezone = this.Request.Query["timezone"];
 
-            IQueryable<Airport> db = App.Entities.Airports;
-
-            if (name != null)
+            using (Context context = new Context(App.ConnectionString))
             {
-                db = db.Where(Model => Model.Name.Contains(name));
+                IQueryable<Airport> db = context.Airports;
+
+                if (name != null)
+                {
+                    db = db.Where(Model => Model.Name.Contains(name));
+                }
+
+                if (country != null)
+                {
+                    db = db.Where(Model => Model.Country.Contains(country));
+                }
+
+                if (city != null)
+                {
+                    db = db.Where(Model => Model.City.Contains(city));
+                }
+
+                if (timezone != null)
+                {
+                    db = db.Where(Model => Model.Timezone.Contains(timezone));
+                }
+
+                db = db.OrderBy(Airline => Airline.Id);
+
+                return new PaginatedResult<Airport>(db, this.perPage, this.GetCurrentPage());
+            }
+        }
+
+        public object CreateModel(dynamic parameters)
+        {
+            this.RequiresClaims(UserIdentity.ROLE_ADMIN);
+
+            using (Context context = new Context(App.ConnectionString))
+            {
+                Airport airport = this.Bind<Airport>();
+
+                context.Airports.Add(airport);
+                context.SaveChanges();
+
+                return airport;
+            }
+        }
+
+        protected object UpdateModel(dynamic parameters)
+        {
+            this.RequiresClaims(UserIdentity.ROLE_ADMIN);
+
+            int id = (int)parameters.id;
+
+            using (Context context = new Context(App.ConnectionString))
+            {
+                Airport airport = context.Airports.FirstOrDefault(m => m.Id == id);
+
+                if (airport == null)
+                {
+                    return new JsonErrorResponse(404, 404, "Airport not found");
+                }
+
+                this.BindTo(airport);
+
+                context.SaveChanges();
+
+                return airport;
+            }
+        }
+
+        protected object DeleteModel(dynamic parameters)
+        {
+            this.RequiresClaims(UserIdentity.ROLE_ADMIN);
+
+            int id = (int)parameters.id;
+
+            using (Context context = new Context(App.ConnectionString))
+            {
+                Airport airports = context.Airports.FirstOrDefault(m => m.Id == id);
+
+                if (airports == null)
+                {
+                    return new JsonErrorResponse(404, 404, "Airline not found");
+                }
+
+                context.Airports.Remove(airports);
+                context.SaveChanges();
             }
 
-            if (country != null)
-            {
-                db = db.Where(Model => Model.Country.Contains(country));
-            }
-
-            if (city != null)
-            {
-                db = db.Where(Model => Model.City.Contains(city));
-            }
-
-            if (timezone != null)
-            {
-                db = db.Where(Model => Model.Timezone.Contains(timezone));
-            }
-
-            db = db.OrderBy(Airline => Airline.Id);
-
-            return new PaginatedResult<Airport>(db, this.perPage, this.GetCurrentPage());
+            return HttpStatusCode.OK;
         }
     }
 }

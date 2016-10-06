@@ -49,6 +49,18 @@ namespace Uniars.Shared.Database
             };
         }
 
+        public List<int> GetPageList()
+        {
+            List<int> pages = new List<int>();
+
+            for (int i = 1; i <= this.Info.PageCount; i++)
+            {
+                pages.Add(i);
+            }
+
+            return pages;
+        }
+
         public class InfoModel
         {
             public int Total { get; set; }

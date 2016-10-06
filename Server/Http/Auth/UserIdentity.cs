@@ -9,6 +9,10 @@ namespace Uniars.Server.Http.Auth
 {
     public class UserIdentity : IUserIdentity
     {
+        public const string ROLE_ADMIN = "admin";
+
+        public const string ROLE_USER = "user";
+
         public User User { get; set; }
 
         public string UserName { get; set; }

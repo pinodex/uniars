@@ -34,10 +34,7 @@ namespace Uniars.Client.UI.Pages.Main
     {
         public MainWindow parent;
 
-        public PassengersModel model = new PassengersModel
-        {
-            IsLoadingActive = false
-        };
+        public PassengersModel model = new PassengersModel();
 
         public bool deferAutoRefresh = false;
 
@@ -53,6 +50,14 @@ namespace Uniars.Client.UI.Pages.Main
                 model.LastUpdateTime = DateTime.Now;
             };
 
+            model.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName == PassengersModel.P_CURRENT_PAGE && !model.IsLoadingActive)
+                {
+                    this.LoadPassengerList();
+                }
+            };
+
             model.PassengerEditor = this.CreateDefaultPassenger();
 
             this.LoadPassengerList();
@@ -64,7 +69,7 @@ namespace Uniars.Client.UI.Pages.Main
             {
                 if (!deferAutoRefresh)
                 {
-                    this.LoadPassengerList();
+                    this.LoadPassengerList(true);
                 }
             };
 
@@ -83,9 +88,12 @@ namespace Uniars.Client.UI.Pages.Main
             };
         }
 
-        public void LoadPassengerList()
+        public void LoadPassengerList(bool autoTriggered = false)
         {
+            model.IsLoadingActive = true && !autoTriggered;
+
             ApiRequest request = new ApiRequest(Url.PASSENGERS);
+            request.AddParameter("page", model.CurrentPage);
 
             App.Client.ExecuteAsync<PaginatedResult<Passenger>>(request, response =>
             {
@@ -94,9 +102,24 @@ namespace Uniars.Client.UI.Pages.Main
                     return;
                 }
 
-                PaginatedResult<Passenger> passengers = response.Data;
+                PaginatedResult<Passenger> result = response.Data;
 
-                this.Dispatcher.Invoke(new Action(() => model.PassengerList.Repopulate<Passenger>(passengers.Data)));
+                this.Dispatcher.Invoke(new Action(() =>
+                {
+                    model.PassengerList.Repopulate<Passenger>(result.Data);
+
+                    if (model.Pages.Count() == 0)
+                    {
+                        model.Pages.Repopulate<int>(result.GetPageList());
+                    }
+
+                    model.IsLoadingActive = false;
+
+                    if (model.CurrentPage != result.Info.CurrentPage)
+                    {
+                        this.LoadPassengerList();
+                    }
+                }));
             });
         }
 
@@ -111,13 +134,22 @@ namespace Uniars.Client.UI.Pages.Main
                     return;
                 }
 
-                this.Dispatcher.Invoke(new Action(() => model.Countries = response.Data));
+                this.Dispatcher.Invoke(new Action(() => model.CountryList = response.Data));
             });
         }
 
         public void SetActiveTab(int index)
         {
             tabs.SelectedIndex = index;
+        }
+
+        public void ResetEditor()
+        {
+            model.PassengerEditor = this.CreateDefaultPassenger();
+            model.IsEditMode = false;
+            model.IsEditorEnabled = true;
+
+            this.SetActiveTab(0);
         }
 
         public void OpenPassengerFlyout(Passenger passenger)
@@ -127,35 +159,6 @@ namespace Uniars.Client.UI.Pages.Main
                 parent.SetFlyoutContent("Passenger", new PassengerView(this, passenger));
                 parent.OpenFlyout();
             }));
-        }
-
-        private void SearchPassenger(string code, Action<Passenger> result)
-        {
-            ApiRequest request = new ApiRequest(Url.PASSENGERS + "/" + code);
-
-            App.Client.ExecuteAsync<Passenger>(request, response => result(response.Data));
-        }
-
-        private void SearchPassenger(Dictionary<string, string> queries, Action<PaginatedResult<Passenger>> result)
-        {
-            model.IsLoadingActive = true;
-
-            ApiRequest request = new ApiRequest(Url.PASSENGER_SEARCH);
-
-            foreach (KeyValuePair<string, string> query in queries)
-            {
-                request.AddQueryParameter(query.Key, query.Value);
-            }
-
-            App.Client.ExecuteAsync<PaginatedResult<Passenger>>(request, response =>
-            {
-                if (response.StatusCode != HttpStatusCode.OK)
-                {
-                    return;
-                }
-
-                result(response.Data);
-            });
         }
 
         private void PassengerListRowDoubleClick(object sender, MouseButtonEventArgs e)
@@ -192,11 +195,11 @@ namespace Uniars.Client.UI.Pages.Main
                 switch (tag)
                 {
                     case "CodeSearch":
-                        this.SearchCodeButtonClicked(null, null);
+                        this.SearchCodeButtonClicked(sender, e);
                         break;
 
                     case "NameSearch":
-                        this.SearchNameButtonClicked(null, null);
+                        this.SearchNameButtonClicked(sender, e);
                         break;
                 }
             }
@@ -211,7 +214,7 @@ namespace Uniars.Client.UI.Pages.Main
                         break;
 
                     case "NameSearch":
-                        this.ClearSearchButtonClicked(null, null);
+                        this.ClearSearchButtonClicked(sender, e);
 
                         break;
                 }
@@ -228,15 +231,12 @@ namespace Uniars.Client.UI.Pages.Main
                 return;
             }
 
-            model.IsCodeSearchEnabled = false;
-
-            this.SearchPassenger(code, passenger =>
+            ApiRequest.Search<Passenger>(Url.PASSENGERS + "/" + code, null, passenger =>
             {
                 this.OpenPassengerFlyout(passenger);
 
                 this.Dispatcher.Invoke(new Action(() =>
                 {
-                    model.IsCodeSearchEnabled = true;
                     searchCodeText.Text = string.Empty;
                 }));
             });
@@ -254,7 +254,7 @@ namespace Uniars.Client.UI.Pages.Main
                 return;
             }
 
-            model.IsNameSearchEnabled = false;
+            model.IsLoadingActive = true;
             this.deferAutoRefresh = true;
 
             Dictionary<string, string> query = new Dictionary<string, string>
@@ -264,14 +264,40 @@ namespace Uniars.Client.UI.Pages.Main
                 {"middle_name", middleName}
             };
 
-            this.SearchPassenger(query, result => this.Dispatcher.Invoke(new Action(() =>
+            ApiRequest.Search<PaginatedResult<Passenger>>(Url.PASSENGER_SEARCH, query, result => this.Dispatcher.Invoke(new Action(() =>
                 {
                     model.PassengerList.Repopulate<Passenger>(result.Data);
                     
                     model.IsLoadingActive = false;
-                    model.IsNameSearchEnabled = true;
                 }))
             );
+        }
+
+        private void EditorDeleteButtonClicked(object sender, RoutedEventArgs e)
+        {
+            string message = string.Format("Are you sure you want to delete \"{0}\" from passenger list? This action is irreversible.",
+                model.PassengerEditor.DisplayName);
+
+            parent.ShowMessageAsync("Delete Passenger", message, MessageDialogStyle.AffirmativeAndNegative).ContinueWith(task =>
+            {
+                if (task.Result == MessageDialogResult.Negative)
+                {
+                    return;
+                }
+
+                this.Dispatcher.Invoke(new Action(() => model.IsEditorEnabled = false));
+
+                ApiRequest request = new ApiRequest(Url.PASSENGERS + "/" + model.PassengerEditor.Id, Method.DELETE);
+                
+                App.Client.ExecuteAsync(request, response =>
+                {
+                    this.Dispatcher.Invoke(new Action(() =>
+                    {
+                        this.LoadPassengerList();
+                        this.ResetEditor();
+                    }));
+                });
+            });
         }
 
         private void ClearSearchButtonClicked(object sender, RoutedEventArgs e)
@@ -330,10 +356,7 @@ namespace Uniars.Client.UI.Pages.Main
 
         private void EditorDiscardButtonClicked(object sender, RoutedEventArgs e)
         {
-            model.PassengerEditor = this.CreateDefaultPassenger();
-            model.IsEditMode = false;
-
-            this.SetActiveTab(0);
+            this.ResetEditor();
         }
     }
 }

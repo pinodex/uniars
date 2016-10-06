@@ -12,5 +12,9 @@ namespace Uniars.Client.Http
         public const string PASSENGER_SEARCH = "passengers/search";
 
         public const string COUNTRIES_ALL = "countries/all";
+
+        public const string AIRLINES = "airlines";
+
+        public const string AIRLINE_SEARCH = "airlines/search";
     }
 }

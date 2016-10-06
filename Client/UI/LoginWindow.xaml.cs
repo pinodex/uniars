@@ -70,7 +70,7 @@ namespace Uniars.Client.UI
             btnLogin.IsEnabled = false;
             windowLogin.IsEnabled = false;
 
-            App.Client.LoginAsync(txtUsername.Text, txtPassword.Password, (response) =>
+            App.Client.LoginAsync(txtUsername.Text, txtPassword.Password, response =>
             {
                 if (response.ResponseStatus != RestSharp.ResponseStatus.Completed)
                 {

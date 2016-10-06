@@ -11,6 +11,7 @@ using Uniars.Server.Http.Response;
 using Uniars.Shared.Database.Entity;
 using Uniars.Shared.Foundation;
 using Uniars.Shared.Database;
+using Uniars.Server.Http.Auth;
 
 namespace Uniars.Server.Http.Module
 {
@@ -90,7 +91,7 @@ namespace Uniars.Server.Http.Module
 
             using (Context context = new Context(App.ConnectionString))
             {
-                IQueryable<Passenger> db = App.Entities.Passengers
+                IQueryable<Passenger> db = context.Passengers
                     .Include(m => m.Contacts);
 
                 if (givenName != null)
@@ -165,6 +166,8 @@ namespace Uniars.Server.Http.Module
 
         protected object DeleteModel(dynamic parameters)
         {
+            this.RequiresClaims(UserIdentity.ROLE_ADMIN);
+
             int id = (int)parameters.id;
 
             using (Context context = new Context(App.ConnectionString))

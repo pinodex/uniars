@@ -52,6 +52,7 @@ namespace Uniars.Client.UI
             {
                 {"Overview", new Pages.Main.Overview()},
                 {"Passengers", new Pages.Main.Passengers(this)},
+                {"Airlines", new Pages.Main.Airlines(this)},
             };
 
             this.Loaded += (s, e) =>
