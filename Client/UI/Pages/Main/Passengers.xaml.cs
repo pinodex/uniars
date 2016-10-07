@@ -1,29 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Threading;
+using MahApps.Metro.Controls.Dialogs;
+using RestSharp;
+using Uniars.Client.Core.Collections;
+using Uniars.Client.Http;
+using Uniars.Client.UI.Pages.Flyout;
 using Uniars.Shared.Database;
 using Uniars.Shared.Database.Entity;
-using Uniars.Client.Core.Collections;
-using Uniars.Client.UI.Pages.Flyout;
-using Uniars.Client.Http;
-using RestSharp;
-using System.Net;
-using System.ComponentModel;
-using System.Threading;
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
-using System.Threading.Tasks;
-using System.Windows.Threading;
 
 namespace Uniars.Client.UI.Pages.Main
 {
@@ -77,6 +66,10 @@ namespace Uniars.Client.UI.Pages.Main
             listTimer.Start();
         }
 
+        /// <summary>
+        /// Create blank Passenger model
+        /// </summary>
+        /// <returns></returns>
         public Passenger CreateBlankModel()
         {
             return new Passenger
@@ -88,6 +81,10 @@ namespace Uniars.Client.UI.Pages.Main
             };
         }
 
+        /// <summary>
+        /// Load list from server
+        /// </summary>
+        /// <param name="autoTriggered"></param>
         public void LoadList(bool autoTriggered = false)
         {
             model.IsLoadingActive = true && !autoTriggered;
@@ -123,6 +120,9 @@ namespace Uniars.Client.UI.Pages.Main
             });
         }
 
+        /// <summary>
+        /// Load countries from server
+        /// </summary>
         public void LoadCountries()
         {
             ApiRequest request = new ApiRequest(Url.COUNTRIES_ALL);
@@ -138,11 +138,18 @@ namespace Uniars.Client.UI.Pages.Main
             });
         }
 
+        /// <summary>
+        /// Set active tab
+        /// </summary>
+        /// <param name="index">Tab index</param>
         public void SetActiveTab(int index)
         {
             tabs.SelectedIndex = index;
         }
 
+        /// <summary>
+        /// Reset editor
+        /// </summary>
         public void ResetEditor()
         {
             model.EditorModel = this.CreateBlankModel();
@@ -152,6 +159,10 @@ namespace Uniars.Client.UI.Pages.Main
             this.SetActiveTab(0);
         }
 
+        /// <summary>
+        /// Open flyout for Passenger
+        /// </summary>
+        /// <param name="model"></param>
         public void OpenFlyout(Passenger model)
         {
             this.Dispatcher.Invoke(new Action(() =>
@@ -160,6 +171,8 @@ namespace Uniars.Client.UI.Pages.Main
                 parent.OpenFlyout();
             }));
         }
+
+        #region Events
 
         private void ListRowDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -231,7 +244,7 @@ namespace Uniars.Client.UI.Pages.Main
                 return;
             }
 
-            ApiRequest.Search<Passenger>(Url.PASSENGERS + "/" + code, null, passenger =>
+            ApiRequest.ExecuteParams<Passenger>(Url.PASSENGERS + "/" + code, null, passenger =>
             {
                 this.OpenFlyout(passenger);
 
@@ -264,7 +277,7 @@ namespace Uniars.Client.UI.Pages.Main
                 {"middle_name", middleName}
             };
 
-            ApiRequest.Search<PaginatedResult<Passenger>>(Url.PASSENGER_SEARCH, query, result => this.Dispatcher.Invoke(new Action(() =>
+            ApiRequest.ExecuteParams<PaginatedResult<Passenger>>(Url.PASSENGER_SEARCH, query, result => this.Dispatcher.Invoke(new Action(() =>
                 {
                     model.PassengerList.Repopulate<Passenger>(result.Data);
                     
@@ -358,5 +371,7 @@ namespace Uniars.Client.UI.Pages.Main
         {
             this.ResetEditor();
         }
+
+        #endregion
     }
 }

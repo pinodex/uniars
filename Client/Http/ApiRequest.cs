@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using RestSharp;
 using System.Net;
+using RestSharp;
 
 namespace Uniars.Client.Http
 {
@@ -19,13 +17,20 @@ namespace Uniars.Client.Http
         {
         }
 
-        public static void Search<T>(string url, IDictionary<string, string> queries, Action<T> result) where T : new()
+        /// <summary>
+        /// Execute parameterized request
+        /// </summary>
+        /// <typeparam name="T">Response type</typeparam>
+        /// <param name="url">Request URL</param>
+        /// <param name="paramList">Parameters</param>
+        /// <param name="result">Async result</param>
+        public static void ExecuteParams<T>(string url, IDictionary<string, string> paramList, Action<T> result) where T : new()
         {
             ApiRequest request = new ApiRequest(url);
 
-            if (queries != null)
+            if (paramList != null)
             {
-                foreach (KeyValuePair<string, string> query in queries)
+                foreach (KeyValuePair<string, string> query in paramList)
                 {
                     request.AddQueryParameter(query.Key, query.Value);
                 }
@@ -42,7 +47,14 @@ namespace Uniars.Client.Http
             });
         }
 
-        public static void Search<T>(ApiRequest request, IDictionary<string, string> queries, Action<T> result) where T : new()
+        /// <summary>
+        /// Execute parameterized request
+        /// </summary>
+        /// <typeparam name="T">Response type</typeparam>
+        /// <param name="request">Request object</param>
+        /// <param name="paramList">Parameters</param>
+        /// <param name="result">Async result</param>
+        public static void ExecuteParams<T>(ApiRequest request, IDictionary<string, string> queries, Action<T> result) where T : new()
         {
             if (queries != null)
             {
@@ -63,7 +75,14 @@ namespace Uniars.Client.Http
             });
         }
 
-        public static void Search<T>(string url, IDictionary<string, string> queries, Action<IRestResponse<T>> result) where T : new()
+        /// <summary>
+        /// Execute parameterized request
+        /// </summary>
+        /// <typeparam name="T">Response type</typeparam>
+        /// <param name="url">Request URL</param>
+        /// <param name="paramList">Parameters</param>
+        /// <param name="result">Async result</param>
+        public static void ExecuteParams<T>(string url, IDictionary<string, string> queries, Action<IRestResponse<T>> result) where T : new()
         {
             ApiRequest request = new ApiRequest(url);
 
@@ -78,7 +97,14 @@ namespace Uniars.Client.Http
             App.Client.ExecuteAsync<T>(request, result);
         }
 
-        public static void Search<T>(ApiRequest request, IDictionary<string, string> queries, Action<IRestResponse<T>> result) where T : new()
+        /// <summary>
+        /// Execute parameterized request
+        /// </summary>
+        /// <typeparam name="T">Response type</typeparam>
+        /// <param name="request">Request object</param>
+        /// <param name="paramList">Parameters</param>
+        /// <param name="result">Async result</param>
+        public static void ExecuteParams<T>(ApiRequest request, IDictionary<string, string> queries, Action<IRestResponse<T>> result) where T : new()
         {
             if (queries != null)
             {

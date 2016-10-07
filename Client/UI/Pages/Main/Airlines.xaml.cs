@@ -1,29 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Threading;
+using MahApps.Metro.Controls.Dialogs;
+using RestSharp;
+using Uniars.Client.Core.Collections;
+using Uniars.Client.Http;
+using Uniars.Client.UI.Pages.Flyout;
 using Uniars.Shared.Database;
 using Uniars.Shared.Database.Entity;
-using Uniars.Client.Core.Collections;
-using Uniars.Client.UI.Pages.Flyout;
-using Uniars.Client.Http;
-using RestSharp;
-using System.Net;
-using System.ComponentModel;
-using System.Threading;
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
-using System.Threading.Tasks;
-using System.Windows.Threading;
 
 namespace Uniars.Client.UI.Pages.Main
 {
@@ -79,11 +67,19 @@ namespace Uniars.Client.UI.Pages.Main
             listTimer.Start();
         }
 
+        /// <summary>
+        /// Create a blank Airline model
+        /// </summary>
+        /// <returns></returns>
         public Airline CreateBlankModel()
         {
             return new Airline();
         }
 
+        /// <summary>
+        /// Load list from server
+        /// </summary>
+        /// <param name="autoTriggered"></param>
         public void LoadList(bool autoTriggered = false)
         {
             model.IsLoadingActive = true && !autoTriggered;
@@ -122,9 +118,12 @@ namespace Uniars.Client.UI.Pages.Main
                 return;
             }
 
-            ApiRequest.Search<PaginatedResult<Airline>>(request, this.searchQuery, responseAction);
+            ApiRequest.ExecuteParams<PaginatedResult<Airline>>(request, this.searchQuery, responseAction);
         }
 
+        /// <summary>
+        /// Load countries from server
+        /// </summary>
         public void LoadCountries()
         {
             ApiRequest request = new ApiRequest(Url.COUNTRIES_ALL);
@@ -140,6 +139,42 @@ namespace Uniars.Client.UI.Pages.Main
             });
         }
 
+        /// <summary>
+        /// Set active tab
+        /// </summary>
+        /// <param name="index">Tab index</param>
+        public void SetActiveTab(int index)
+        {
+            tabs.SelectedIndex = index;
+        }
+
+        /// <summary>
+        /// Open flyout for airline
+        /// </summary>
+        /// <param name="model">Airline instance</param>
+        public void OpenFlyout(Airline model)
+        {
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                parent.SetFlyoutContent("Airline", new AirlineView(this, model));
+                parent.OpenFlyout();
+            }));
+        }
+
+        /// <summary>
+        /// Reset editor
+        /// </summary>
+        public void ResetEditor()
+        {
+            model.EditorModel = this.CreateBlankModel();
+            model.IsEditMode = false;
+            model.IsEditorEnabled = true;
+
+            this.SetActiveTab(0);
+        }
+
+        #region Events
+
         private void SearchTextBoxKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -153,7 +188,7 @@ namespace Uniars.Client.UI.Pages.Main
             }
         }
 
-        public void ClearSearchButtonClicked(object sender, RoutedEventArgs e)
+        private void ClearSearchButtonClicked(object sender, RoutedEventArgs e)
         {
             searchNameText.Text = string.Empty;
             searchCallsignText.Text = string.Empty;
@@ -189,29 +224,6 @@ namespace Uniars.Client.UI.Pages.Main
             };
 
             this.LoadList();
-        }
-
-        public void SetActiveTab(int index)
-        {
-            tabs.SelectedIndex = index;
-        }
-
-        public void OpenFlyout(Airline model)
-        {
-            this.Dispatcher.Invoke(new Action(() =>
-            {
-                parent.SetFlyoutContent("Airline", new AirlineView(this, model));
-                parent.OpenFlyout();
-            }));
-        }
-
-        public void ResetEditor()
-        {
-            model.EditorModel = this.CreateBlankModel();
-            model.IsEditMode = false;
-            model.IsEditorEnabled = true;
-
-            this.SetActiveTab(0);
         }
 
         private void ListRowDoubleClick(object sender, MouseButtonEventArgs e)
@@ -309,5 +321,7 @@ namespace Uniars.Client.UI.Pages.Main
                 }));
             });
         }
+
+        #endregion
     }
 }

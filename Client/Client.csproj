@@ -129,13 +129,7 @@
     <Compile Include="UI\Converter\BooleanToStringConverter.cs" />
     <Compile Include="UI\Converter\InverseBooleanToVisiblityConverter.cs" />
     <Compile Include="UI\Converter\RoleToVisibilityConverter.cs" />
-    <Compile Include="UI\Interface.cs" />
     <Compile Include="UI\MainWindowModel.cs" />
-    <Compile Include="UI\Modals\Booking\SelectSource.xaml.cs">
-      <DependentUpon>SelectSource.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Modals\Modal.cs" />
-    <Compile Include="UI\Modals\ModalEvent.cs" />
     <Compile Include="UI\Pages\Flyout\AirlineView.xaml.cs">
       <DependentUpon>AirlineView.xaml</DependentUpon>
     </Compile>
@@ -146,9 +140,6 @@
       <DependentUpon>Airlines.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Pages\Main\AirlinesModel.cs" />
-    <Compile Include="UI\Pages\Main\Booking.xaml.cs">
-      <DependentUpon>Booking.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UI\Pages\Main\Passengers.xaml.cs">
       <DependentUpon>Passengers.xaml</DependentUpon>
     </Compile>
@@ -175,10 +166,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Modals\Booking\SelectSource.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="UI\Pages\Flyout\AirlineView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -188,10 +175,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Pages\Main\Airlines.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Pages\Main\Booking.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

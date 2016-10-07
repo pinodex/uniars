@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Uniars.Client.Http
+﻿namespace Uniars.Client.Http
 {
     public class Url
     {

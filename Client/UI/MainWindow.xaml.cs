@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Windows.Threading;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using System.Threading.Tasks;
-using System.Windows.Threading;
 
 namespace Uniars.Client.UI
 {
@@ -104,6 +98,8 @@ namespace Uniars.Client.UI
             this.mainFlyout.IsOpen = false;
         }
 
+        #region Events
+
         private void menu_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (this.deferMenuSelectionChange)
@@ -159,5 +155,7 @@ namespace Uniars.Client.UI
                 }
             });
         }
+
+        #endregion
     }
 }

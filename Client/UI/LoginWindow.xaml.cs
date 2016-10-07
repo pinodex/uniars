@@ -1,25 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Net;
-using System.Xml;
-using Uniars.Client.Http;
-using Uniars.Shared.Database.Entity;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media.Animation;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using System.Windows.Media.Animation;
 
 namespace Uniars.Client.UI
 {
@@ -56,47 +41,6 @@ namespace Uniars.Client.UI
 
             btnLoginClick(null, null);
 #endif
-        }
-
-        private void btnLoginClick(object sender, RoutedEventArgs e)
-        {
-            if (txtUsername.Text == "/exit")
-            {
-                this.Close();
-                return;
-            }
-
-            txtLoginError.Visibility = Visibility.Hidden;
-            btnLogin.IsEnabled = false;
-            windowLogin.IsEnabled = false;
-
-            App.Client.LoginAsync(txtUsername.Text, txtPassword.Password, response =>
-            {
-                if (response.ResponseStatus != RestSharp.ResponseStatus.Completed)
-                {
-                    this.ResetLoginForm();
-                    this.ShowConnectErrorDialog();
-
-                    return;
-                }
-                
-                if (response.StatusCode != HttpStatusCode.OK || response.Data == null)
-                {
-                    this.ResetLoginForm();
-                    this.AlertInvalidLogin();
-
-                    return;
-                }
-
-                this.ResetLoginForm(true);
-
-                this.Dispatcher.Invoke(new Action(() =>
-                    {
-                        Window mainWindow = new MainWindow();
-                        mainWindow.Show();
-                    }
-                ));
-            });
         }
 
         protected void ShowConnectErrorDialog()
@@ -146,5 +90,50 @@ namespace Uniars.Client.UI
                 txtUsername.Focus();
             }));
         }
+
+        #region Events
+
+        private void btnLoginClick(object sender, RoutedEventArgs e)
+        {
+            if (txtUsername.Text == "/exit")
+            {
+                this.Close();
+                return;
+            }
+
+            txtLoginError.Visibility = Visibility.Hidden;
+            btnLogin.IsEnabled = false;
+            windowLogin.IsEnabled = false;
+
+            App.Client.LoginAsync(txtUsername.Text, txtPassword.Password, response =>
+            {
+                if (response.ResponseStatus != RestSharp.ResponseStatus.Completed)
+                {
+                    this.ResetLoginForm();
+                    this.ShowConnectErrorDialog();
+
+                    return;
+                }
+
+                if (response.StatusCode != HttpStatusCode.OK || response.Data == null)
+                {
+                    this.ResetLoginForm();
+                    this.AlertInvalidLogin();
+
+                    return;
+                }
+
+                this.ResetLoginForm(true);
+
+                this.Dispatcher.Invoke(new Action(() =>
+                {
+                    Window mainWindow = new MainWindow();
+                    mainWindow.Show();
+                }
+                ));
+            });
+        }
+
+        #endregion
     }
 }
