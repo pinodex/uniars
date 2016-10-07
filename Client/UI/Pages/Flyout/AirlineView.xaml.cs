@@ -19,15 +19,15 @@ namespace Uniars.Client.UI.Pages.Flyout
     /// <summary>
     /// Interaction logic for Passenger.xaml
     /// </summary>
-    public partial class PassengerView : Page
+    public partial class AirlineView : Page
     {
-        private Passengers parent;
+        private Airlines parent;
 
-        public PassengerView(Passengers parent, Passenger passenger)
+        public AirlineView(Airlines parent, Airline model)
         {
             InitializeComponent();
 
-            this.DataContext = passenger;
+            this.DataContext = model;
             this.parent = parent;
         }
 
@@ -36,7 +36,7 @@ namespace Uniars.Client.UI.Pages.Flyout
             this.parent.parent.CloseFlyout();
 
             this.parent.model.IsEditMode = true;
-            this.parent.model.EditorModel = this.DataContext as Passenger;
+            this.parent.model.EditorModel = this.DataContext as Airline;
 
             this.parent.SetActiveTab(1);
         }

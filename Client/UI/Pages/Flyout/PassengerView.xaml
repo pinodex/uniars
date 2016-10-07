@@ -15,7 +15,7 @@
         </Grid>
 
         <StackPanel Margin="0,0,110,0" VerticalAlignment="Top">
-            <TextBlock Text="{Binding DisplayName, TargetNullValue='Not Found'}" FontSize="28" FontWeight="Bold" VerticalAlignment="Top" />
+            <TextBlock Text="{Binding DisplayName, TargetNullValue='Not Found'}" ToolTip="{Binding DisplayName}" FontSize="28" FontWeight="Bold" VerticalAlignment="Top" TextTrimming="CharacterEllipsis" />
             <TextBlock Text="{Binding Code, TargetNullValue='Passenger Not Found'}" Margin="0,0,0,10" />
             
             <StackPanel Orientation="Vertical">
@@ -39,7 +39,7 @@
         <TextBlock Text="contact information" Margin="0,200,0,0" FontWeight="Light" FontSize="28" HorizontalAlignment="Left" VerticalAlignment="Top" />
         <Rectangle Margin="240,222,0,0" StrokeThickness="1" VerticalAlignment="Top" Stroke="White" />
         
-        <ScrollViewer Margin="0,250,0,0">
+        <ScrollViewer Margin="0,250,0,40">
             <StackPanel>
                 <GroupBox Header="Address" VerticalAlignment="Top" Foreground="White" Background="DarkSlateGray" BorderBrush="DarkSlateGray">
                     <StackPanel DataContext="{Binding Contacts[0]}">
@@ -102,6 +102,6 @@
             </StackPanel>
         </ScrollViewer>
         
-        <Button Style="{StaticResource AccentedSquareButtonStyle}" Content="Edit Passenger" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Padding="10" Margin="0,0,15,0" Click="EditPassengerButtonClick" />
+        <Button Style="{StaticResource AccentedSquareButtonStyle}" Content="Edit Passenger" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Padding="10" Click="EditButtonClick" />
     </Grid>
 </Page>

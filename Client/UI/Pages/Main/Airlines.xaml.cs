@@ -51,7 +51,7 @@ namespace Uniars.Client.UI.Pages.Main
             {
                 if (e.PropertyName == AirlinesModel.P_CURRENT_PAGE && !model.IsLoadingActive)
                 {
-                    this.LoadAirlineList();
+                    this.LoadList();
                 }
             };
 
@@ -60,7 +60,9 @@ namespace Uniars.Client.UI.Pages.Main
                 model.LastUpdateTime = DateTime.Now;
             };
 
-            this.LoadAirlineList();
+            model.EditorModel = this.CreateBlankModel();
+
+            this.LoadList();
             this.LoadCountries();
 
             DispatcherTimer listTimer = new DispatcherTimer();
@@ -69,7 +71,7 @@ namespace Uniars.Client.UI.Pages.Main
             {
                 if (!deferAutoRefresh)
                 {
-                    this.LoadAirlineList(true);
+                    this.LoadList(true);
                 }
             };
 
@@ -77,7 +79,12 @@ namespace Uniars.Client.UI.Pages.Main
             listTimer.Start();
         }
 
-        public void LoadAirlineList(bool autoTriggered = false)
+        public Airline CreateBlankModel()
+        {
+            return new Airline();
+        }
+
+        public void LoadList(bool autoTriggered = false)
         {
             model.IsLoadingActive = true && !autoTriggered;
 
@@ -103,11 +110,7 @@ namespace Uniars.Client.UI.Pages.Main
                 this.Dispatcher.Invoke(new Action(() =>
                 {
                     model.AirlineList.Repopulate<Airline>(result.Data);
-
-                    if (model.Pages.Count() == 0)
-                    {
-                        model.Pages.Repopulate<int>(result.GetPageList());
-                    }
+                    model.Pages.Repopulate<int>(result.GetPageList());
 
                     model.IsLoadingActive = false;
                 }));
@@ -161,7 +164,7 @@ namespace Uniars.Client.UI.Pages.Main
 
             model.Pages.Clear();
 
-            this.LoadAirlineList();
+            this.LoadList();
         }
 
         private void SearchButtonClicked(object sender, RoutedEventArgs e)
@@ -185,7 +188,126 @@ namespace Uniars.Client.UI.Pages.Main
                 {"country", country}
             };
 
-            this.LoadAirlineList();
+            this.LoadList();
+        }
+
+        public void SetActiveTab(int index)
+        {
+            tabs.SelectedIndex = index;
+        }
+
+        public void OpenFlyout(Airline model)
+        {
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                parent.SetFlyoutContent("Airline", new AirlineView(this, model));
+                parent.OpenFlyout();
+            }));
+        }
+
+        public void ResetEditor()
+        {
+            model.EditorModel = this.CreateBlankModel();
+            model.IsEditMode = false;
+            model.IsEditorEnabled = true;
+
+            this.SetActiveTab(0);
+        }
+
+        private void ListRowDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            DataGridRow row = ItemsControl.ContainerFromElement(
+                sender as DataGrid, e.OriginalSource as DependencyObject) as DataGridRow;
+
+            if (row == null)
+            {
+                return;
+            }
+
+            this.OpenFlyout(this.passengersTable.SelectedItem as Airline);
+
+            e.Handled = true;
+        }
+
+        private void ListKeyDown(object sender, KeyEventArgs e)
+        {
+
+        }
+
+        private void EditorDeleteButtonClicked(object sender, RoutedEventArgs e)
+        {
+            string message = string.Format("Are you sure you want to delete \"{0}\" from airline list? This action is irreversible.",
+                model.EditorModel.Name);
+
+            parent.ShowMessageAsync("Delete Airline", message, MessageDialogStyle.AffirmativeAndNegative).ContinueWith(task =>
+            {
+                if (task.Result == MessageDialogResult.Negative)
+                {
+                    return;
+                }
+
+                this.Dispatcher.Invoke(new Action(() => model.IsEditorEnabled = false));
+
+                ApiRequest request = new ApiRequest(Url.AIRLINES + "/" + model.EditorModel.Id, Method.DELETE);
+
+                App.Client.ExecuteAsync(request, response =>
+                {
+                    this.Dispatcher.Invoke(new Action(() =>
+                    {
+                        this.LoadList();
+                        this.ResetEditor();
+                    }));
+                });
+            });
+        }
+
+        private void EditorClearButtonClicked(object sender, RoutedEventArgs e)
+        {
+            model.EditorModel = this.CreateBlankModel();
+        }
+
+        private void EditorDiscardButtonClicked(object sender, RoutedEventArgs e)
+        {
+            this.ResetEditor();
+        }
+
+        private void EditorSaveButtonClicked(object sender, RoutedEventArgs e)
+        {
+            model.IsEditorEnabled = false;
+
+            string url = Url.AIRLINES;
+            Method method = Method.POST;
+
+            if (model.EditorModel.Id != 0)
+            {
+                url += "/" + model.EditorModel.Id;
+                method = Method.PUT;
+            }
+
+            ApiRequest request = new ApiRequest(url, method);
+            request.RequestFormat = RestSharp.DataFormat.Json;
+            request.AddBody(model.EditorModel);
+
+            App.Client.ExecuteAsync<Airline>(request, response =>
+            {
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    this.Dispatcher.Invoke(new Action(() => parent.ShowMessageAsync("Error", "Unable to save airline formation.")));
+
+                    return;
+                }
+
+                this.Dispatcher.Invoke(new Action(() =>
+                {
+                    this.LoadList();
+                    this.OpenFlyout(response.Data);
+                    this.SetActiveTab(0);
+
+                    model.EditorModel = this.CreateBlankModel();
+                    model.IsEditorEnabled = true;
+                    model.IsEditMode = false;
+                }));
+            });
         }
     }
 }

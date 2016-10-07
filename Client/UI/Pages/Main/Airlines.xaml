@@ -33,7 +33,7 @@
                                 </GroupBox.Header>
                                 
                                 <Grid>
-                                    <DataGrid Name="passengersTable" IsEnabled="{Binding IsLoadingActive, Converter={StaticResource BooleanInverter}}" AutoGenerateColumns="False" ItemsSource="{Binding AirlineList}" ColumnHeaderHeight="50" CanUserResizeRows="False" MinRowHeight="30" RowHeight="30" SelectionMode="Single" CanUserResizeColumns="False" Focusable="False" Margin="-5">
+                                    <DataGrid Name="passengersTable" IsEnabled="{Binding IsLoadingActive, Converter={StaticResource BooleanInverter}}" AutoGenerateColumns="False" ItemsSource="{Binding AirlineList}" ColumnHeaderHeight="50" CanUserResizeRows="False" MinRowHeight="30" RowHeight="30" SelectionMode="Single" CanUserResizeColumns="False" Focusable="False" Margin="-5" MouseDoubleClick="ListRowDoubleClick" PreviewKeyDown="ListKeyDown">
                                         <DataGrid.Columns>
                                             <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" IsReadOnly="True" />
                                             <DataGridTextColumn Header="Callsign" Binding="{Binding Callsign}" Width="*" IsReadOnly="True" />
@@ -76,6 +76,105 @@
                                 </StackPanel>
                             </GroupBox>
                         </StackPanel>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="{Binding ElementName=Root, Path=DataContext.IsEditMode, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='Edit Airline|Add Airline'}" DataContext="{Binding EditorModel}" Visibility="{Binding Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter=admin}">
+                    <Grid>
+                        <Grid Margin="15" IsEnabled="{Binding ElementName=Root, Path=DataContext.IsEditorEnabled}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Margin="0,0,10,0" Grid.Column="0">
+                                <StackPanel>
+                                    <TextBlock Text="information" FontWeight="Light" FontSize="24" />
+                                    <Rectangle StrokeThickness="1" VerticalAlignment="Top" Stroke="Black" Margin="125,-12,0,0" />
+
+                                    <StackPanel Margin="0,10,0,0">
+                                        <Label>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Name" />
+                                                <TextBlock Text="(required)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
+                                            </StackPanel>
+                                        </Label>
+                                        <TextBox Text="{Binding Name}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="Foo Airlines" />
+                                    </StackPanel>
+
+                                    <StackPanel Margin="0,10,0,0">
+                                        <Label>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Alias" />
+                                                <TextBlock Text="(optional)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
+                                            </StackPanel>
+                                        </Label>
+                                        <TextBox Text="{Binding Alias}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="FOOAIR" />
+                                    </StackPanel>
+
+                                    <StackPanel Margin="0,10,0,0">
+                                        <Label>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Callsign" />
+                                                <TextBlock Text="(optional)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
+                                            </StackPanel>
+                                        </Label>
+                                        <TextBox Text="{Binding Callsign}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="FOOAIR" />
+                                    </StackPanel>
+
+                                    <Grid Margin="0,10,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0">
+                                            <Label>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="IATA" />
+                                                    <TextBlock Text="(optional)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
+                                                </StackPanel>
+                                            </Label>
+                                            <TextBox Text="{Binding IATA}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="XXX" />
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                            <Label>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="ICAO" />
+                                                    <TextBlock Text="(optional)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
+                                                </StackPanel>
+                                            </Label>
+
+                                            <TextBox Text="{Binding GivenName}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="XXX" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <StackPanel Grid.Column="0" Margin="5,0,0,0">
+                                        <Label Content="Country" />
+                                        <ComboBox FontSize="26" ItemsSource="{Binding ElementName=Root, Path=DataContext.CountryList}" SelectedValue="{Binding Country}" DisplayMemberPath="Name" SelectedValuePath="Name"></ComboBox>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+
+                            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal" Grid.Column="0">
+                                <Button Content="Delete Airline" FontSize="16" Click="EditorDeleteButtonClicked" Visibility="{Binding ElementName=Root, Path=DataContext.IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" Background="Firebrick" Foreground="White" />
+                            </StackPanel>
+
+                            <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" Grid.Column="1">
+                                <Button Content="Clear" FontSize="16" Margin="0,0,10,0" Click="EditorClearButtonClicked" Visibility="{Binding ElementName=Root, Path=DataContext.IsEditMode, Converter={StaticResource InverseBooleanToVisiblityConverter}}" />
+                                <Button Content="Discard edits" FontSize="16" Margin="0,0,10,0" Click="EditorDiscardButtonClicked" Visibility="{Binding ElementName=Root, Path=DataContext.IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                                <Button Click="EditorSaveButtonClicked">
+                                    <Grid>
+                                        <fa:FontAwesome Icon="Save" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                        <TextBlock Text="{Binding ElementName=Root, Path=DataContext.IsEditMode, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='Save changes|Add passenger'}" FontSize="16" Margin="24,0,0,0" />
+                                    </Grid>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+
+                        <Controls:ProgressRing IsActive="{Binding ElementName=Root, Path=DataContext.IsEditorEnabled, Converter={StaticResource BooleanInverter}}" />
                     </Grid>
                 </TabItem>
             </TabControl>

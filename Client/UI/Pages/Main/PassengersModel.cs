@@ -23,7 +23,7 @@ namespace Uniars.Client.UI.Pages.Main
 
         public const string P_CURRENT_PAGE = "CurrentPage";
 
-        public const string P_PASSENGER_EDITOR = "PassengerEditor";
+        public const string P_EDITOR_MODEL = "EditorModel";
 
         public const string P_COUNTRY_LIST = "CountryList";
 
@@ -43,7 +43,7 @@ namespace Uniars.Client.UI.Pages.Main
 
         private int _currentPage = 1;
 
-        private Passenger _passengerEditor;
+        private Passenger _editorModel;
 
         private List<Country> _countryList = new List<Country>();
 
@@ -152,18 +152,18 @@ namespace Uniars.Client.UI.Pages.Main
             }
         }
 
-        public Passenger PassengerEditor
+        public Passenger EditorModel
         {
             get
             {
-                return _passengerEditor;
+                return _editorModel;
             }
 
             set
             {
-                _passengerEditor = value;
+                _editorModel = value;
 
-                OnPropertyChanged(P_PASSENGER_EDITOR);
+                OnPropertyChanged(P_EDITOR_MODEL);
             }
         }
 

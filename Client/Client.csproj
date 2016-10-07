@@ -136,6 +136,9 @@
     </Compile>
     <Compile Include="UI\Modals\Modal.cs" />
     <Compile Include="UI\Modals\ModalEvent.cs" />
+    <Compile Include="UI\Pages\Flyout\AirlineView.xaml.cs">
+      <DependentUpon>AirlineView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Pages\Flyout\PassengerView.xaml.cs">
       <DependentUpon>PassengerView.xaml</DependentUpon>
     </Compile>
@@ -175,6 +178,10 @@
     <Page Include="UI\Modals\Booking\SelectSource.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Pages\Flyout\AirlineView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Pages\Flyout\PassengerView.xaml">
       <SubType>Designer</SubType>

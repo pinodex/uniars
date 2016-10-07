@@ -9,13 +9,25 @@ namespace Uniars.Client.Core.Collections
 {
     public static class CollectionRepopulation
     {
-        public static void Repopulate<T>(this ICollection<T> collection, ICollection<T> newCollection)
+        /// <summary>
+        /// Repopulate an existing collection with new collection
+        /// </summary>
+        /// <typeparam name="T">Collection type</typeparam>
+        /// <param name="destination">Destination</param>
+        /// <param name="source">Source</param>
+        /// <param name="checkSequence">Check for collection sequence matches</param>
+        public static void Repopulate<T>(this ICollection<T> destination, ICollection<T> source, bool checkSequence = true)
         {
-            collection.Clear();
-
-            foreach (T element in newCollection)
+            if (checkSequence && destination.SequenceEqual(source))
             {
-                collection.Add(element);
+                return;
+            }
+
+            destination.Clear();
+
+            foreach (T element in source)
+            {
+                destination.Add(element);
             }
         }
     }

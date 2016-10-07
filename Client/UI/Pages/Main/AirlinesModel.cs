@@ -11,6 +11,10 @@ namespace Uniars.Client.UI.Pages.Main
     {
         public const string P_IS_LOADING_ACTIVE = "IsLoadingActive";
 
+        public const string P_IS_EDITOR_ENABLED = "IsEditorEnabled";
+
+        public const string P_IS_EDIT_MODE = "IsEditMode";
+
         public const string P_AIRLINE_LIST = "AirlineList";
 
         public const string P_COUNTRY_LIST = "CountryList";
@@ -21,9 +25,15 @@ namespace Uniars.Client.UI.Pages.Main
 
         public const string P_CURRENT_PAGE = "CurrentPage";
 
+        public const string P_EDITOR_MODEL = "EditorModel";
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool _isLoadingActive = false;
+
+        private bool _isEditorEnabled = true;
+
+        private bool _isEditMode = false;
 
         private BindingList<Airline> _airlineList = new BindingList<Airline>();
 
@@ -34,6 +44,8 @@ namespace Uniars.Client.UI.Pages.Main
         private BindingList<int> _pages = new BindingList<int>();
 
         private int _currentPage = 1;
+
+        private Airline _editorModel;
 
         public bool IsLoadingActive
         {
@@ -47,6 +59,36 @@ namespace Uniars.Client.UI.Pages.Main
                 _isLoadingActive = value;
 
                 OnPropertyChanged(P_IS_LOADING_ACTIVE);
+            }
+        }
+
+        public bool IsEditorEnabled
+        {
+            get
+            {
+                return _isEditorEnabled;
+            }
+
+            set
+            {
+                _isEditorEnabled = value;
+
+                OnPropertyChanged(P_IS_EDITOR_ENABLED);
+            }
+        }
+
+        public bool IsEditMode
+        {
+            get
+            {
+                return _isEditMode;
+            }
+
+            set
+            {
+                _isEditMode = value;
+
+                OnPropertyChanged(P_IS_EDIT_MODE);
             }
         }
 
@@ -122,6 +164,21 @@ namespace Uniars.Client.UI.Pages.Main
                 _currentPage = value;
 
                 OnPropertyChanged(P_CURRENT_PAGE);
+            }
+        }
+
+        public Airline EditorModel
+        {
+            get
+            {
+                return _editorModel;
+            }
+
+            set
+            {
+                _editorModel = value;
+
+                OnPropertyChanged(P_EDITOR_MODEL);
             }
         }
 

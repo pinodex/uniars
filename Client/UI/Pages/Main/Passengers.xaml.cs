@@ -54,13 +54,13 @@ namespace Uniars.Client.UI.Pages.Main
             {
                 if (e.PropertyName == PassengersModel.P_CURRENT_PAGE && !model.IsLoadingActive)
                 {
-                    this.LoadPassengerList();
+                    this.LoadList();
                 }
             };
 
-            model.PassengerEditor = this.CreateDefaultPassenger();
+            model.EditorModel = this.CreateBlankModel();
 
-            this.LoadPassengerList();
+            this.LoadList();
             this.LoadCountries();
 
             DispatcherTimer listTimer = new DispatcherTimer();
@@ -69,7 +69,7 @@ namespace Uniars.Client.UI.Pages.Main
             {
                 if (!deferAutoRefresh)
                 {
-                    this.LoadPassengerList(true);
+                    this.LoadList(true);
                 }
             };
 
@@ -77,7 +77,7 @@ namespace Uniars.Client.UI.Pages.Main
             listTimer.Start();
         }
 
-        public Passenger CreateDefaultPassenger()
+        public Passenger CreateBlankModel()
         {
             return new Passenger
             {
@@ -88,7 +88,7 @@ namespace Uniars.Client.UI.Pages.Main
             };
         }
 
-        public void LoadPassengerList(bool autoTriggered = false)
+        public void LoadList(bool autoTriggered = false)
         {
             model.IsLoadingActive = true && !autoTriggered;
 
@@ -117,7 +117,7 @@ namespace Uniars.Client.UI.Pages.Main
 
                     if (model.CurrentPage != result.Info.CurrentPage)
                     {
-                        this.LoadPassengerList();
+                        this.LoadList();
                     }
                 }));
             });
@@ -145,23 +145,23 @@ namespace Uniars.Client.UI.Pages.Main
 
         public void ResetEditor()
         {
-            model.PassengerEditor = this.CreateDefaultPassenger();
+            model.EditorModel = this.CreateBlankModel();
             model.IsEditMode = false;
             model.IsEditorEnabled = true;
 
             this.SetActiveTab(0);
         }
 
-        public void OpenPassengerFlyout(Passenger passenger)
+        public void OpenFlyout(Passenger model)
         {
             this.Dispatcher.Invoke(new Action(() =>
             {
-                parent.SetFlyoutContent("Passenger", new PassengerView(this, passenger));
+                parent.SetFlyoutContent("Passenger", new PassengerView(this, model));
                 parent.OpenFlyout();
             }));
         }
 
-        private void PassengerListRowDoubleClick(object sender, MouseButtonEventArgs e)
+        private void ListRowDoubleClick(object sender, MouseButtonEventArgs e)
         {
             DataGridRow row = ItemsControl.ContainerFromElement(
                 sender as DataGrid, e.OriginalSource as DependencyObject) as DataGridRow;
@@ -171,16 +171,16 @@ namespace Uniars.Client.UI.Pages.Main
                 return;
             }
 
-            this.OpenPassengerFlyout(this.passengersTable.SelectedItem as Passenger);
+            this.OpenFlyout(this.passengersTable.SelectedItem as Passenger);
 
             e.Handled = true;
         }
 
-        private void PassengerListKeyDown(object sender, KeyEventArgs e)
+        private void ListKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                this.OpenPassengerFlyout(this.passengersTable.SelectedItem as Passenger);
+                this.OpenFlyout(this.passengersTable.SelectedItem as Passenger);
 
                 e.Handled = true;
             }
@@ -233,7 +233,7 @@ namespace Uniars.Client.UI.Pages.Main
 
             ApiRequest.Search<Passenger>(Url.PASSENGERS + "/" + code, null, passenger =>
             {
-                this.OpenPassengerFlyout(passenger);
+                this.OpenFlyout(passenger);
 
                 this.Dispatcher.Invoke(new Action(() =>
                 {
@@ -276,7 +276,7 @@ namespace Uniars.Client.UI.Pages.Main
         private void EditorDeleteButtonClicked(object sender, RoutedEventArgs e)
         {
             string message = string.Format("Are you sure you want to delete \"{0}\" from passenger list? This action is irreversible.",
-                model.PassengerEditor.DisplayName);
+                model.EditorModel.DisplayName);
 
             parent.ShowMessageAsync("Delete Passenger", message, MessageDialogStyle.AffirmativeAndNegative).ContinueWith(task =>
             {
@@ -287,13 +287,13 @@ namespace Uniars.Client.UI.Pages.Main
 
                 this.Dispatcher.Invoke(new Action(() => model.IsEditorEnabled = false));
 
-                ApiRequest request = new ApiRequest(Url.PASSENGERS + "/" + model.PassengerEditor.Id, Method.DELETE);
+                ApiRequest request = new ApiRequest(Url.PASSENGERS + "/" + model.EditorModel.Id, Method.DELETE);
                 
                 App.Client.ExecuteAsync(request, response =>
                 {
                     this.Dispatcher.Invoke(new Action(() =>
                     {
-                        this.LoadPassengerList();
+                        this.LoadList();
                         this.ResetEditor();
                     }));
                 });
@@ -307,7 +307,7 @@ namespace Uniars.Client.UI.Pages.Main
             searchMiddleNameText.Text = string.Empty;
 
             this.deferAutoRefresh = false;
-            this.LoadPassengerList();
+            this.LoadList();
         }
 
         private void SavePassengerButtonClicked(object sender, RoutedEventArgs e)
@@ -317,15 +317,15 @@ namespace Uniars.Client.UI.Pages.Main
             string url = Url.PASSENGERS;
             Method method = Method.POST;
 
-            if (model.PassengerEditor.Id != 0)
+            if (model.EditorModel.Id != 0)
             {
-                url += "/" + model.PassengerEditor.Id;
+                url += "/" + model.EditorModel.Id;
                 method = Method.PUT;
             }
 
             ApiRequest request = new ApiRequest(url, method);
             request.RequestFormat = RestSharp.DataFormat.Json;
-            request.AddBody(model.PassengerEditor);
+            request.AddBody(model.EditorModel);
 
             App.Client.ExecuteAsync<Passenger>(request, response =>
             {
@@ -338,11 +338,11 @@ namespace Uniars.Client.UI.Pages.Main
 
                 this.Dispatcher.Invoke(new Action(() =>
                 {
-                    this.LoadPassengerList();
-                    this.OpenPassengerFlyout(response.Data);
+                    this.LoadList();
+                    this.OpenFlyout(response.Data);
                     this.SetActiveTab(0);
 
-                    model.PassengerEditor = this.CreateDefaultPassenger();
+                    model.EditorModel = this.CreateBlankModel();
                     model.IsEditorEnabled = true;
                     model.IsEditMode = false;
                 }));
@@ -351,7 +351,7 @@ namespace Uniars.Client.UI.Pages.Main
 
         private void EditorClearButtonClicked(object sender, RoutedEventArgs e)
         {
-            model.PassengerEditor = this.CreateDefaultPassenger();
+            model.EditorModel = this.CreateBlankModel();
         }
 
         private void EditorDiscardButtonClicked(object sender, RoutedEventArgs e)
