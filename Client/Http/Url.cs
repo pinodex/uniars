@@ -11,5 +11,11 @@
         public const string AIRLINES = "airlines";
 
         public const string AIRLINE_SEARCH = "airlines/search";
+
+        public const string AIRPORTS = "airports";
+
+        public const string AIRPORT_SEARCH = "airports/search";
+
+        public const string TIMEZONES = "timezones";
     }
 }

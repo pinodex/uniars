@@ -16,13 +16,13 @@ using Uniars.Shared.Database.Entity;
 namespace Uniars.Client.UI.Pages.Main
 {
     /// <summary>
-    /// Interaction logic for Airlines.xaml
+    /// Interaction logic for Airports.xaml
     /// </summary>
-    public partial class Airlines : Page
+    public partial class Airports : Page
     {
         public MainWindow parent;
 
-        public AirlinesModel model = new AirlinesModel();
+        public AirportsModel model = new AirportsModel();
 
         public Dictionary<string, string> searchQuery;
 
@@ -30,7 +30,7 @@ namespace Uniars.Client.UI.Pages.Main
 
         private bool listLoadComplete = false;
 
-        public Airlines(MainWindow parent)
+        public Airports(MainWindow parent)
         {
             InitializeComponent();
 
@@ -39,13 +39,13 @@ namespace Uniars.Client.UI.Pages.Main
 
             model.PropertyChanged += (sender, e) =>
             {
-                if (e.PropertyName == AirlinesModel.P_CURRENT_PAGE && !model.IsLoadingActive)
+                if (e.PropertyName == AirportsModel.P_CURRENT_PAGE && !model.IsLoadingActive)
                 {
                     this.LoadList();
                 }
             };
 
-            model.AirlineList.ListChanged += (sender, e) =>
+            model.AirportList.ListChanged += (sender, e) =>
             {
                 model.LastUpdateTime = DateTime.Now;
             };
@@ -80,12 +80,12 @@ namespace Uniars.Client.UI.Pages.Main
         }
 
         /// <summary>
-        /// Create a blank Airline model
+        /// Create a blank Airport model
         /// </summary>
         /// <returns></returns>
-        public Airline CreateBlankModel()
+        public Airport CreateBlankModel()
         {
-            return new Airline();
+            return new Airport();
         }
 
         /// <summary>
@@ -96,28 +96,28 @@ namespace Uniars.Client.UI.Pages.Main
         {
             model.IsLoadingActive = true && !autoTriggered;
 
-            string url = Url.AIRLINES;
+            string url = Url.AIRPORTS;
 
             if (this.searchQuery != null)
             {
-                url = Url.AIRLINE_SEARCH;
+                url = Url.AIRPORT_SEARCH;
             }
 
             ApiRequest request = new ApiRequest(url);
             request.AddParameter("page", model.CurrentPage);
 
-            var responseAction = new Action<IRestResponse<PaginatedResult<Airline>>>(response =>
+            var responseAction = new Action<IRestResponse<PaginatedResult<Airport>>>(response =>
             {
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
                     return;
                 }
 
-                PaginatedResult<Airline> result = response.Data;
+                PaginatedResult<Airport> result = response.Data;
 
                 this.Dispatcher.Invoke(new Action(() =>
                 {
-                    model.AirlineList.Repopulate<Airline>(result.Data);
+                    model.AirportList.Repopulate<Airport>(result.Data);
                     model.Pages.Repopulate<int>(result.GetPageList());
 
                     model.IsLoadingActive = false;
@@ -133,11 +133,11 @@ namespace Uniars.Client.UI.Pages.Main
 
             if (this.searchQuery == null)
             {
-                App.Client.ExecuteAsync<PaginatedResult<Airline>>(request, responseAction);
+                App.Client.ExecuteAsync<PaginatedResult<Airport>>(request, responseAction);
                 return;
             }
 
-            ApiRequest.ExecuteParams<PaginatedResult<Airline>>(request, this.searchQuery, responseAction);
+            ApiRequest.ExecuteParams<PaginatedResult<Airport>>(request, this.searchQuery, responseAction);
         }
 
         /// <summary>
@@ -170,12 +170,12 @@ namespace Uniars.Client.UI.Pages.Main
         /// <summary>
         /// Open flyout for airline
         /// </summary>
-        /// <param name="model">Airline instance</param>
-        public void OpenFlyout(Airline model)
+        /// <param name="model">Airport instance</param>
+        public void OpenFlyout(Airport model)
         {
             this.Dispatcher.Invoke(new Action(() =>
             {
-                parent.SetFlyoutContent("Airline", new AirlineView(this, model));
+                parent.SetFlyoutContent("Airport", new AirportView(this, model));
                 parent.OpenFlyout();
             }));
         }
@@ -210,7 +210,6 @@ namespace Uniars.Client.UI.Pages.Main
         private void ClearSearchButtonClicked(object sender, RoutedEventArgs e)
         {
             searchNameText.Text = string.Empty;
-            searchCallsignText.Text = string.Empty;
             searchCountryText.SelectedItem = null;
 
             this.searchQuery = null;
@@ -224,7 +223,6 @@ namespace Uniars.Client.UI.Pages.Main
         private void SearchButtonClicked(object sender, RoutedEventArgs e)
         {
             string name = searchNameText.Text;
-            string callsign = searchCallsignText.Text;
             string country = string.Empty;
 
             if (searchCountryText.SelectedItem != null)
@@ -238,7 +236,6 @@ namespace Uniars.Client.UI.Pages.Main
             this.searchQuery = new Dictionary<string, string>
             {
                 {"name", name},
-                {"callsign", callsign},
                 {"country", country}
             };
 
@@ -255,7 +252,7 @@ namespace Uniars.Client.UI.Pages.Main
                 return;
             }
 
-            this.OpenFlyout(this.table.SelectedItem as Airline);
+            this.OpenFlyout(this.table.SelectedItem as Airport);
 
             e.Handled = true;
         }
@@ -264,7 +261,7 @@ namespace Uniars.Client.UI.Pages.Main
         {
             if (e.Key == Key.Enter)
             {
-                this.OpenFlyout(this.table.SelectedItem as Airline);
+                this.OpenFlyout(this.table.SelectedItem as Airport);
 
                 e.Handled = true;
             }
@@ -275,7 +272,7 @@ namespace Uniars.Client.UI.Pages.Main
             string message = string.Format("Are you sure you want to delete \"{0}\" from airline list? This action is irreversible.",
                 model.EditorModel.Name);
 
-            parent.ShowMessageAsync("Delete Airline", message, MessageDialogStyle.AffirmativeAndNegative).ContinueWith(task =>
+            parent.ShowMessageAsync("Delete Airport", message, MessageDialogStyle.AffirmativeAndNegative).ContinueWith(task =>
             {
                 if (task.Result == MessageDialogResult.Negative)
                 {
@@ -284,7 +281,7 @@ namespace Uniars.Client.UI.Pages.Main
 
                 this.Dispatcher.Invoke(new Action(() => model.IsEditorEnabled = false));
 
-                ApiRequest request = new ApiRequest(Url.AIRLINES + "/" + model.EditorModel.Id, Method.DELETE);
+                ApiRequest request = new ApiRequest(Url.AIRPORTS + "/" + model.EditorModel.Id, Method.DELETE);
 
                 App.Client.ExecuteAsync(request, response =>
                 {
@@ -311,7 +308,7 @@ namespace Uniars.Client.UI.Pages.Main
         {
             model.IsEditorEnabled = false;
 
-            string url = Url.AIRLINES;
+            string url = Url.AIRPORTS;
             Method method = Method.POST;
 
             if (model.EditorModel.Id != 0)
@@ -324,7 +321,7 @@ namespace Uniars.Client.UI.Pages.Main
             request.RequestFormat = RestSharp.DataFormat.Json;
             request.AddBody(model.EditorModel);
 
-            App.Client.ExecuteAsync<Airline>(request, response =>
+            App.Client.ExecuteAsync<Airport>(request, response =>
             {
                 if (response.StatusCode != HttpStatusCode.OK)
                 {

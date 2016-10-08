@@ -25,9 +25,5 @@ namespace Uniars.Shared.Database.Entity
         public double Altitude { get; set; }
 
         public double TzOffset { get; set; }
-
-        public char DST { get; set; }
-
-        public string Timezone { get; set; }
     }
 }

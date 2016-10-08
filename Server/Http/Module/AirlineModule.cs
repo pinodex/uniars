@@ -33,7 +33,7 @@ namespace Uniars.Server.Http.Module
         {
             using (Context context = new Context(App.ConnectionString))
             {
-                IQueryable<Airline> db = context.Airlines.OrderBy(Airline => Airline.Id);
+                IQueryable<Airline> db = context.Airlines.OrderBy(Airline => Airline.Name);
 
                 return new PaginatedResult<Airline>(db, this.perPage, this.GetCurrentPage());
             }
@@ -79,7 +79,7 @@ namespace Uniars.Server.Http.Module
                     db = db.Where(Flyer => Flyer.Country.Contains(country));
                 }
 
-                db = db.OrderBy(Airline => Airline.Id);
+                db = db.OrderBy(Airline => Airline.Name);
 
                 return new PaginatedResult<Airline>(db, this.perPage, this.GetCurrentPage());
             }

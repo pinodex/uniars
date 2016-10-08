@@ -25,7 +25,9 @@ namespace Uniars.Client.UI.Pages.Main
 
         public PassengersModel model = new PassengersModel();
 
-        public bool deferAutoRefresh = false;
+        private bool disableAutoRefresh = false;
+
+        private bool listLoadComplete = false;
 
         public Passengers(MainWindow parentWindow)
         {
@@ -34,17 +36,27 @@ namespace Uniars.Client.UI.Pages.Main
             this.DataContext = model;
             this.parent = parentWindow;
 
-            model.PassengerList.ListChanged += (sender, e) =>
-            {
-                model.LastUpdateTime = DateTime.Now;
-            };
-
             model.PropertyChanged += (sender, e) =>
             {
                 if (e.PropertyName == PassengersModel.P_CURRENT_PAGE && !model.IsLoadingActive)
                 {
                     this.LoadList();
                 }
+            };
+
+            model.PassengerList.ListChanged += (sender, e) =>
+            {
+                model.LastUpdateTime = DateTime.Now;
+            };
+
+            model.Pages.ListChanged += (sender, e) =>
+            {
+                if (!this.listLoadComplete)
+                {
+                    return;
+                }
+
+                model.CurrentPage = 1;
             };
 
             model.EditorModel = this.CreateBlankModel();
@@ -56,7 +68,7 @@ namespace Uniars.Client.UI.Pages.Main
 
             listTimer.Tick += (sender, e) =>
             {
-                if (!deferAutoRefresh)
+                if (!disableAutoRefresh)
                 {
                     this.LoadList(true);
                 }
@@ -104,11 +116,7 @@ namespace Uniars.Client.UI.Pages.Main
                 this.Dispatcher.Invoke(new Action(() =>
                 {
                     model.PassengerList.Repopulate<Passenger>(result.Data);
-
-                    if (model.Pages.Count() == 0)
-                    {
-                        model.Pages.Repopulate<int>(result.GetPageList());
-                    }
+                    model.Pages.Repopulate<int>(result.GetPageList());
 
                     model.IsLoadingActive = false;
 
@@ -117,6 +125,8 @@ namespace Uniars.Client.UI.Pages.Main
                         this.LoadList();
                     }
                 }));
+
+                this.listLoadComplete = true;
             });
         }
 
@@ -184,7 +194,7 @@ namespace Uniars.Client.UI.Pages.Main
                 return;
             }
 
-            this.OpenFlyout(this.passengersTable.SelectedItem as Passenger);
+            this.OpenFlyout(this.table.SelectedItem as Passenger);
 
             e.Handled = true;
         }
@@ -193,7 +203,7 @@ namespace Uniars.Client.UI.Pages.Main
         {
             if (e.Key == Key.Enter)
             {
-                this.OpenFlyout(this.passengersTable.SelectedItem as Passenger);
+                this.OpenFlyout(this.table.SelectedItem as Passenger);
 
                 e.Handled = true;
             }
@@ -268,7 +278,7 @@ namespace Uniars.Client.UI.Pages.Main
             }
 
             model.IsLoadingActive = true;
-            this.deferAutoRefresh = true;
+            this.disableAutoRefresh = true;
 
             Dictionary<string, string> query = new Dictionary<string, string>
             {
@@ -319,7 +329,7 @@ namespace Uniars.Client.UI.Pages.Main
             searchFamilyNameText.Text = string.Empty;
             searchMiddleNameText.Text = string.Empty;
 
-            this.deferAutoRefresh = false;
+            this.disableAutoRefresh = false;
             this.LoadList();
         }
 

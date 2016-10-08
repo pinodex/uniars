@@ -133,6 +133,9 @@
     <Compile Include="UI\Pages\Flyout\AirlineView.xaml.cs">
       <DependentUpon>AirlineView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Pages\Flyout\AirportView.xaml.cs">
+      <DependentUpon>AirportView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Pages\Flyout\PassengerView.xaml.cs">
       <DependentUpon>PassengerView.xaml</DependentUpon>
     </Compile>
@@ -140,6 +143,10 @@
       <DependentUpon>Airlines.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Pages\Main\AirlinesModel.cs" />
+    <Compile Include="UI\Pages\Main\Airports.xaml.cs">
+      <DependentUpon>Airports.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Pages\Main\AirportModel.cs" />
     <Compile Include="UI\Pages\Main\Passengers.xaml.cs">
       <DependentUpon>Passengers.xaml</DependentUpon>
     </Compile>
@@ -170,6 +177,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Pages\Flyout\AirportView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Pages\Flyout\PassengerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -177,6 +188,10 @@
     <Page Include="UI\Pages\Main\Airlines.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Pages\Main\Airports.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Pages\Main\Passengers.xaml">
       <Generator>MSBuild:Compile</Generator>

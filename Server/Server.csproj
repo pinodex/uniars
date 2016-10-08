@@ -139,6 +139,7 @@
     <Compile Include="Http\Module\BaseModule.cs" />
     <Compile Include="Http\Module\CountryModule.cs" />
     <Compile Include="Http\Module\PassengerContactModule.cs" />
+    <Compile Include="Http\Module\TimezoneModule.cs" />
     <Compile Include="Http\Response\JsonErrorResponse.cs" />
     <Compile Include="Http\Module\PassengerModule.cs" />
     <Compile Include="Http\Module\MainModule.cs" />

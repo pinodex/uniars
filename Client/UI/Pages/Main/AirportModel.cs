@@ -7,7 +7,7 @@ using Uniars.Shared.Database.Entity;
 
 namespace Uniars.Client.UI.Pages.Main
 {
-    public class PassengersModel : INotifyPropertyChanged
+    public class AirportsModel : INotifyPropertyChanged
     {
         public const string P_IS_LOADING_ACTIVE = "IsLoadingActive";
 
@@ -15,7 +15,9 @@ namespace Uniars.Client.UI.Pages.Main
 
         public const string P_IS_EDIT_MODE = "IsEditMode";
 
-        public const string P_PASSENGER_LIST = "PassengerList";
+        public const string P_AIRPORT_LIST = "AirportList";
+
+        public const string P_COUNTRY_LIST = "CountryList";
 
         public const string P_LAST_UPDATE_TIME = "LastUpdateTime";
 
@@ -25,8 +27,6 @@ namespace Uniars.Client.UI.Pages.Main
 
         public const string P_EDITOR_MODEL = "EditorModel";
 
-        public const string P_COUNTRY_LIST = "CountryList";
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool _isLoadingActive = false;
@@ -35,7 +35,9 @@ namespace Uniars.Client.UI.Pages.Main
 
         private bool _isEditMode = false;
 
-        private BindingList<Passenger> _passengerList = new BindingList<Passenger>();
+        private BindingList<Airport> _airportList = new BindingList<Airport>();
+
+        private List<Country> _countryList = new List<Country>();
 
         private DateTime _lastUpdateTime = DateTime.Now;
 
@@ -43,9 +45,7 @@ namespace Uniars.Client.UI.Pages.Main
 
         private int _currentPage = 1;
 
-        private Passenger _editorModel;
-
-        private List<Country> _countryList = new List<Country>();
+        private Airport _editorModel;
 
         public bool IsLoadingActive
         {
@@ -92,18 +92,33 @@ namespace Uniars.Client.UI.Pages.Main
             }
         }
 
-        public BindingList<Passenger> PassengerList
+        public BindingList<Airport> AirportList
         {
             get
             {
-                return _passengerList;
+                return _airportList;
             }
 
             set
             {
-                _passengerList = value;
+                _airportList = value;
 
-                OnPropertyChanged(P_PASSENGER_LIST);
+                OnPropertyChanged(P_AIRPORT_LIST);
+            }
+        }
+
+        public List<Country> CountryList
+        {
+            get
+            {
+                return _countryList;
+            }
+
+            set
+            {
+                _countryList = value;
+
+                OnPropertyChanged(P_COUNTRY_LIST);
             }
         }
 
@@ -152,7 +167,7 @@ namespace Uniars.Client.UI.Pages.Main
             }
         }
 
-        public Passenger EditorModel
+        public Airport EditorModel
         {
             get
             {
@@ -167,25 +182,10 @@ namespace Uniars.Client.UI.Pages.Main
             }
         }
 
-        public List<Country> CountryList
-        {
-            get
-            {
-                return _countryList;
-            }
-
-            set
-            {
-                _countryList = value;
-
-                OnPropertyChanged(P_COUNTRY_LIST);
-            }
-        }
-
         protected void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
-            
+
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(name));

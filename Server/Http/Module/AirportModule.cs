@@ -33,7 +33,7 @@ namespace Uniars.Server.Http.Module
         {
             using (Context context = new Context(App.ConnectionString))
             {
-                IQueryable<Airport> db = context.Airports.OrderBy(Airline => Airline.Id);
+                IQueryable<Airport> db = context.Airports.OrderBy(Airline => Airline.Name);
 
                 return new PaginatedResult<Airport>(db, this.perPage, this.GetCurrentPage());
             }
@@ -80,12 +80,7 @@ namespace Uniars.Server.Http.Module
                     db = db.Where(Model => Model.City.Contains(city));
                 }
 
-                if (timezone != null)
-                {
-                    db = db.Where(Model => Model.Timezone.Contains(timezone));
-                }
-
-                db = db.OrderBy(Airline => Airline.Id);
+                db = db.OrderBy(Airline => Airline.Name);
 
                 return new PaginatedResult<Airport>(db, this.perPage, this.GetCurrentPage());
             }
