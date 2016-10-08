@@ -16,6 +16,10 @@
 
         public const string AIRPORT_SEARCH = "airports/search";
 
+        public const string USERS = "users";
+
+        public const string USER_SEARCH = "users/search";
+
         public const string TIMEZONES = "timezones";
     }
 }

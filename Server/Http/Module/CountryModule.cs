@@ -23,14 +23,20 @@ namespace Uniars.Server.Http.Module
 
         protected object Index(dynamic parameters)
         {
-            IQueryable<Country> db = App.Entities.Countries.OrderBy(Country => Country.Name);
+            using (Context context = new Context(App.ConnectionString))
+            {
+                IQueryable<Country> db = context.Countries.OrderBy(Country => Country.Name);
 
-            return new PaginatedResult<Country>(db, this.perPage, this.GetCurrentPage());
+                return new PaginatedResult<Country>(db, this.perPage, this.GetCurrentPage());
+            }
         }
 
         protected object All(dynamic parameters)
         {
-            return App.Entities.Countries.OrderBy(Country => Country.Name);
+            using (Context context = new Context(App.ConnectionString))
+            {
+                return context.Countries.OrderBy(Country => Country.Name).ToList();
+            }
         }
     }
 }

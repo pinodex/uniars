@@ -33,8 +33,6 @@ namespace Uniars.Server
 
         public static Http.Server Server;
 
-        public static Context Entities;
-
         public App()
         {
             try
@@ -57,7 +55,6 @@ namespace Uniars.Server
             );
 
             Server = new Http.Server(App.Config.Server.Host, App.Config.Server.Port);
-            Entities = new Context(ConnectionString);
 
             InitializeComponent();
         }

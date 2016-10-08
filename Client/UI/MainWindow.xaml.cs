@@ -8,6 +8,8 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using Uniars.Client.UI.Pages;
+using Uniars.Client.Http;
 
 namespace Uniars.Client.UI
 {
@@ -34,13 +36,10 @@ namespace Uniars.Client.UI
 
             this.DataContext = model;
 
-            DispatcherTimer clock = new DispatcherTimer();
-            
-            clock.Tick += (sender, e) => model.CurrentDateTime = DateTime.Now;
-            clock.Interval = new TimeSpan(0, 0, 1);
-            clock.Start();
-
             model.Username = App.Client.CurrentUser.Name;
+            model.ShowTouchKeyboard = App.TouchKeyboard.IsSupported && App.Config.PortableMode;
+
+            Commons.GetCountryList();
 
             map = new Dictionary<string, Page>
             {
@@ -48,29 +47,59 @@ namespace Uniars.Client.UI
                 {"Passengers", new Pages.Main.Passengers(this)},
                 {"Airlines", new Pages.Main.Airlines(this)},
                 {"Airports", new Pages.Main.Airports(this)},
+                {"Users", new Pages.Main.Users(this)}
             };
 
-            this.Loaded += (s, e) =>
-            {
-                mainFrame.Content = map.ElementAt(0).Value;
-                this.deferMenuSelectionChange = false;
-            };
+            this.Loaded += OnLoaded;
+            this.KeyDown += OnKeyDown;
+        }
 
-            this.KeyDown += (s, e) =>
+        private void OnLoaded(object sender, EventArgs e)
+        {
+            mainFrame.Content = map.ElementAt(0).Value;
+            this.deferMenuSelectionChange = false;
+
+            DispatcherTimer clock = new DispatcherTimer();
+
+            clock.Tick += (s, ea) => model.CurrentDateTime = DateTime.Now;
+            clock.Interval = new TimeSpan(0, 0, 1);
+            clock.Start();
+
+            DispatcherTimer listTimer = new DispatcherTimer();
+
+            listTimer.Tick += (s, ea) =>
             {
-                if (e.Key == Key.System && e.SystemKey == Key.F4)
+                var enumerator = map.GetEnumerator();
+
+                while (enumerator.MoveNext())
                 {
-                    this.btnSignOut_Click(s, e);
-                    e.Handled = true;
+                    IPollingList page = enumerator.Current.Value as IPollingList;
+
+                    if (page != null)
+                    {
+                        page.LoadList(true);
+                    }
                 }
+            };
+
+            listTimer.Interval = new TimeSpan(0, 0, 5);
+            listTimer.Start();
+        }
+
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.System && e.SystemKey == Key.F4)
+            {
+                this.btnSignOut_Click(sender, e);
+                e.Handled = true;
+            }
 
 #if DEBUG
-                if (e.Key == Key.F12)
-                {
-                    Application.Current.Shutdown();
-                }
+            if (e.Key == Key.F12)
+            {
+                Application.Current.Shutdown();
+            }
 #endif
-            };
         }
 
         private void Logout()
@@ -100,6 +129,11 @@ namespace Uniars.Client.UI
         }
 
         #region Events
+
+        private void TouchKeyboardButtonClicked(object sender, RoutedEventArgs e)
+        {
+            App.TouchKeyboard.ShowTouchKeyboard();
+        }
 
         private void menu_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

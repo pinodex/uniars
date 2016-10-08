@@ -41,7 +41,7 @@
     <OutputPath>..\debug\Client\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>3</WarningLevel>
     <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
@@ -86,6 +86,24 @@
   <PropertyGroup>
     <ApplicationManifest>Properties\App.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <OutputPath>..\debug\Client\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <WarningLevel>3</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="FontAwesome.WPF">
       <HintPath>..\Libraries\FontAwesome.WPF.dll</HintPath>
@@ -121,14 +139,17 @@
     </Compile>
     <Compile Include="Core\Collections\CollectionRepopulation.cs" />
     <Compile Include="Core\Config\BaseModel.cs" />
+    <Compile Include="Core\TouchKeyboardProvider.cs" />
     <Compile Include="Http\ApiClient.cs" />
     <Compile Include="Http\ApiRequest.cs" />
     <Compile Include="Http\AuthException.cs" />
+    <Compile Include="Http\Commons.cs" />
     <Compile Include="Http\Url.cs" />
     <Compile Include="UI\Converter\BooleanInverter.cs" />
     <Compile Include="UI\Converter\BooleanToStringConverter.cs" />
     <Compile Include="UI\Converter\InverseBooleanToVisiblityConverter.cs" />
     <Compile Include="UI\Converter\RoleToVisibilityConverter.cs" />
+    <Compile Include="UI\LoginWindowModel.cs" />
     <Compile Include="UI\MainWindowModel.cs" />
     <Compile Include="UI\Pages\Flyout\AirlineView.xaml.cs">
       <DependentUpon>AirlineView.xaml</DependentUpon>
@@ -136,9 +157,13 @@
     <Compile Include="UI\Pages\Flyout\AirportView.xaml.cs">
       <DependentUpon>AirportView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Pages\Flyout\UserView.xaml.cs">
+      <DependentUpon>UserView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Pages\Flyout\PassengerView.xaml.cs">
       <DependentUpon>PassengerView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Pages\IPollingList.cs" />
     <Compile Include="UI\Pages\Main\Airlines.xaml.cs">
       <DependentUpon>Airlines.xaml</DependentUpon>
     </Compile>
@@ -147,6 +172,10 @@
       <DependentUpon>Airports.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Pages\Main\AirportModel.cs" />
+    <Compile Include="UI\Pages\Main\Users.xaml.cs">
+      <DependentUpon>Users.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Pages\Main\UserModel.cs" />
     <Compile Include="UI\Pages\Main\Passengers.xaml.cs">
       <DependentUpon>Passengers.xaml</DependentUpon>
     </Compile>
@@ -154,9 +183,6 @@
       <DependentUpon>Overview.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Pages\Main\PassengersModel.cs" />
-    <Compile Include="UI\Pages\Main\Reports.xaml.cs">
-      <DependentUpon>Reports.xaml</DependentUpon>
-    </Compile>
     <ApplicationDefinition Include="App.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -181,6 +207,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Pages\Flyout\UserView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Pages\Flyout\PassengerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -193,15 +223,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Pages\Main\Users.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Pages\Main\Passengers.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Pages\Main\Overview.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Pages\Main\Reports.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

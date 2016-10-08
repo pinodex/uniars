@@ -18,15 +18,18 @@ namespace Uniars.Client.UI.Pages.Main
     /// <summary>
     /// Interaction logic for Airlines.xaml
     /// </summary>
-    public partial class Airlines : Page
+    public partial class Airlines : Page, IPollingList
     {
         public MainWindow parent;
 
-        public AirlinesModel model = new AirlinesModel();
+        public AirlinesModel model = new AirlinesModel
+        {
+            CountryList = Commons.GetCountryList()
+        };
 
         public Dictionary<string, string> searchQuery;
 
-        private bool deferAutoRefresh = false;
+        private bool disableAutoRefresh = false;
 
         private bool listLoadComplete = false;
 
@@ -63,20 +66,6 @@ namespace Uniars.Client.UI.Pages.Main
             model.EditorModel = this.CreateBlankModel();
 
             this.LoadList();
-            this.LoadCountries();
-
-            DispatcherTimer listTimer = new DispatcherTimer();
-
-            listTimer.Tick += (sender, e) =>
-            {
-                if (!this.deferAutoRefresh)
-                {
-                    this.LoadList(true);
-                }
-            };
-
-            listTimer.Interval = new TimeSpan(0, 0, 5);
-            listTimer.Start();
         }
 
         /// <summary>
@@ -94,6 +83,11 @@ namespace Uniars.Client.UI.Pages.Main
         /// <param name="autoTriggered"></param>
         public void LoadList(bool autoTriggered = false)
         {
+            if (autoTriggered && this.disableAutoRefresh)
+            {
+                return;
+            }
+
             model.IsLoadingActive = true && !autoTriggered;
 
             string url = Url.AIRLINES;
@@ -141,24 +135,6 @@ namespace Uniars.Client.UI.Pages.Main
         }
 
         /// <summary>
-        /// Load countries from server
-        /// </summary>
-        public void LoadCountries()
-        {
-            ApiRequest request = new ApiRequest(Url.COUNTRIES_ALL);
-
-            App.Client.ExecuteAsync<List<Country>>(request, response =>
-            {
-                if (response.StatusCode != HttpStatusCode.OK)
-                {
-                    return;
-                }
-
-                this.Dispatcher.Invoke(new Action(() => model.CountryList = response.Data));
-            });
-        }
-
-        /// <summary>
         /// Set active tab
         /// </summary>
         /// <param name="index">Tab index</param>
@@ -173,6 +149,11 @@ namespace Uniars.Client.UI.Pages.Main
         /// <param name="model">Airline instance</param>
         public void OpenFlyout(Airline model)
         {
+            if (model == null)
+            {
+                return;
+            }
+
             this.Dispatcher.Invoke(new Action(() =>
             {
                 parent.SetFlyoutContent("Airline", new AirlineView(this, model));
@@ -214,7 +195,7 @@ namespace Uniars.Client.UI.Pages.Main
             searchCountryText.SelectedItem = null;
 
             this.searchQuery = null;
-            this.deferAutoRefresh = false;
+            this.disableAutoRefresh = false;
 
             model.Pages.Clear();
 
@@ -233,7 +214,7 @@ namespace Uniars.Client.UI.Pages.Main
             }
 
             model.IsLoadingActive = true;
-            this.deferAutoRefresh = true;
+            this.disableAutoRefresh = true;
 
             this.searchQuery = new Dictionary<string, string>
             {
@@ -341,11 +322,8 @@ namespace Uniars.Client.UI.Pages.Main
                 {
                     this.LoadList();
                     this.OpenFlyout(response.Data);
-                    this.SetActiveTab(0);
 
-                    model.EditorModel = this.CreateBlankModel();
-                    model.IsEditorEnabled = true;
-                    model.IsEditMode = false;
+                    this.ResetEditor();
                 }));
             });
         }

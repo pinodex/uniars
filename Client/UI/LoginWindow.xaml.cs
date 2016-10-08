@@ -10,9 +10,15 @@ namespace Uniars.Client.UI
 {
     public partial class LoginWindow : MetroWindow
     {
+        private LoginWindowModel model = new LoginWindowModel();
+
         public LoginWindow()
         {
             InitializeComponent();
+
+            this.DataContext = model;
+
+            model.ShowTouchKeyboard = App.TouchKeyboard.IsSupported && App.Config.PortableMode;
 
             this.Loaded += (s, e) =>
             {
@@ -92,6 +98,11 @@ namespace Uniars.Client.UI
         }
 
         #region Events
+
+        private void TouchKeyboardButtonClicked(object sender, RoutedEventArgs e)
+        {
+            App.TouchKeyboard.ShowTouchKeyboard();
+        }
 
         private void btnLoginClick(object sender, RoutedEventArgs e)
         {

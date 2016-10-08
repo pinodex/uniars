@@ -22,6 +22,8 @@ namespace Uniars.Client
     /// </summary>
     public partial class App : Application
     {
+        public static TouchKeyboardProvider TouchKeyboard;
+
         public static ApiClient Client;
 
         public const string CONFIG_FILE = "config\\client.json";
@@ -30,6 +32,8 @@ namespace Uniars.Client
 
         public App()
         {
+            TouchKeyboard = new TouchKeyboardProvider();
+
             try
             {
                 Config = (BaseModel)JsonConfig.Load<BaseModel>(CONFIG_FILE);

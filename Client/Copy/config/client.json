@@ -1,3 +1,4 @@
 ﻿{
-	"ServerAddress": "http://localhost:8080"
+	"ServerAddress": "http://localhost:8080",
+	"PortableMode": false
 }

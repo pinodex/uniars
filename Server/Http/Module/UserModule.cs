@@ -5,8 +5,11 @@ using System.Text;
 using Uniars.Shared.Database.Entity;
 using Nancy;
 using Nancy.Security;
+using Nancy.ModelBinding;
 using Uniars.Server.Http.Response;
 using Uniars.Shared.Database;
+using Uniars.Shared.Foundation;
+using Uniars.Server.Http.Auth;
 
 namespace Uniars.Server.Http.Module
 {
@@ -15,29 +18,42 @@ namespace Uniars.Server.Http.Module
         public UserModule() : base("/users")
         {
             this.RequiresAuthentication();
+            this.RequiresClaims(UserIdentity.ROLE_ADMIN);
 
             Get["/"] = Index;
             Get["/{id:int}"] = Single;
             Get["/search"] = Search;
+
+            Post["/"] = CreateModel;
+            Put["/{id:int}"] = UpdateModel;
+            Delete["/{id:int}"] = DeleteModel;
         }
 
         protected object Index(dynamic parameters)
         {
-            IQueryable<User> db = App.Entities.Users.OrderBy(User => User.Id);
+            using (Context context = new Context(App.ConnectionString))
+            {
+                IQueryable<User> db = context.Users.OrderBy(User => User.Id);
 
-            return new PaginatedResult<User>(db, this.perPage, this.GetCurrentPage());
+                return new PaginatedResult<User>(db, this.perPage, this.GetCurrentPage());
+            }
         }
 
         protected object Single(dynamic parameters)
         {
-            User model = App.Entities.Users.Find((int)parameters.id);
-
-            if (model == null)
+            using (Context context = new Context(App.ConnectionString))
             {
-                return new JsonErrorResponse(404, 404, "User not found");
-            }
+                User model = context.Users.Find((int)parameters.id);
 
-            return model;
+                if (model == null)
+                {
+                    return new JsonErrorResponse(404, 404, "User not found");
+                }
+
+                model.Password = null;
+
+                return model;
+            }
         }
 
         protected object Search(dynamic parameters)
@@ -45,21 +61,91 @@ namespace Uniars.Server.Http.Module
             string username = this.Request.Query["username"];
             string name = this.Request.Query["name"];
 
-            IQueryable<User> db = App.Entities.Users;
-
-            if (username != null)
+            using (Context context = new Context(App.ConnectionString))
             {
-                db = App.Entities.Users.Where(User => User.Username.Contains(username));
+                IQueryable<User> db = context.Users;
+
+                if (username != null)
+                {
+                    db = context.Users.Where(User => User.Username.Contains(username));
+                }
+
+                if (name != null)
+                {
+                    db = context.Users.Where(User => User.Name.Contains(name));
+                }
+
+                db = db.OrderBy(User => User.Id);
+
+                return new PaginatedResult<User>(db, this.perPage, this.GetCurrentPage());
+            }
+        }
+
+        public object CreateModel(dynamic parameters)
+        {
+            using (Context context = new Context(App.ConnectionString))
+            {
+                User user = this.Bind<User>();
+
+                user.Password = Hash.Make(user.Password);
+
+                context.Users.Add(user);
+                context.SaveChanges();
+
+                return user;
+            }
+        }
+
+        protected object UpdateModel(dynamic parameters)
+        {
+            int id = (int)parameters.id;
+
+            using (Context context = new Context(App.ConnectionString))
+            {
+                User user = context.Users.FirstOrDefault(m => m.Id == id);
+
+                if (user == null)
+                {
+                    return new JsonErrorResponse(404, 404, "User not found");
+                }
+
+                string currentPassword = user.Password;
+
+                this.BindTo(user);
+
+                if (user.Password == null)
+                {
+                    user.Password = currentPassword;
+                }
+                else
+                {
+                    user.Password = Hash.Make(user.Password);
+                }
+
+                context.SaveChanges();
+
+                return user;
+            }
+        }
+
+        protected object DeleteModel(dynamic parameters)
+        {
+            int id = (int)parameters.id;
+
+            using (Context context = new Context(App.ConnectionString))
+            {
+                User user = context.Users.FirstOrDefault(m => m.Id == id);
+
+                if (user == null)
+                {
+                    return new JsonErrorResponse(404, 404, "User not found");
+                }
+
+                context.Users.Remove(user);
+                context.SaveChanges();
             }
 
-            if (name != null)
-            {
-                db = App.Entities.Users.Where(User => User.Name.Contains(name));
-            }
-
-            db = db.OrderBy(User => User.Id);
-
-            return new PaginatedResult<User>(db, this.perPage, this.GetCurrentPage());
+            return HttpStatusCode.OK;
         }
     }
 }

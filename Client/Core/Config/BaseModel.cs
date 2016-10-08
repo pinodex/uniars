@@ -5,5 +5,7 @@ namespace Uniars.Client.Core.Config
     public class BaseModel : IConfigModel
     {
         public string ServerAddress { get; set; }
+
+        public bool PortableMode { get; set; }
     }
 }

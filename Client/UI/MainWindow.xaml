@@ -70,6 +70,13 @@
                             <TextBlock Text="Booking" Margin="24,0,0,0" />
                         </Grid>
                     </ListBoxItem>
+
+                    <ListBoxItem FontSize="14" Tag="Users">
+                        <Grid>
+                            <fa:FontAwesome Icon="Users" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                            <TextBlock Text="Users" Margin="24,0,0,0" />
+                        </Grid>
+                    </ListBoxItem>
                 </ListBox>
 
                 <Grid Name="userArea" VerticalAlignment="Bottom" Margin="0,100,0,0">
@@ -153,6 +160,10 @@
 
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White" Grid.Column="1">
                 <Frame Name="mainFrame" Padding="0,30,0,0" NavigationUIVisibility="Hidden" />
+
+                <Button Padding="10" Background="Transparent" BorderThickness="0" HorizontalAlignment="Right" VerticalAlignment="Top" Click="TouchKeyboardButtonClicked" Visibility="{Binding ShowTouchKeyboard, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <fa:FontAwesome FontSize="24" Icon="KeyboardOutline" />
+                </Button>
             </Grid>
         </Grid>
     </Grid>
