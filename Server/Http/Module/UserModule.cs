@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Uniars.Shared.Database.Entity;
+﻿using System.Linq;
 using Nancy;
-using Nancy.Security;
 using Nancy.ModelBinding;
+using Nancy.Security;
+using Uniars.Server.Http.Auth;
 using Uniars.Server.Http.Response;
 using Uniars.Shared.Database;
+using Uniars.Shared.Database.Entity;
 using Uniars.Shared.Foundation;
-using Uniars.Server.Http.Auth;
 
 namespace Uniars.Server.Http.Module
 {
@@ -85,14 +82,14 @@ namespace Uniars.Server.Http.Module
         {
             using (Context context = new Context(App.ConnectionString))
             {
-                User user = this.Bind<User>();
+                User model = this.Bind<User>();
 
-                user.Password = Hash.Make(user.Password);
+                model.Password = Hash.Make(model.Password);
 
-                context.Users.Add(user);
+                context.Users.Add(model);
                 context.SaveChanges();
 
-                return user;
+                return model;
             }
         }
 
@@ -102,29 +99,29 @@ namespace Uniars.Server.Http.Module
 
             using (Context context = new Context(App.ConnectionString))
             {
-                User user = context.Users.FirstOrDefault(m => m.Id == id);
+                User model = context.Users.FirstOrDefault(m => m.Id == id);
 
-                if (user == null)
+                if (model == null)
                 {
                     return new JsonErrorResponse(404, 404, "User not found");
                 }
 
-                string currentPassword = user.Password;
+                string currentPassword = model.Password;
 
-                this.BindTo(user);
+                this.BindTo(model);
 
-                if (user.Password == null)
+                if (model.Password == null)
                 {
-                    user.Password = currentPassword;
+                    model.Password = currentPassword;
                 }
                 else
                 {
-                    user.Password = Hash.Make(user.Password);
+                    model.Password = Hash.Make(model.Password);
                 }
 
                 context.SaveChanges();
 
-                return user;
+                return model;
             }
         }
 
@@ -134,14 +131,14 @@ namespace Uniars.Server.Http.Module
 
             using (Context context = new Context(App.ConnectionString))
             {
-                User user = context.Users.FirstOrDefault(m => m.Id == id);
+                User model = context.Users.FirstOrDefault(m => m.Id == id);
 
-                if (user == null)
+                if (model == null)
                 {
                     return new JsonErrorResponse(404, 404, "User not found");
                 }
 
-                context.Users.Remove(user);
+                context.Users.Remove(model);
                 context.SaveChanges();
             }
 

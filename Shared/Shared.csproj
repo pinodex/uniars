@@ -65,7 +65,9 @@
     <Compile Include="Database\Context.cs" />
     <Compile Include="Database\Entity\Airline.cs" />
     <Compile Include="Database\Entity\Airport.cs" />
+    <Compile Include="Database\Entity\Book.cs" />
     <Compile Include="Database\Entity\Country.cs" />
+    <Compile Include="Database\Entity\Flight.cs" />
     <Compile Include="Database\ITrackedEntity.cs" />
     <Compile Include="Database\Entity\Passenger.cs" />
     <Compile Include="Database\Entity\PassengerContact.cs" />

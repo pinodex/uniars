@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Nancy;
 using Nancy.Security;
-using Nancy.ModelBinding;
 using Uniars.Server.Http.Auth;
+using Uniars.Server.Http.Response;
 using Uniars.Shared.Database;
 using Uniars.Shared.Database.Entity;
 using Uniars.Shared.Foundation;
-using System.Data.Entity;
-using Uniars.Server.Http.Response;
-using Nancy;
-
 
 namespace Uniars.Server.Http.Module
 {

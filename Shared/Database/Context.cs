@@ -24,6 +24,10 @@ namespace Uniars.Shared.Database
 
         public DbSet<Route> Routes { get; set; }
 
+        public DbSet<Flight> Flights { get; set; }
+
+        public DbSet<Book> Books { get; set; }
+
         public Context(string connectionString) : base(connectionString)
         {
             this.Configuration.LazyLoadingEnabled = false;
@@ -35,6 +39,16 @@ namespace Uniars.Shared.Database
 
             modelBuilder.Entity<Passenger>()
                 .HasMany(p => p.Contacts);
+
+            modelBuilder.Entity<Book>()
+                .HasMany(m => m.Passengers)
+                .WithMany()
+                .Map(x =>
+                {
+                    x.MapLeftKey("book_id");
+                    x.MapRightKey("passenger_id");
+                    x.ToTable("book_passengers");
+                });
         }
 
         public override int SaveChanges()

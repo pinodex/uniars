@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
+using Nancy;
+using Nancy.ModelBinding;
+using Nancy.Security;
+using Uniars.Server.Http.Auth;
+using Uniars.Server.Http.Response;
 using Uniars.Shared.Database;
 using Uniars.Shared.Database.Entity;
-using Uniars.Shared.Foundation;
-using Nancy;
-using Nancy.Security;
-using Nancy.ModelBinding;
-using Uniars.Server.Http.Response;
-using Uniars.Server.Http.Auth;
 
 namespace Uniars.Server.Http.Module
 {
@@ -132,14 +128,14 @@ namespace Uniars.Server.Http.Module
 
             using (Context context = new Context(App.ConnectionString))
             {
-                Airport airports = context.Airports.FirstOrDefault(m => m.Id == id);
+                Airport model = context.Airports.FirstOrDefault(m => m.Id == id);
 
-                if (airports == null)
+                if (model == null)
                 {
                     return new JsonErrorResponse(404, 404, "Airline not found");
                 }
 
-                context.Airports.Remove(airports);
+                context.Airports.Remove(model);
                 context.SaveChanges();
             }
 

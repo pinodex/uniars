@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Data.Entity;
 using System.Linq;
-using System.Text;
 using Nancy;
-using Nancy.Security;
 using Nancy.ModelBinding;
-using System.Data.Entity;
-using System.Data.Entity.Core.Objects;
-using Uniars.Server.Http.Response;
-using Uniars.Shared.Database.Entity;
-using Uniars.Shared.Foundation;
-using Uniars.Shared.Database;
+using Nancy.Security;
 using Uniars.Server.Http.Auth;
+using Uniars.Server.Http.Response;
+using Uniars.Shared.Database;
+using Uniars.Shared.Database.Entity;
 
 namespace Uniars.Server.Http.Module
 {
@@ -50,16 +45,16 @@ namespace Uniars.Server.Http.Module
 
             using (Context context = new Context(App.ConnectionString))
             {
-                Passenger passenger = context.Passengers
+                Passenger model = context.Passengers
                     .Include(m => m.Contacts)
                     .FirstOrDefault(m => m.Id == id);
 
-                if (passenger == null)
+                if (model == null)
                 {
                     return new JsonErrorResponse(404, 404, "Passenger not found");
                 }
 
-                return passenger;
+                return model;
             }
         }
 
@@ -69,16 +64,16 @@ namespace Uniars.Server.Http.Module
 
             using (Context context = new Context(App.ConnectionString))
             {
-                Passenger passenger = context.Passengers
+                Passenger model = context.Passengers
                     .Include(m => m.Contacts)
                     .FirstOrDefault(m => m.Code == code);
 
-                if (passenger == null)
+                if (model == null)
                 {
                     return new JsonErrorResponse(404, 404, "Passenger not found");
                 }
 
-                return passenger;
+                return model;
             }
         }
 
@@ -96,25 +91,25 @@ namespace Uniars.Server.Http.Module
 
                 if (givenName != null)
                 {
-                    db = db.Where(Model => Model.GivenName.Contains(givenName));
+                    db = db.Where(m => m.GivenName.Contains(givenName));
                 }
 
                 if (familyName != null)
                 {
-                    db = db.Where(Model => Model.FamilyName.Contains(familyName));
+                    db = db.Where(m => m.FamilyName.Contains(familyName));
                 }
 
                 if (middleName != null)
                 {
-                    db = db.Where(Model => Model.MiddleName.Contains(middleName));
+                    db = db.Where(m => m.MiddleName.Contains(middleName));
                 }
 
                 if (displayName != null)
                 {
-                    db = db.Where(Model => Model.DisplayName.Contains(displayName));
+                    db = db.Where(m => m.DisplayName.Contains(displayName));
                 }
 
-                db = db.OrderBy(Passenger => Passenger.Id);
+                db = db.OrderBy(m => m.Id);
 
                 return new PaginatedResult<Passenger>(db, this.perPage, this.GetCurrentPage());
             }
@@ -124,17 +119,17 @@ namespace Uniars.Server.Http.Module
         {
             using (Context context = new Context(App.ConnectionString))
             {
-                Passenger passenger = this.Bind<Passenger>(
+                Passenger model = this.Bind<Passenger>(
                     m => m.Id,
                     m => m.Code
                 );
 
-                passenger.GenerateCode();
+                model.GenerateCode();
 
-                context.Passengers.Add(passenger);
+                context.Passengers.Add(model);
                 context.SaveChanges();
 
-                return passenger;
+                return model;
             }
         }
 
@@ -172,14 +167,14 @@ namespace Uniars.Server.Http.Module
 
             using (Context context = new Context(App.ConnectionString))
             {
-                Passenger passenger = context.Passengers.FirstOrDefault(m => m.Id == id);
+                Passenger model = context.Passengers.FirstOrDefault(m => m.Id == id);
 
-                if (passenger == null)
+                if (model == null)
                 {
                     return new JsonErrorResponse(404, 404, "Passenger not found");
                 }
 
-                context.Passengers.Remove(passenger);
+                context.Passengers.Remove(model);
                 context.SaveChanges();
             }
 

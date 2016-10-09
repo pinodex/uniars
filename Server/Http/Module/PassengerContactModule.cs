@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Data.Entity;
 using System.Linq;
-using System.Text;
 using Nancy;
-using Nancy.Security;
 using Nancy.ModelBinding;
-using System.Data.Entity;
-using System.Data.Entity.Core.Objects;
+using Nancy.Security;
 using Uniars.Server.Http.Response;
-using Uniars.Shared.Database.Entity;
-using Uniars.Shared.Foundation;
 using Uniars.Shared.Database;
+using Uniars.Shared.Database.Entity;
 
 namespace Uniars.Server.Http.Module
 {
@@ -50,17 +45,17 @@ namespace Uniars.Server.Http.Module
 
             using (Context context = new Context(App.ConnectionString))
             {
-                PassengerContact passengerContact = context.PassengerContacts
+                PassengerContact model = context.PassengerContacts
                     .Where(m => m.Id == id)
                     .Where(m => m.PassengerId == passengerId)
                     .FirstOrDefault();
 
-                if (passengerContact == null)
+                if (model == null)
                 {
                     return new JsonErrorResponse(404, 404, "Passenger contact not found");
                 }
 
-                return passengerContact;
+                return model;
             }
         }
 
@@ -80,14 +75,14 @@ namespace Uniars.Server.Http.Module
                     return new JsonErrorResponse(404, 404, "Passenger not found");
                 }
 
-                PassengerContact passengerContact = this.Bind<PassengerContact>(
+                PassengerContact model = this.Bind<PassengerContact>(
                     m => m.Id
                 );
 
-                passenger.Contacts.Add(passengerContact);
+                passenger.Contacts.Add(model);
                 context.SaveChanges();
 
-                return passengerContact;
+                return model;
             }
         }
 
@@ -98,21 +93,21 @@ namespace Uniars.Server.Http.Module
 
             using (Context context = new Context(App.ConnectionString))
             {
-                PassengerContact passengerContact = context.PassengerContacts
+                PassengerContact model = context.PassengerContacts
                     .Where(m => m.Id == id)
                     .Where(m => m.PassengerId == passengerId)
                     .FirstOrDefault();
 
-                if (passengerContact == null)
+                if (model == null)
                 {
                     return new JsonErrorResponse(404, 404, "Passenger contact not found");
                 }
 
-                this.BindTo(passengerContact);
+                this.BindTo(model);
 
                 context.SaveChanges();
 
-                return passengerContact;
+                return model;
             }
         }
 
@@ -123,17 +118,17 @@ namespace Uniars.Server.Http.Module
 
             using (Context context = new Context(App.ConnectionString))
             {
-                PassengerContact passengerContact = context.PassengerContacts
+                PassengerContact model = context.PassengerContacts
                     .Where(m => m.Id == id)
                     .Where(m => m.PassengerId == passengerId)
                     .FirstOrDefault();
 
-                if (passengerContact == null)
+                if (model == null)
                 {
                     return new JsonErrorResponse(404, 404, "Passenger contact not found");
                 }
 
-                context.PassengerContacts.Remove(passengerContact);
+                context.PassengerContacts.Remove(model);
                 context.SaveChanges();
             }
 

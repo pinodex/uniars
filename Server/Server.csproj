@@ -157,6 +157,8 @@
     <Compile Include="Core\Config\DatabaseModel.cs" />
     <Compile Include="Core\Config\ServerModel.cs" />
     <Compile Include="Http\Module\BaseModule.cs" />
+    <Compile Include="Http\Module\BookModule.cs" />
+    <Compile Include="Http\Module\FlightModule.cs" />
     <Compile Include="Http\Module\CountryModule.cs" />
     <Compile Include="Http\Module\PassengerContactModule.cs" />
     <Compile Include="Http\Module\SettingsModule.cs" />
@@ -166,6 +168,7 @@
     <Compile Include="Http\Module\MainModule.cs" />
     <Compile Include="Http\Module\UserModule.cs" />
     <Compile Include="Http\Server.cs" />
+    <Compile Include="Model\BookModel.cs" />
     <Compile Include="UI\AboutBox.cs">
       <SubType>Form</SubType>
     </Compile>

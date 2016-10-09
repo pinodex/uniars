@@ -57,7 +57,7 @@
 
                     <ListBoxItem FontSize="14" Tag="Airlines">
                         <Grid>
-                            <fa:FontAwesome Icon="Plane" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                            <fa:FontAwesome Icon="BuildingOutline" HorizontalAlignment="Left" VerticalAlignment="Center" />
                             <TextBlock Text="Airlines" Margin="24,0,0,0" />
                         </Grid>
                     </ListBoxItem>
@@ -66,6 +66,14 @@
                         <Grid>
                             <fa:FontAwesome Icon="Building" HorizontalAlignment="Left" VerticalAlignment="Center" />
                             <TextBlock Text="Airports" Margin="24,0,0,0" />
+                        </Grid>
+                    </ListBoxItem>
+
+
+                    <ListBoxItem FontSize="14" Tag="Flights" Visibility="{Binding Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter=admin}">
+                        <Grid>
+                            <fa:FontAwesome Icon="Plane" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                            <TextBlock Text="Flights" Margin="24,0,0,0" />
                         </Grid>
                     </ListBoxItem>
 

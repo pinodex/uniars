@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
+using Nancy;
+using Nancy.ModelBinding;
+using Nancy.Security;
+using Uniars.Server.Http.Auth;
+using Uniars.Server.Http.Response;
 using Uniars.Shared.Database;
 using Uniars.Shared.Database.Entity;
-using Uniars.Shared.Foundation;
-using Nancy;
-using Nancy.Security;
-using Nancy.ModelBinding;
-using Uniars.Server.Http.Response;
-using Uniars.Server.Http.Auth;
 
 namespace Uniars.Server.Http.Module
 {
@@ -91,12 +87,12 @@ namespace Uniars.Server.Http.Module
 
             using (Context context = new Context(App.ConnectionString))
             {
-                Airline airline = this.Bind<Airline>();
+                Airline model = this.Bind<Airline>();
 
-                context.Airlines.Add(airline);
+                context.Airlines.Add(model);
                 context.SaveChanges();
 
-                return airline;
+                return model;
             }
         }
 
@@ -108,18 +104,18 @@ namespace Uniars.Server.Http.Module
 
             using (Context context = new Context(App.ConnectionString))
             {
-                Airline airline = context.Airlines.FirstOrDefault(m => m.Id == id);
+                Airline model = context.Airlines.FirstOrDefault(m => m.Id == id);
 
-                if (airline == null)
+                if (model == null)
                 {
                     return new JsonErrorResponse(404, 404, "Airline not found");
                 }
 
-                this.BindTo(airline);
+                this.BindTo(model);
 
                 context.SaveChanges();
 
-                return airline;
+                return model;
             }
         }
 
