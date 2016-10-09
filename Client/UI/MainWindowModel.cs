@@ -14,11 +14,15 @@ namespace Uniars.Client.UI
 
         public const string P_SHOW_TOUCH_KEYBOARD = "ShowTouchKeyboard";
 
+        public const string P_IS_SETTINGS_ENABLED = "IsSettingsEnabled";
+
         private DateTime _currentDateTime = DateTime.Now;
 
         private string _username = "Unknown";
 
         private bool _showTouchKeyboard = false;
+
+        private bool _isSettingsEnabled = true;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -64,6 +68,21 @@ namespace Uniars.Client.UI
                 _showTouchKeyboard = value;
 
                 OnPropertyChanged(P_SHOW_TOUCH_KEYBOARD);
+            }
+        }
+
+        public bool IsSettingsEnabled
+        {
+            get
+            {
+                return _isSettingsEnabled;
+            }
+
+            set
+            {
+                _isSettingsEnabled = value;
+
+                OnPropertyChanged(P_IS_SETTINGS_ENABLED);
             }
         }
 

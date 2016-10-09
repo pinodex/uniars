@@ -9,10 +9,12 @@ using Uniars.Server.Http.Auth;
 
 namespace Uniars.Server.Http.Module
 {
-    public class MainModule : NancyModule
+    public class MainModule : BaseModule
     {
         public MainModule() : base("/")
         {
+            this.RequiresAuthentication();
+
             Get["/"] = Index;
             Get["/auth"] = Auth;
             Get["/health"] = Health;
@@ -25,12 +27,7 @@ namespace Uniars.Server.Http.Module
 
         public object Auth(dynamic parameters)
         {
-            if (this.Context.CurrentUser != null)
-            {
-                return ((UserIdentity)this.Context.CurrentUser).User;
-            }
-
-            return HttpStatusCode.Unauthorized;
+            return ((UserIdentity)this.Context.CurrentUser).User;
         }
 
         public object Health(dynamic parameters)

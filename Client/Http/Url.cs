@@ -21,5 +21,7 @@
         public const string USER_SEARCH = "users/search";
 
         public const string TIMEZONES = "timezones";
+
+        public const string SETTINGS_PASSWORD = "settings/password";
     }
 }

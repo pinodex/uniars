@@ -157,6 +157,9 @@
     <Compile Include="UI\Pages\Flyout\AirportView.xaml.cs">
       <DependentUpon>AirportView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Pages\Flyout\AccountSettingsView.xaml.cs">
+      <DependentUpon>AccountSettingsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Pages\Flyout\UserView.xaml.cs">
       <DependentUpon>UserView.xaml</DependentUpon>
     </Compile>
@@ -204,6 +207,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Pages\Flyout\AirportView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Pages\Flyout\AccountSettingsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

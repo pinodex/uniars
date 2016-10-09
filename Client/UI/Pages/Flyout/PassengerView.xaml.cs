@@ -31,7 +31,9 @@ namespace Uniars.Client.UI.Pages.Flyout
             this.parent = parent;
         }
 
-        public void EditButtonClick(object sender, RoutedEventArgs e)
+        #region Events
+
+        private void EditButtonClick(object sender, RoutedEventArgs e)
         {
             this.parent.parent.CloseFlyout();
 
@@ -40,5 +42,7 @@ namespace Uniars.Client.UI.Pages.Flyout
 
             this.parent.SetActiveTab(1);
         }
+
+        #endregion
     }
 }

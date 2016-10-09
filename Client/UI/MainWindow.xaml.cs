@@ -10,6 +10,7 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Uniars.Client.UI.Pages;
 using Uniars.Client.Http;
+using Uniars.Client.UI.Pages.Flyout;
 
 namespace Uniars.Client.UI
 {
@@ -170,7 +171,8 @@ namespace Uniars.Client.UI
 
         private void btnAccountSettings_Click(object sender, RoutedEventArgs e)
         {
-            this.ShowMessageAsync("Coming soon", "Feature not yet ready.");
+            this.SetFlyoutContent("Account Settings", new AccountSettingsView(this, this.model));
+            this.OpenFlyout();
         }
 
         private void btnSignOut_Click(object sender, RoutedEventArgs e)
