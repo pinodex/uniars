@@ -101,7 +101,9 @@
                 </GroupBox>
             </StackPanel>
         </ScrollViewer>
-        
-        <Button Style="{StaticResource AccentedSquareButtonStyle}" Content="Edit Passenger" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Padding="10" Click="EditButtonClick" />
+
+        <Grid Name="controls" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
+            <Button Style="{StaticResource AccentedSquareButtonStyle}" Content="Edit Passenger" Padding="10" Click="EditButtonClick" />
+        </Grid>
     </Grid>
 </Page>

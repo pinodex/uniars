@@ -47,6 +47,7 @@ namespace Uniars.Client.UI
             {
                 {"Overview", new Pages.Main.Overview()},
                 {"Passengers", new Pages.Main.Passengers(this)},
+                {"Booking", new Pages.Main.Booking(this)},
                 {"Airlines", new Pages.Main.Airlines(this)},
                 {"Airports", new Pages.Main.Airports(this)},
                 {"Flights", new Pages.Main.Flights(this)},

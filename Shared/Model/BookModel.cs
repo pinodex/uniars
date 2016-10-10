@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Uniars.Server.Model
+namespace Uniars.Shared.Model
 {
     public class BookModel
     {

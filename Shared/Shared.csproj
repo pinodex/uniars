@@ -79,6 +79,7 @@
     <Compile Include="Foundation\Config\JsonConfig.cs" />
     <Compile Include="Foundation\Helper.cs" />
     <Compile Include="Foundation\ObjectCloner.cs" />
+    <Compile Include="Model\BookModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

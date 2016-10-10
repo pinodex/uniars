@@ -18,7 +18,6 @@ namespace Uniars.Server.Http.Module
 
             Get["/"] = Index;
             Get["/{id:int}"] = Single;
-            Get["/search"] = Search;
 
             Post["/"] = CreateModel;
             Put["/{id:int}"] = UpdateModel;
@@ -26,31 +25,6 @@ namespace Uniars.Server.Http.Module
         }
 
         public object Index(dynamic parameter)
-        {
-            using (Context context = new Context(App.ConnectionString))
-            {
-                IQueryable<Airline> db = context.Airlines.OrderBy(Airline => Airline.Name);
-
-                return new PaginatedResult<Airline>(db, this.perPage, this.GetCurrentPage());
-            }
-        }
-
-        public object Single(dynamic parameters)
-        {
-            using (Context context = new Context(App.ConnectionString))
-            {
-                Airline model = context.Airlines.Find((int)parameters.id);
-
-                if (model == null)
-                {
-                    return new JsonErrorResponse(404, 404, "Airline not found");
-                }
-
-                return model;
-            }
-        }
-
-        protected object Search(dynamic parameters)
         {
             string name = this.Request.Query["name"];
             string callsign = this.Request.Query["callsign"];
@@ -78,6 +52,21 @@ namespace Uniars.Server.Http.Module
                 db = db.OrderBy(Airline => Airline.Name);
 
                 return new PaginatedResult<Airline>(db, this.perPage, this.GetCurrentPage());
+            }
+        }
+
+        public object Single(dynamic parameters)
+        {
+            using (Context context = new Context(App.ConnectionString))
+            {
+                Airline model = context.Airlines.Find((int)parameters.id);
+
+                if (model == null)
+                {
+                    return new JsonErrorResponse(404, 404, "Airline not found");
+                }
+
+                return model;
             }
         }
 

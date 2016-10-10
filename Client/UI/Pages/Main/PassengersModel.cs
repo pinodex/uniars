@@ -15,6 +15,8 @@ namespace Uniars.Client.UI.Pages.Main
 
         public const string P_IS_EDIT_MODE = "IsEditMode";
 
+        public const string P_IS_PICKER_MODE = "IsPickerMode";
+
         public const string P_PASSENGER_LIST = "PassengerList";
 
         public const string P_LAST_UPDATE_TIME = "LastUpdateTime";
@@ -34,6 +36,8 @@ namespace Uniars.Client.UI.Pages.Main
         private bool _isEditorEnabled = true;
 
         private bool _isEditMode = false;
+
+        private bool _isPickerMode = false;
 
         private BindingList<Passenger> _passengerList = new BindingList<Passenger>();
 
@@ -89,6 +93,21 @@ namespace Uniars.Client.UI.Pages.Main
                 _isEditMode = value;
 
                 OnPropertyChanged(P_IS_EDIT_MODE);
+            }
+        }
+
+        public bool IsPickerMode
+        {
+            get
+            {
+                return _isPickerMode;
+            }
+
+            set
+            {
+                _isPickerMode = value;
+
+                OnPropertyChanged(P_IS_PICKER_MODE);
             }
         }
 

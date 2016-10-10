@@ -20,7 +20,7 @@ namespace Uniars.Client.UI.Pages.Main
     /// <summary>
     /// Interaction logic for Flights.xaml
     /// </summary>
-    public partial class Flights : Page, IPollingList
+    public partial class Flights : Page, IPollingList, IPickable<Flight>
     {
         public MainWindow parent;
 
@@ -89,14 +89,7 @@ namespace Uniars.Client.UI.Pages.Main
 
             model.IsLoadingActive = true && !autoTriggered;
 
-            string url = Url.FLIGHTS;
-
-            if (this.searchQuery != null)
-            {
-                url = Url.FLIGHT_SEARCH;
-            }
-
-            ApiRequest request = new ApiRequest(url);
+            ApiRequest request = new ApiRequest(Url.FLIGHTS);
             request.AddParameter("page", model.CurrentPage);
 
             var responseAction = new Action<IRestResponse<PaginatedResult<Flight>>>(response =>
@@ -172,18 +165,64 @@ namespace Uniars.Client.UI.Pages.Main
             this.SetActiveTab(0);
         }
 
+        public void EnablePicker(Action<Flight> result)
+        {
+            this.disableAutoRefresh = true;
+            model.IsPickerMode = true;
+
+            selectButton.Click += (sender, e) =>
+            {
+                result(table.SelectedItem as Flight);
+
+                this.disableAutoRefresh = false;
+                model.IsPickerMode = false;
+            };
+        }
+
+        public void EnablePicker(Action<List<Flight>> result)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsPickerEnabled()
+        {
+            return model.IsPickerMode;
+        }
+
         #region Events
 
         private void SearchTextBoxKeyDown(object sender, KeyEventArgs e)
         {
+            string tag = (sender as TextBox).Tag.ToString();
+
             if (e.Key == Key.Enter)
             {
-                this.SearchButtonClicked(sender, e);
+                switch (tag)
+                {
+                    case "CodeSearch":
+                        this.SearchCodeButtonClicked(sender, e);
+                        break;
+
+                    case "NameSearch":
+                        this.SearchButtonClicked(sender, e);
+                        break;
+                }
             }
 
             if (e.Key == Key.Escape)
             {
-                this.ClearSearchButtonClicked(sender, e);
+                switch (tag)
+                {
+                    case "CodeSearch":
+                        searchCodeText.Text = string.Empty;
+
+                        break;
+
+                    case "NameSearch":
+                        this.ClearSearchButtonClicked(sender, e);
+
+                        break;
+                }
             }
         }
 
@@ -199,9 +238,36 @@ namespace Uniars.Client.UI.Pages.Main
             this.LoadList();
         }
 
+        private void SearchCodeButtonClicked(object sender, RoutedEventArgs e)
+        {
+            string code = searchCodeText.Text;
+
+            if (code == string.Empty)
+            {
+                parent.ShowMessageAsync("Error", "Code cannot be empty.");
+                return;
+            }
+
+            App.Client.ExecuteAsync<Flight>(new ApiRequest(Url.FLIGHTS + "/" + code), response =>
+            {
+                this.Dispatcher.Invoke(new Action(() =>
+                {
+                    searchCodeText.Text = string.Empty;
+
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        parent.ShowMessageAsync("Error", "Flight with requested code cannot be found");
+                        return;
+                    }
+
+                    this.OpenFlyout(response.Data);
+                }));
+            });
+        }
+
         private void SearchButtonClicked(object sender, RoutedEventArgs e)
         {
-            string flight = searchAirlineText.Text;
+            string airline = searchAirlineText.Text;
             string source = searchSourceText.Text;
             string destination = searchDestinationText.Text;
 
@@ -210,7 +276,7 @@ namespace Uniars.Client.UI.Pages.Main
 
             this.searchQuery = new Dictionary<string, string>
             {
-                {"flight", flight},
+                {"airline", airline},
                 {"source", source},
                 {"destination", destination}
             };
@@ -254,6 +320,7 @@ namespace Uniars.Client.UI.Pages.Main
             {
                 case "AirlineSearch":
                     Airlines airlinesPage = new Airlines(this.parent);
+                    
                     airlinesPage.EnablePicker(result =>
                     {
                         flight.Airline = result;
@@ -267,6 +334,7 @@ namespace Uniars.Client.UI.Pages.Main
 
                 case "SourceSearch":
                     Airports sourceAirportPage = new Airports(this.parent);
+                    
                     sourceAirportPage.EnablePicker(result =>
                     {
                         flight.Source = result;
@@ -281,6 +349,7 @@ namespace Uniars.Client.UI.Pages.Main
 
                 case "DestinationSearch":
                     Airports destAirportPage = new Airports(this.parent);
+                    
                     destAirportPage.EnablePicker(result =>
                     {
                         flight.Destination = result;
@@ -336,6 +405,15 @@ namespace Uniars.Client.UI.Pages.Main
 
         private void EditorSaveButtonClicked(object sender, RoutedEventArgs e)
         {
+            if (model.EditorModel.Airline == null ||
+                model.EditorModel.Source == null ||
+                model.EditorModel.Destination == null ||
+                model.EditorModel.DepartureDate == null)
+            {
+                parent.ShowMessageAsync("Error", "Please fill all required fields");
+                return;
+            }
+
             model.IsEditorEnabled = false;
 
             string url = Url.FLIGHTS;
@@ -361,7 +439,7 @@ namespace Uniars.Client.UI.Pages.Main
                 {
                     this.Dispatcher.Invoke(new Action(() =>
                     {
-                        parent.ShowMessageAsync("Error", "Unable to save flight formation.");
+                        parent.ShowMessageAsync("Error", "Unable to save flight information.");
                         model.IsEditorEnabled = true;
                     }));
 

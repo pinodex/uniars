@@ -59,6 +59,13 @@
                         </Grid>
                     </ListBoxItem>
 
+                    <ListBoxItem FontSize="14" Tag="Booking">
+                        <Grid>
+                            <fa:FontAwesome Icon="PencilSquareOutline" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                            <TextBlock Text="Booking" Margin="24,0,0,0" />
+                        </Grid>
+                    </ListBoxItem>
+
                     <ListBoxItem FontSize="14" Tag="Airlines">
                         <Grid>
                             <fa:FontAwesome Icon="BuildingOutline" HorizontalAlignment="Left" VerticalAlignment="Center" />
@@ -77,13 +84,6 @@
                         <Grid>
                             <fa:FontAwesome Icon="Plane" HorizontalAlignment="Left" VerticalAlignment="Center" />
                             <TextBlock Text="Flights" Margin="24,0,0,0" />
-                        </Grid>
-                    </ListBoxItem>
-
-                    <ListBoxItem FontSize="14">
-                        <Grid>
-                            <fa:FontAwesome Icon="PencilSquareOutline" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                            <TextBlock Text="Booking" Margin="24,0,0,0" />
                         </Grid>
                     </ListBoxItem>
 

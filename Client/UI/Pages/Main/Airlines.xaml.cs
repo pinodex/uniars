@@ -91,14 +91,7 @@ namespace Uniars.Client.UI.Pages.Main
 
             model.IsLoadingActive = true && !autoTriggered;
 
-            string url = Url.AIRLINES;
-
-            if (this.searchQuery != null)
-            {
-                url = Url.AIRLINE_SEARCH;
-            }
-
-            ApiRequest request = new ApiRequest(url);
+            ApiRequest request = new ApiRequest(Url.AIRLINES);
             request.AddParameter("page", model.CurrentPage);
 
             var responseAction = new Action<IRestResponse<PaginatedResult<Airline>>>(response =>
@@ -186,6 +179,11 @@ namespace Uniars.Client.UI.Pages.Main
                 this.disableAutoRefresh = false;
                 model.IsPickerMode = false;
             };
+        }
+
+        public void EnablePicker(Action<List<Airline>> result)
+        {
+            throw new NotImplementedException();
         }
 
         public bool IsPickerEnabled()
@@ -329,7 +327,7 @@ namespace Uniars.Client.UI.Pages.Main
                 {
                     this.Dispatcher.Invoke(new Action(() =>
                     {
-                        parent.ShowMessageAsync("Error", "Unable to save airline formation.");
+                        parent.ShowMessageAsync("Error", "Unable to save airline information.");
                         model.IsEditorEnabled = true;
                     }));
 

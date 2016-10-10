@@ -16,8 +16,17 @@
         <converter:BooleanInverter x:Key="BooleanInverter" />
     </Page.Resources>
 
-    <Controls:MetroContentControl>
+    <Controls:MetroContentControl ClipToBounds="True">
         <Grid>
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPickerMode}" Value="True">
+                            <Setter Property="Margin" Value="0,-40,0,0" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
             <TabControl Name="tabs" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <TabItem Header="Flights">
                     <Grid Margin="15">
@@ -53,16 +62,30 @@
                         </Grid>
 
                         <StackPanel Grid.Column="1" Orientation="Vertical">
+                            <GroupBox Header="Search by Flight Code" VerticalAlignment="Top" IsEnabled="{Binding IsLoadingActive, Converter={StaticResource BooleanInverter}}">
+                                <StackPanel Margin="5">
+                                    <Label Content="Code" Padding="0,0,5,5" />
+                                    <TextBox Name="searchCodeText" Tag="CodeSearch" FontSize="16" Controls:TextBoxHelper.Watermark="2016-XXXXXX" KeyDown="SearchTextBoxKeyDown" />
+
+                                    <Button Style="{StaticResource AccentedSquareButtonStyle}" Margin="0,10,0,0" HorizontalAlignment="Right" Click="SearchCodeButtonClicked" Padding="10,6">
+                                        <Grid>
+                                            <fa:FontAwesome Icon="Search" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                            <TextBlock Text="search" Margin="20,0,0,0" />
+                                        </Grid>
+                                    </Button>
+                                </StackPanel>
+                            </GroupBox>
+                            
                             <GroupBox Header="Search" VerticalAlignment="Top" IsEnabled="{Binding IsLoadingActive, Converter={StaticResource BooleanInverter}}">
                                 <StackPanel Margin="5">
-                                    <Label Content="Airline" Padding="0,0,5,5" Margin="0,10,0,0" />
-                                    <TextBox Name="searchAirlineText" FontSize="16" KeyDown="SearchTextBoxKeyDown" />
+                                    <Label Content="Airline" Padding="0,0,5,5" />
+                                    <TextBox Name="searchAirlineText" FontSize="16" Tag="NameSearch" KeyDown="SearchTextBoxKeyDown" />
 
                                     <Label Content="Source" Padding="0,0,5,5" Margin="0,10,0,0" />
-                                    <TextBox Name="searchSourceText" FontSize="16" KeyDown="SearchTextBoxKeyDown" />
+                                    <TextBox Name="searchSourceText" FontSize="16" Tag="NameSearch" KeyDown="SearchTextBoxKeyDown" />
 
                                     <Label Content="Destination" Padding="0,0,5,5" Margin="0,10,0,0" />
-                                    <TextBox Name="searchDestinationText" FontSize="16" KeyDown="SearchTextBoxKeyDown" />
+                                    <TextBox Name="searchDestinationText" FontSize="16" Tag="NameSearch" KeyDown="SearchTextBoxKeyDown" />
 
                                     <StackPanel Orientation="Horizontal"  Margin="0,10,0,0" HorizontalAlignment="Right" >
                                         <Button Style="{StaticResource SquareButtonStyle}" Content="Clear" Click="ClearSearchButtonClicked" Margin="0,0,10,0" Padding="10,6" />
@@ -77,6 +100,15 @@
                                 </StackPanel>
                             </GroupBox>
                         </StackPanel>
+
+                        <Grid HorizontalAlignment="Right" Margin="5,0,5,5" Visibility="{Binding IsPickerMode, Converter={StaticResource BooleanToVisibilityConverter}}" VerticalAlignment="Bottom" Grid.Column="1">
+                            <Button Name="selectButton" FontSize="16">
+                                <Grid>
+                                    <TextBlock Text="Select Flight" Margin="0,0,15,0" />
+                                    <fa:FontAwesome Icon="ChevronRight" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                </Grid>
+                            </Button>
+                        </Grid>
                     </Grid>
                 </TabItem>
 

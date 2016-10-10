@@ -150,6 +150,7 @@
     <Compile Include="UI\Converter\BooleanToStringConverter.cs" />
     <Compile Include="UI\Converter\BooleanToVisibilityMultiConverter.cs" />
     <Compile Include="UI\Converter\BooleanToCollapseVisiblityConverter.cs" />
+    <Compile Include="UI\Converter\BooleanToSelectionModeConverter.cs" />
     <Compile Include="UI\Converter\InverseBooleanToVisiblityConverter.cs" />
     <Compile Include="UI\Converter\RoleToVisibilityConverter.cs" />
     <Compile Include="UI\LoginWindowModel.cs" />
@@ -162,6 +163,9 @@
     </Compile>
     <Compile Include="UI\Pages\Flyout\AccountSettingsView.xaml.cs">
       <DependentUpon>AccountSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Pages\Flyout\BookingView.xaml.cs">
+      <DependentUpon>BookingView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Pages\Flyout\FlightView.xaml.cs">
       <DependentUpon>FlightView.xaml</DependentUpon>
@@ -181,6 +185,10 @@
       <DependentUpon>Airports.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Pages\Main\AirportModel.cs" />
+    <Compile Include="UI\Pages\Main\Booking.xaml.cs">
+      <DependentUpon>Booking.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Pages\Main\BookingModel.cs" />
     <Compile Include="UI\Pages\Main\FlightsModel.cs" />
     <Compile Include="UI\Pages\Main\Flights.xaml.cs">
       <DependentUpon>Flights.xaml</DependentUpon>
@@ -224,6 +232,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Pages\Flyout\BookingView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Pages\Flyout\FlightView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -241,6 +253,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Pages\Main\Airports.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Pages\Main\Booking.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

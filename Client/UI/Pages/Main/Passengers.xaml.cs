@@ -20,7 +20,7 @@ namespace Uniars.Client.UI.Pages.Main
     /// <summary>
     /// Interaction logic for Overview.xaml
     /// </summary>
-    public partial class Passengers : Page, IPollingList
+    public partial class Passengers : Page, IPollingList, IPickable<Passenger>
     {
         public MainWindow parent;
 
@@ -28,6 +28,8 @@ namespace Uniars.Client.UI.Pages.Main
         {
             CountryList = Commons.GetCountryList()
         };
+
+        public Dictionary<string, string> searchQuery;
 
         private bool disableAutoRefresh = false;
 
@@ -99,7 +101,7 @@ namespace Uniars.Client.UI.Pages.Main
             ApiRequest request = new ApiRequest(Url.PASSENGERS);
             request.AddParameter("page", model.CurrentPage);
 
-            App.Client.ExecuteAsync<PaginatedResult<Passenger>>(request, response =>
+            var responseAction = new Action<IRestResponse<PaginatedResult<Passenger>>>(response =>
             {
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
@@ -123,6 +125,14 @@ namespace Uniars.Client.UI.Pages.Main
 
                 this.listLoadComplete = true;
             });
+
+            if (this.searchQuery == null)
+            {
+                App.Client.ExecuteAsync<PaginatedResult<Passenger>>(request, responseAction);
+                return;
+            }
+
+            ApiRequest.ExecuteParams<PaginatedResult<Passenger>>(request, this.searchQuery, responseAction);
         }
 
         /// <summary>
@@ -162,6 +172,30 @@ namespace Uniars.Client.UI.Pages.Main
                 parent.SetFlyoutContent("Passenger", new PassengerView(this, model));
                 parent.OpenFlyout();
             }));
+        }
+
+        public void EnablePicker(Action<List<Passenger>> result)
+        {
+            this.disableAutoRefresh = true;
+            model.IsPickerMode = true;
+
+            selectButton.Click += (sender, e) =>
+            {
+                result(table.SelectedItems.OfType<Passenger>().ToList());
+
+                this.disableAutoRefresh = false;
+                model.IsPickerMode = false;
+            };
+        }
+
+        public void EnablePicker(Action<Passenger> result)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsPickerEnabled()
+        {
+            return model.IsPickerMode;
         }
 
         #region Events
@@ -236,13 +270,19 @@ namespace Uniars.Client.UI.Pages.Main
                 return;
             }
 
-            ApiRequest.ExecuteParams<Passenger>(Url.PASSENGERS + "/" + code, null, passenger =>
+            App.Client.ExecuteAsync<Passenger>(new ApiRequest(Url.PASSENGERS + "/" + code), response =>
             {
-                this.OpenFlyout(passenger);
-
                 this.Dispatcher.Invoke(new Action(() =>
                 {
                     searchCodeText.Text = string.Empty;
+
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        parent.ShowMessageAsync("Error", "Passenger with requested code cannot be found");
+                        return;
+                    }
+
+                    this.OpenFlyout(response.Data);
                 }));
             });
         }
@@ -269,40 +309,13 @@ namespace Uniars.Client.UI.Pages.Main
                 {"middle_name", middleName}
             };
 
-            ApiRequest.ExecuteParams<PaginatedResult<Passenger>>(Url.PASSENGER_SEARCH, query, result => this.Dispatcher.Invoke(new Action(() =>
+            ApiRequest.ExecuteParams<PaginatedResult<Passenger>>(Url.PASSENGERS, query, result => this.Dispatcher.Invoke(new Action(() =>
                 {
                     model.PassengerList.Repopulate<Passenger>(result.Data);
                     
                     model.IsLoadingActive = false;
                 }))
             );
-        }
-
-        private void EditorDeleteButtonClicked(object sender, RoutedEventArgs e)
-        {
-            string message = string.Format("Are you sure you want to delete \"{0}\" from passenger list? This action is irreversible.",
-                model.EditorModel.DisplayName);
-
-            parent.ShowMessageAsync("Delete Passenger", message, MessageDialogStyle.AffirmativeAndNegative).ContinueWith(task =>
-            {
-                if (task.Result == MessageDialogResult.Negative)
-                {
-                    return;
-                }
-
-                this.Dispatcher.Invoke(new Action(() => model.IsEditorEnabled = false));
-
-                ApiRequest request = new ApiRequest(Url.PASSENGERS + "/" + model.EditorModel.Id, Method.DELETE);
-                
-                App.Client.ExecuteAsync(request, response =>
-                {
-                    this.Dispatcher.Invoke(new Action(() =>
-                    {
-                        this.LoadList();
-                        this.ResetEditor();
-                    }));
-                });
-            });
         }
 
         private void ClearSearchButtonClicked(object sender, RoutedEventArgs e)
@@ -348,6 +361,33 @@ namespace Uniars.Client.UI.Pages.Main
 
                     this.ResetEditor();
                 }));
+            });
+        }
+
+        private void EditorDeleteButtonClicked(object sender, RoutedEventArgs e)
+        {
+            string message = string.Format("Are you sure you want to delete \"{0}\" from passenger list? This action is irreversible.",
+                model.EditorModel.DisplayName);
+
+            parent.ShowMessageAsync("Delete Passenger", message, MessageDialogStyle.AffirmativeAndNegative).ContinueWith(task =>
+            {
+                if (task.Result == MessageDialogResult.Negative)
+                {
+                    return;
+                }
+
+                this.Dispatcher.Invoke(new Action(() => model.IsEditorEnabled = false));
+
+                ApiRequest request = new ApiRequest(Url.PASSENGERS + "/" + model.EditorModel.Id, Method.DELETE);
+
+                App.Client.ExecuteAsync(request, response =>
+                {
+                    this.Dispatcher.Invoke(new Action(() =>
+                    {
+                        this.LoadList();
+                        this.ResetEditor();
+                    }));
+                });
             });
         }
 

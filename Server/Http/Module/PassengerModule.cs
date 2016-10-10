@@ -20,7 +20,6 @@ namespace Uniars.Server.Http.Module
             Get["/"] = Index;
             Get["/{id:int}"] = Single;
             Get["/{code}"] = SingleCode;
-            Get["/search"] = Search;
 
             Post["/"] = CreateModel;
             Put["/{id:int}"] = UpdateModel;
@@ -29,11 +28,37 @@ namespace Uniars.Server.Http.Module
 
         protected object Index(dynamic parameters)
         {
+            string givenName = this.Request.Query["given_name"];
+            string familyName = this.Request.Query["family_name"];
+            string middleName = this.Request.Query["middle_name"];
+            string displayName = this.Request.Query["display_name"];
+
             using (Context context = new Context(App.ConnectionString))
             {
                 IQueryable<Passenger> db = context.Passengers
-                    .Include(m => m.Contacts)
-                    .OrderBy(m => m.Id);
+                    .Include(m => m.Contacts);
+
+                if (givenName != null)
+                {
+                    db = db.Where(m => m.GivenName.Contains(givenName));
+                }
+
+                if (familyName != null)
+                {
+                    db = db.Where(m => m.FamilyName.Contains(familyName));
+                }
+
+                if (middleName != null)
+                {
+                    db = db.Where(m => m.MiddleName.Contains(middleName));
+                }
+
+                if (displayName != null)
+                {
+                    db = db.Where(m => m.DisplayName.Contains(displayName));
+                }
+
+                db = db.OrderBy(m => m.Id);
 
                 return new PaginatedResult<Passenger>(db, this.perPage, this.GetCurrentPage());
             }
@@ -74,44 +99,6 @@ namespace Uniars.Server.Http.Module
                 }
 
                 return model;
-            }
-        }
-
-        protected object Search(dynamic parameters)
-        {
-            string givenName = this.Request.Query["given_name"];
-            string familyName = this.Request.Query["family_name"];
-            string middleName = this.Request.Query["middle_name"];
-            string displayName = this.Request.Query["display_name"];
-
-            using (Context context = new Context(App.ConnectionString))
-            {
-                IQueryable<Passenger> db = context.Passengers
-                    .Include(m => m.Contacts);
-
-                if (givenName != null)
-                {
-                    db = db.Where(m => m.GivenName.Contains(givenName));
-                }
-
-                if (familyName != null)
-                {
-                    db = db.Where(m => m.FamilyName.Contains(familyName));
-                }
-
-                if (middleName != null)
-                {
-                    db = db.Where(m => m.MiddleName.Contains(middleName));
-                }
-
-                if (displayName != null)
-                {
-                    db = db.Where(m => m.DisplayName.Contains(displayName));
-                }
-
-                db = db.OrderBy(m => m.Id);
-
-                return new PaginatedResult<Passenger>(db, this.perPage, this.GetCurrentPage());
             }
         }
 

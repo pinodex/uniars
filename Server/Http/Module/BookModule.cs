@@ -4,9 +4,9 @@ using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
 using Uniars.Server.Http.Response;
-using Uniars.Server.Model;
 using Uniars.Shared.Database;
 using Uniars.Shared.Database.Entity;
+using Uniars.Shared.Model;
 
 namespace Uniars.Server.Http.Module
 {
@@ -27,6 +27,12 @@ namespace Uniars.Server.Http.Module
 
         public object Index(dynamic parameter)
         {
+            string flight = this.Request.Query["flight"];
+            string airline = this.Request.Query["airline"];
+            string source = this.Request.Query["source"];
+            string destination = this.Request.Query["destination"];
+            string passengerId = this.Request.Query["passenger_id"];
+
             using (Context context = new Context(App.ConnectionString))
             {
                 IQueryable<Book> db = context.Books
@@ -34,8 +40,38 @@ namespace Uniars.Server.Http.Module
                     .Include(m => m.Flight.Airline)
                     .Include(m => m.Flight.Source)
                     .Include(m => m.Flight.Destination)
-                    .Include(m => m.Passengers)
-                    .OrderBy(m => m.Id);
+                    .Include(m => m.Passengers);
+
+                if (flight != null)
+                {
+                    db = db.Where(m => m.Flight.Code == flight);
+                }
+
+                if (airline != null)
+                {
+                    db = db.Where(m => m.Flight.Airline.Name.Contains(airline));
+                }
+
+                if (source != null)
+                {
+                    db = db.Where(m => m.Flight.Source.Name.Contains(source));
+                }
+
+                if (destination != null)
+                {
+                    db = db.Where(m => m.Flight.Destination.Name.Contains(destination));
+                }
+
+                if (passengerId != null)
+                {
+                    try
+                    {
+                        db = db.Where(m => m.Passengers.Any(p => p.Id == int.Parse(passengerId)));
+                    }
+                    catch { }
+                }
+
+                db = db.OrderBy(m => m.Id);
 
                 return new PaginatedResult<Book>(db, this.perPage, this.GetCurrentPage());
             }
@@ -79,7 +115,13 @@ namespace Uniars.Server.Http.Module
                 context.Books.Add(model);
                 context.SaveChanges();
 
-                return model;
+                return context.Books
+                    .Include(m => m.Flight)
+                    .Include(m => m.Flight.Airline)
+                    .Include(m => m.Flight.Source)
+                    .Include(m => m.Flight.Destination)
+                    .Include(m => m.Passengers)
+                    .FirstOrDefault(m => m.Id == model.Id);
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,20 +11,23 @@ using RestSharp;
 using Uniars.Client.Core.Collections;
 using Uniars.Client.Http;
 using Uniars.Client.UI.Pages.Flyout;
+using Uniars.Shared.Model;
 using Uniars.Shared.Database;
+using Uniars.Shared.Foundation;
 using Uniars.Shared.Database.Entity;
 using Uniars.Client.Core;
+using System.Collections;
 
 namespace Uniars.Client.UI.Pages.Main
 {
     /// <summary>
-    /// Interaction logic for Users.xaml
+    /// Interaction logic for Booking.xaml
     /// </summary>
-    public partial class Users : Page, IPollingList
+    public partial class Booking : Page, IPollingList
     {
         public MainWindow parent;
 
-        public UserModel model = new UserModel();
+        public BookingModel model = new BookingModel();
 
         public Dictionary<string, string> searchQuery;
 
@@ -31,7 +35,7 @@ namespace Uniars.Client.UI.Pages.Main
 
         private bool listLoadComplete = false;
 
-        public Users(MainWindow parent)
+        public Booking(MainWindow parent)
         {
             InitializeComponent();
 
@@ -40,13 +44,13 @@ namespace Uniars.Client.UI.Pages.Main
 
             model.PropertyChanged += (sender, e) =>
             {
-                if (e.PropertyName == UserModel.P_CURRENT_PAGE && !model.IsLoadingActive)
+                if (e.PropertyName == BookingModel.P_CURRENT_PAGE && !model.IsLoadingActive)
                 {
                     this.LoadList();
                 }
             };
 
-            model.UserList.ListChanged += (sender, e) =>
+            model.BookingList.ListChanged += (sender, e) =>
             {
                 model.LastUpdateTime = DateTime.Now;
             };
@@ -67,12 +71,12 @@ namespace Uniars.Client.UI.Pages.Main
         }
 
         /// <summary>
-        /// Create a blank User model
+        /// Create a blank Booking model
         /// </summary>
         /// <returns></returns>
-        public User CreateBlankModel()
+        public Book CreateBlankModel()
         {
-            return new User();
+            return new Book();
         }
 
         /// <summary>
@@ -88,21 +92,21 @@ namespace Uniars.Client.UI.Pages.Main
 
             model.IsLoadingActive = true && !autoTriggered;
 
-            ApiRequest request = new ApiRequest(Url.USERS);
+            ApiRequest request = new ApiRequest(Url.BOOKINGS);
             request.AddParameter("page", model.CurrentPage);
 
-            var responseAction = new Action<IRestResponse<PaginatedResult<User>>>(response =>
+            var responseAction = new Action<IRestResponse<PaginatedResult<Book>>>(response =>
             {
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
                     return;
                 }
 
-                PaginatedResult<User> result = response.Data;
+                PaginatedResult<Book> result = response.Data;
 
                 this.Dispatcher.Invoke(new Action(() =>
                 {
-                    model.UserList.Repopulate<User>(result.Data);
+                    model.BookingList.Repopulate<Book>(result.Data);
                     model.Pages.Repopulate<int>(result.GetPageList());
 
                     model.IsLoadingActive = false;
@@ -118,11 +122,11 @@ namespace Uniars.Client.UI.Pages.Main
 
             if (this.searchQuery == null)
             {
-                App.Client.ExecuteAsync<PaginatedResult<User>>(request, responseAction);
+                App.Client.ExecuteAsync<PaginatedResult<Book>>(request, responseAction);
                 return;
             }
 
-            ApiRequest.ExecuteParams<PaginatedResult<User>>(request, this.searchQuery, responseAction);
+            ApiRequest.ExecuteParams<PaginatedResult<Book>>(request, this.searchQuery, responseAction);
         }
 
         /// <summary>
@@ -135,21 +139,19 @@ namespace Uniars.Client.UI.Pages.Main
         }
 
         /// <summary>
-        /// Open flyout for user
+        /// Open flyout for booking
         /// </summary>
-        /// <param name="model">User instance</param>
-        public void OpenFlyout(User model)
+        /// <param name="model">Booking instance</param>
+        public void OpenFlyout(Book model)
         {
             if (model == null)
             {
                 return;
             }
 
-            model.Password = null;
-
             this.Dispatcher.Invoke(new Action(() =>
             {
-                parent.SetFlyoutContent("User", new UserView(this, model));
+                parent.SetFlyoutContent("Booking", new BookingView(this, model));
                 parent.OpenFlyout();
             }));
         }
@@ -162,9 +164,6 @@ namespace Uniars.Client.UI.Pages.Main
             model.EditorModel = this.CreateBlankModel();
             model.IsEditMode = false;
             model.IsEditorEnabled = true;
-
-            txtPassword.Password = string.Empty;
-            txtPasswordConfirm.Password = string.Empty;
 
             this.SetActiveTab(0);
         }
@@ -186,7 +185,10 @@ namespace Uniars.Client.UI.Pages.Main
 
         private void ClearSearchButtonClicked(object sender, RoutedEventArgs e)
         {
-            searchNameText.Text = string.Empty;
+            searchFlightCodeText.Text = string.Empty;
+            searchAirlineText.Text = string.Empty;
+            searchSourceText.Text = string.Empty;
+            searchDestinationText.Text = string.Empty;
 
             this.searchQuery = null;
             this.disableAutoRefresh = false;
@@ -196,14 +198,20 @@ namespace Uniars.Client.UI.Pages.Main
 
         private void SearchButtonClicked(object sender, RoutedEventArgs e)
         {
-            string name = searchNameText.Text;
+            string flight = searchFlightCodeText.Text;
+            string airline = searchAirlineText.Text;
+            string source = searchSourceText.Text;
+            string destination = searchDestinationText.Text;
 
             model.IsLoadingActive = true;
             this.disableAutoRefresh = true;
 
             this.searchQuery = new Dictionary<string, string>
             {
-                {"name", name}
+                {"flight", flight},
+                {"airline", airline},
+                {"source", source},
+                {"destination", destination}
             };
 
             this.LoadList();
@@ -219,7 +227,7 @@ namespace Uniars.Client.UI.Pages.Main
                 return;
             }
 
-            this.OpenFlyout(this.table.SelectedItem as User);
+            this.OpenFlyout(this.table.SelectedItem as Book);
 
             e.Handled = true;
         }
@@ -228,18 +236,85 @@ namespace Uniars.Client.UI.Pages.Main
         {
             if (e.Key == Key.Enter)
             {
-                this.OpenFlyout(this.table.SelectedItem as User);
+                this.OpenFlyout(this.table.SelectedItem as Book);
 
                 e.Handled = true;
             }
         }
 
+        private void SearchTextBoxButtonClicked(object sender, MouseButtonEventArgs e)
+        {
+            TextBox button = sender as TextBox;
+            string mode = button.Tag.ToString();
+
+            Book book = model.EditorModel.Clone();
+
+            switch (mode)
+            {
+                case "FlightSearch":
+                    Flights flightsPage = new Flights(this.parent);
+                    
+                    flightsPage.EnablePicker(result =>
+                    {
+                        book.Flight = result;
+                        model.EditorModel = book;
+
+                        parent.CloseBigFlyout();
+                    });
+
+                    parent.SetBigFlyoutContent("Flight", flightsPage);
+                    break;
+            }
+
+            parent.OpenBigFlyout();
+        }
+
+        private void EditorAddPassengerClicked(object sender, RoutedEventArgs e)
+        {
+            Passengers passengersPage = new Passengers(this.parent);
+            Book book= model.EditorModel.Clone();
+
+            if (book.Passengers == null)
+            {
+                book.Passengers = new List<Passenger>();
+            }
+            
+            passengersPage.EnablePicker(result =>
+            {
+                result.RemoveAll(r => book.Passengers.Any(p => p.Id == r.Id));
+                book.Passengers.AddRange(result);
+
+                model.EditorModel = book;
+
+                parent.CloseBigFlyout();
+            });
+
+            parent.SetBigFlyoutContent("Passengers", passengersPage);
+            parent.OpenBigFlyout();
+        }
+
+        private void EditorDeletePassengerClicked(object sender, RoutedEventArgs e)
+        {
+            Passengers passengersPage = new Passengers(this.parent);
+            Book book = model.EditorModel.Clone();
+
+            if (book.Passengers == null)
+            {
+                book.Passengers = new List<Passenger>();
+            }
+
+            List<Passenger> selectedPassengers = tableSelected.SelectedItems.OfType<Passenger>().ToList();
+
+            book.Passengers.RemoveAll(m => selectedPassengers.Any(p => p.Id == m.Id));
+
+            model.EditorModel = book;
+        }
+
         private void EditorDeleteButtonClicked(object sender, RoutedEventArgs e)
         {
-            string message = string.Format("Are you sure you want to delete \"{0}\" from user list? This action is irreversible.",
-                model.EditorModel.Name);
+            string message = "Are you sure you want to cancel this booking? This action is irreversible.";
 
-            parent.ShowMessageAsync("Delete User", message, MessageDialogStyle.AffirmativeAndNegative).ContinueWith(task =>
+            parent.ShowMessageAsync("Delete Booking", message, MessageDialogStyle.AffirmativeAndNegative).ContinueWith(task =>
             {
                 if (task.Result == MessageDialogResult.Negative)
                 {
@@ -248,7 +323,7 @@ namespace Uniars.Client.UI.Pages.Main
 
                 this.Dispatcher.Invoke(new Action(() => model.IsEditorEnabled = false));
 
-                ApiRequest request = new ApiRequest(Url.USERS + "/" + model.EditorModel.Id, Method.DELETE);
+                ApiRequest request = new ApiRequest(Url.BOOKINGS + "/" + model.EditorModel.Id, Method.DELETE);
 
                 App.Client.ExecuteAsync(request, response =>
                 {
@@ -275,16 +350,7 @@ namespace Uniars.Client.UI.Pages.Main
         {
             model.IsEditorEnabled = false;
 
-            string url = Url.USERS;
-            string password = txtPassword.Password;
-            string passwordConfirm = txtPasswordConfirm.Password;
-
-            if (password != passwordConfirm)
-            {
-                parent.ShowMessageAsync("Error", "Passwords do not match.");
-                return;
-            }
-
+            string url = Url.BOOKINGS;
             Method method = Method.POST;
 
             if (model.EditorModel.Id != 0)
@@ -293,22 +359,23 @@ namespace Uniars.Client.UI.Pages.Main
                 method = Method.PUT;
             }
 
-            if (password != string.Empty)
+            BookModel bookModel = new BookModel
             {
-                model.EditorModel.Password = password;
-            }
+                FlightId = model.EditorModel.Flight.Id,
+                PassengerIds = model.EditorModel.Passengers.Select(p => p.Id).ToList()
+            };
 
             ApiRequest request = new ApiRequest(url, method);
             request.RequestFormat = RestSharp.DataFormat.Json;
-            request.AddBody(model.EditorModel);
+            request.AddBody(bookModel);
 
-            App.Client.ExecuteAsync<User>(request, response =>
+            App.Client.ExecuteAsync<Book>(request, response =>
             {
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
                     this.Dispatcher.Invoke(new Action(() =>
                     {
-                        parent.ShowMessageAsync("Error", "Unable to save user information.");
+                        parent.ShowMessageAsync("Error", "Unable to save booking information.");
                         model.IsEditorEnabled = true;
                     }));
 

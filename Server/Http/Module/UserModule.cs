@@ -19,7 +19,6 @@ namespace Uniars.Server.Http.Module
 
             Get["/"] = Index;
             Get["/{id:int}"] = Single;
-            Get["/search"] = Search;
 
             Post["/"] = CreateModel;
             Put["/{id:int}"] = UpdateModel;
@@ -27,33 +26,6 @@ namespace Uniars.Server.Http.Module
         }
 
         protected object Index(dynamic parameters)
-        {
-            using (Context context = new Context(App.ConnectionString))
-            {
-                IQueryable<User> db = context.Users.OrderBy(User => User.Id);
-
-                return new PaginatedResult<User>(db, this.perPage, this.GetCurrentPage());
-            }
-        }
-
-        protected object Single(dynamic parameters)
-        {
-            using (Context context = new Context(App.ConnectionString))
-            {
-                User model = context.Users.Find((int)parameters.id);
-
-                if (model == null)
-                {
-                    return new JsonErrorResponse(404, 404, "User not found");
-                }
-
-                model.Password = null;
-
-                return model;
-            }
-        }
-
-        protected object Search(dynamic parameters)
         {
             string username = this.Request.Query["username"];
             string name = this.Request.Query["name"];
@@ -75,6 +47,23 @@ namespace Uniars.Server.Http.Module
                 db = db.OrderBy(User => User.Id);
 
                 return new PaginatedResult<User>(db, this.perPage, this.GetCurrentPage());
+            }
+        }
+
+        protected object Single(dynamic parameters)
+        {
+            using (Context context = new Context(App.ConnectionString))
+            {
+                User model = context.Users.Find((int)parameters.id);
+
+                if (model == null)
+                {
+                    return new JsonErrorResponse(404, 404, "User not found");
+                }
+
+                model.Password = null;
+
+                return model;
             }
         }
 

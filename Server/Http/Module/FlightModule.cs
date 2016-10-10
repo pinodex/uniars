@@ -21,7 +21,6 @@ namespace Uniars.Server.Http.Module
             Get["/"] = Index;
             Get["/{id:int}"] = Single;
             Get["/{id}"] = SingleCode;
-            Get["/search"] = Search;
 
             Post["/"] = CreateModel;
             Put["/{id:int}"] = UpdateModel;
@@ -29,62 +28,6 @@ namespace Uniars.Server.Http.Module
         }
 
         public object Index(dynamic parameter)
-        {
-            using (Context context = new Context(App.ConnectionString))
-            {
-                IQueryable<Flight> db = context.Flights
-                    .Include(m => m.Airline)
-                    .Include(m => m.Source)
-                    .Include(m => m.Destination)
-                    .OrderBy(m => m.Id);
-
-                return new PaginatedResult<Flight>(db, this.perPage, this.GetCurrentPage());
-            }
-        }
-
-        public object Single(dynamic parameters)
-        {
-            using (Context context = new Context(App.ConnectionString))
-            {
-                int id = (int)parameters.id;
-
-                Flight model = context.Flights
-                    .Include(m => m.Airline)
-                    .Include(m => m.Source)
-                    .Include(m => m.Destination)
-                    .FirstOrDefault(m => m.Id == id);
-
-                if (model == null)
-                {
-                    return new JsonErrorResponse(404, 404, "Flight not found");
-                }
-
-                return model;
-            }
-        }
-
-        public object SingleCode(dynamic parameters)
-        {
-            using (Context context = new Context(App.ConnectionString))
-            {
-                string code = parameters.code;
-
-                Flight model = context.Flights
-                    .Include(m => m.Airline)
-                    .Include(m => m.Source)
-                    .Include(m => m.Destination)
-                    .FirstOrDefault(m => m.Code == code);
-
-                if (model == null)
-                {
-                    return new JsonErrorResponse(404, 404, "Flight not found");
-                }
-
-                return model;
-            }
-        }
-
-        protected object Search(dynamic parameters)
         {
             string airline = this.Request.Query["airline"];
             string source = this.Request.Query["source"];
@@ -115,6 +58,48 @@ namespace Uniars.Server.Http.Module
                 db = db.OrderBy(Airline => Airline.Id);
 
                 return new PaginatedResult<Flight>(db, this.perPage, this.GetCurrentPage());
+            }
+        }
+
+        public object Single(dynamic parameters)
+        {
+            using (Context context = new Context(App.ConnectionString))
+            {
+                int id = (int)parameters.id;
+
+                Flight model = context.Flights
+                    .Include(m => m.Airline)
+                    .Include(m => m.Source)
+                    .Include(m => m.Destination)
+                    .FirstOrDefault(m => m.Id == id);
+
+                if (model == null)
+                {
+                    return new JsonErrorResponse(404, 404, "Flight not found");
+                }
+
+                return model;
+            }
+        }
+
+        public object SingleCode(dynamic parameters)
+        {
+            using (Context context = new Context(App.ConnectionString))
+            {
+                string code = parameters.id;
+
+                Flight model = context.Flights
+                    .Include(m => m.Airline)
+                    .Include(m => m.Source)
+                    .Include(m => m.Destination)
+                    .FirstOrDefault(m => m.Code == code);
+
+                if (model == null)
+                {
+                    return new JsonErrorResponse(404, 404, "Flight not found");
+                }
+
+                return model;
             }
         }
 

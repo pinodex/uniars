@@ -168,7 +168,6 @@
     <Compile Include="Http\Module\MainModule.cs" />
     <Compile Include="Http\Module\UserModule.cs" />
     <Compile Include="Http\Server.cs" />
-    <Compile Include="Model\BookModel.cs" />
     <Compile Include="UI\AboutBox.cs">
       <SubType>Form</SubType>
     </Compile>

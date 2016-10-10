@@ -11,13 +11,23 @@
     
     <Page.Resources>
         <converter:BooleanToStringConverter x:Key="BooleanToStringConverter" />
+        <converter:BooleanToSelectionModeConverter x:Key="BooleanToSelectionModeConverter" />
         <converter:RoleToVisibilityConverter x:Key="RoleToVisibilityConverter" />
         <converter:InverseBooleanToVisiblityConverter x:Key="InverseBooleanToVisiblityConverter" />
         <converter:BooleanInverter x:Key="BooleanInverter" />
     </Page.Resources>
 
-    <Controls:MetroContentControl>
+    <Controls:MetroContentControl ClipToBounds="True">
         <Grid>
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPickerMode}" Value="True">
+                            <Setter Property="Margin" Value="0,-40,0,0" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
             <TabControl Name="tabs" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <TabItem Header="Passengers">
                     <Grid Margin="15">
@@ -32,7 +42,7 @@
                                     <TextBlock Text="{Binding LastUpdateTime, StringFormat='PASSENGER LIST (Updated {0})', TargetNullValue='N/A'}" Foreground="White" />
                                 </GroupBox.Header>
                                 <Grid>
-                                    <DataGrid Name="table" IsEnabled="{Binding IsLoadingActive, Converter={StaticResource BooleanInverter}}" AutoGenerateColumns="False" ItemsSource="{Binding PassengerList}" ColumnHeaderHeight="50" CanUserResizeRows="False" MinRowHeight="30" RowHeight="30" SelectionMode="Single" CanUserResizeColumns="False" Focusable="False" Margin="-5" MouseDoubleClick="ListRowDoubleClick" PreviewKeyDown="ListKeyDown">
+                                    <DataGrid Name="table" IsEnabled="{Binding IsLoadingActive, Converter={StaticResource BooleanInverter}}" AutoGenerateColumns="False" ItemsSource="{Binding PassengerList}" ColumnHeaderHeight="50" CanUserResizeRows="False" MinRowHeight="30" RowHeight="30" SelectionMode="{Binding IsPickerMode, Converter={StaticResource BooleanToSelectionModeConverter}}" CanUserResizeColumns="False" Focusable="False" Margin="-5" MouseDoubleClick="ListRowDoubleClick" PreviewKeyDown="ListKeyDown">
                                         <DataGrid.Columns>
                                             <DataGridTextColumn Header="Code" Binding="{Binding Code}" Width="150" IsReadOnly="True" />
                                             <DataGridTextColumn Header="Name" Binding="{Binding DisplayName}" Width="*" IsReadOnly="True" />
@@ -90,6 +100,15 @@
                                 </StackPanel>
                             </GroupBox>
                         </StackPanel>
+
+                        <Grid HorizontalAlignment="Right" Margin="5,0,5,5" Visibility="{Binding IsPickerMode, Converter={StaticResource BooleanToVisibilityConverter}}" VerticalAlignment="Bottom" Grid.Column="1">
+                            <Button Name="selectButton" FontSize="16">
+                                <Grid>
+                                    <TextBlock Text="Select Passenger" Margin="0,0,15,0" />
+                                    <fa:FontAwesome Icon="ChevronRight" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                </Grid>
+                            </Button>
+                        </Grid>
                     </Grid>
                 </TabItem>
 
