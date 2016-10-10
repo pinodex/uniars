@@ -5,15 +5,14 @@ using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Threading;
 using MahApps.Metro.Controls.Dialogs;
 using RestSharp;
+using Uniars.Client.Core;
 using Uniars.Client.Core.Collections;
 using Uniars.Client.Http;
 using Uniars.Client.UI.Pages.Flyout;
 using Uniars.Shared.Database;
 using Uniars.Shared.Database.Entity;
-using Uniars.Client.Core;
 
 namespace Uniars.Client.UI.Pages.Main
 {

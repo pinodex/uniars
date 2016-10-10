@@ -8,10 +8,9 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using Uniars.Client.UI.Pages;
+using Uniars.Client.Core;
 using Uniars.Client.Http;
 using Uniars.Client.UI.Pages.Flyout;
-using Uniars.Client.Core;
 
 namespace Uniars.Client.UI
 {

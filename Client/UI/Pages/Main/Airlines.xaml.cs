@@ -4,7 +4,6 @@ using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Threading;
 using MahApps.Metro.Controls.Dialogs;
 using RestSharp;
 using Uniars.Client.Core;
@@ -267,33 +266,6 @@ namespace Uniars.Client.UI.Pages.Main
             }
         }
 
-        private void EditorDeleteButtonClicked(object sender, RoutedEventArgs e)
-        {
-            string message = string.Format("Are you sure you want to delete \"{0}\" from airline list? This action is irreversible.",
-                model.EditorModel.Name);
-
-            parent.ShowMessageAsync("Delete Airline", message, MessageDialogStyle.AffirmativeAndNegative).ContinueWith(task =>
-            {
-                if (task.Result == MessageDialogResult.Negative)
-                {
-                    return;
-                }
-
-                this.Dispatcher.Invoke(new Action(() => model.IsEditorEnabled = false));
-
-                ApiRequest request = new ApiRequest(Url.AIRLINES + "/" + model.EditorModel.Id, Method.DELETE);
-
-                App.Client.ExecuteAsync(request, response =>
-                {
-                    this.Dispatcher.Invoke(new Action(() =>
-                    {
-                        this.LoadList();
-                        this.ResetEditor();
-                    }));
-                });
-            });
-        }
-
         private void EditorClearButtonClicked(object sender, RoutedEventArgs e)
         {
             model.EditorModel = this.CreateBlankModel();
@@ -341,6 +313,33 @@ namespace Uniars.Client.UI.Pages.Main
 
                     this.ResetEditor();
                 }));
+            });
+        }
+
+        private void EditorDeleteButtonClicked(object sender, RoutedEventArgs e)
+        {
+            string message = string.Format("Are you sure you want to delete \"{0}\" from airline list? This action is irreversible.",
+                model.EditorModel.Name);
+
+            parent.ShowMessageAsync("Delete Airline", message, MessageDialogStyle.AffirmativeAndNegative).ContinueWith(task =>
+            {
+                if (task.Result == MessageDialogResult.Negative)
+                {
+                    return;
+                }
+
+                this.Dispatcher.Invoke(new Action(() => model.IsEditorEnabled = false));
+
+                ApiRequest request = new ApiRequest(Url.AIRLINES + "/" + model.EditorModel.Id, Method.DELETE);
+
+                App.Client.ExecuteAsync(request, response =>
+                {
+                    this.Dispatcher.Invoke(new Action(() =>
+                    {
+                        this.LoadList();
+                        this.ResetEditor();
+                    }));
+                });
             });
         }
 

@@ -310,32 +310,6 @@ namespace Uniars.Client.UI.Pages.Main
             model.EditorModel = book;
         }
 
-        private void EditorDeleteButtonClicked(object sender, RoutedEventArgs e)
-        {
-            string message = "Are you sure you want to cancel this booking? This action is irreversible.";
-
-            parent.ShowMessageAsync("Delete Booking", message, MessageDialogStyle.AffirmativeAndNegative).ContinueWith(task =>
-            {
-                if (task.Result == MessageDialogResult.Negative)
-                {
-                    return;
-                }
-
-                this.Dispatcher.Invoke(new Action(() => model.IsEditorEnabled = false));
-
-                ApiRequest request = new ApiRequest(Url.BOOKINGS + "/" + model.EditorModel.Id, Method.DELETE);
-
-                App.Client.ExecuteAsync(request, response =>
-                {
-                    this.Dispatcher.Invoke(new Action(() =>
-                    {
-                        this.LoadList();
-                        this.ResetEditor();
-                    }));
-                });
-            });
-        }
-
         private void EditorClearButtonClicked(object sender, RoutedEventArgs e)
         {
             model.EditorModel = this.CreateBlankModel();
@@ -348,6 +322,13 @@ namespace Uniars.Client.UI.Pages.Main
 
         private void EditorSaveButtonClicked(object sender, RoutedEventArgs e)
         {
+            if (model.EditorModel.Flight == null ||
+                model.EditorModel.Passengers == null)
+            {
+                parent.ShowMessageAsync("Error", "Please fill all required fields");
+                return;
+            }
+
             model.IsEditorEnabled = false;
 
             string url = Url.BOOKINGS;
@@ -389,6 +370,32 @@ namespace Uniars.Client.UI.Pages.Main
 
                     this.ResetEditor();
                 }));
+            });
+        }
+
+        private void EditorDeleteButtonClicked(object sender, RoutedEventArgs e)
+        {
+            string message = "Are you sure you want to cancel this booking? This action is irreversible.";
+
+            parent.ShowMessageAsync("Delete Booking", message, MessageDialogStyle.AffirmativeAndNegative).ContinueWith(task =>
+            {
+                if (task.Result == MessageDialogResult.Negative)
+                {
+                    return;
+                }
+
+                this.Dispatcher.Invoke(new Action(() => model.IsEditorEnabled = false));
+
+                ApiRequest request = new ApiRequest(Url.BOOKINGS + "/" + model.EditorModel.Id, Method.DELETE);
+
+                App.Client.ExecuteAsync(request, response =>
+                {
+                    this.Dispatcher.Invoke(new Action(() =>
+                    {
+                        this.LoadList();
+                        this.ResetEditor();
+                    }));
+                });
             });
         }
 

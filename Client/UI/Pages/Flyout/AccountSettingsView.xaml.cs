@@ -1,23 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Uniars.Shared.Database.Entity;
-using Uniars.Client.UI.Pages.Main;
-using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using RestSharp;
 using Uniars.Client.Http;
-using System.Net;
+using Uniars.Shared.Database.Entity;
 
 namespace Uniars.Client.UI.Pages.Flyout
 {
