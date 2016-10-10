@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using MahApps.Metro.Controls.Dialogs;
 using RestSharp;
+using Uniars.Client.Core;
 using Uniars.Client.Core.Collections;
 using Uniars.Client.Http;
 using Uniars.Client.UI.Pages.Flyout;
@@ -18,7 +19,7 @@ namespace Uniars.Client.UI.Pages.Main
     /// <summary>
     /// Interaction logic for Airlines.xaml
     /// </summary>
-    public partial class Airlines : Page, IPollingList
+    public partial class Airlines : Page, IPollingList, IPickable<Airline>
     {
         public MainWindow parent;
 
@@ -173,6 +174,25 @@ namespace Uniars.Client.UI.Pages.Main
             this.SetActiveTab(0);
         }
 
+        public void EnablePicker(Action<Airline> result)
+        {
+            this.disableAutoRefresh = true;
+            model.IsPickerMode = true;
+
+            selectButton.Click += (sender, e) =>
+            {
+                result(table.SelectedItem as Airline);
+
+                this.disableAutoRefresh = false;
+                model.IsPickerMode = false;
+            };
+        }
+
+        public bool IsPickerEnabled()
+        {
+            return model.IsPickerMode;
+        }
+
         #region Events
 
         private void SearchTextBoxKeyDown(object sender, KeyEventArgs e)
@@ -196,8 +216,6 @@ namespace Uniars.Client.UI.Pages.Main
 
             this.searchQuery = null;
             this.disableAutoRefresh = false;
-
-            model.Pages.Clear();
 
             this.LoadList();
         }

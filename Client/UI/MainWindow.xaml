@@ -20,8 +20,12 @@
 
     <Controls:MetroWindow.Flyouts>
         <Controls:FlyoutsControl>
-            <Controls:Flyout Name="mainFlyout" Position="Right" Width="500">
+            <Controls:Flyout Name="mainFlyout" Position="Right" Width="500" IsModal="True">
                 <Frame Name="mainFlyoutFrame" NavigationUIVisibility="Hidden" Padding="5" Focusable="False" />
+            </Controls:Flyout>
+
+            <Controls:Flyout Name="bigFlyout" Position="Right" Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:MetroWindow}, Path=ActualWidth}" Focusable="False" IsModal="True" Theme="Accent">
+                <Frame Background="White" Name="bigFlyoutFrame" NavigationUIVisibility="Hidden" Padding="5" Focusable="False" />
             </Controls:Flyout>
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>
@@ -40,7 +44,7 @@
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="DarkSlateGray">
                 <Image Height="100" HorizontalAlignment="Center" Stretch="UniformToFill" VerticalAlignment="Top" Width="100" Source="/UNIARS;component/Resources/IconMaskedWhite.ico" />
 
-                <ListBox Style="{StaticResource MenuListBox}" HorizontalAlignment="Stretch" Margin="0,100,0,100" Name="menu" VerticalAlignment="Stretch" SelectionChanged="menu_SelectionChanged">
+                <ListBox IsEnabled="{Binding MenuEnabled}" Style="{StaticResource MenuListBox}" HorizontalAlignment="Stretch" Margin="0,100,0,100" Name="menu" VerticalAlignment="Stretch" SelectionChanged="menu_SelectionChanged">
                     <ListBoxItem FontSize="14" IsSelected="True" Tag="Overview">
                         <Grid>
                             <fa:FontAwesome Icon="Dashboard" HorizontalAlignment="Left" VerticalAlignment="Center" />
@@ -68,7 +72,6 @@
                             <TextBlock Text="Airports" Margin="24,0,0,0" />
                         </Grid>
                     </ListBoxItem>
-
 
                     <ListBoxItem FontSize="14" Tag="Flights" Visibility="{Binding Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter=admin}">
                         <Grid>

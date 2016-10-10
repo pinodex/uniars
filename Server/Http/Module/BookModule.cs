@@ -31,6 +31,9 @@ namespace Uniars.Server.Http.Module
             {
                 IQueryable<Book> db = context.Books
                     .Include(m => m.Flight)
+                    .Include(m => m.Flight.Airline)
+                    .Include(m => m.Flight.Source)
+                    .Include(m => m.Flight.Destination)
                     .Include(m => m.Passengers)
                     .OrderBy(m => m.Id);
 
@@ -46,6 +49,9 @@ namespace Uniars.Server.Http.Module
 
                 Book model = context.Books
                     .Include(m => m.Flight)
+                    .Include(m => m.Flight.Airline)
+                    .Include(m => m.Flight.Source)
+                    .Include(m => m.Flight.Destination)
                     .Include(m => m.Passengers)
                     .FirstOrDefault(m => m.Id == id);
 

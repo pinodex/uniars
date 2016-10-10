@@ -12,6 +12,7 @@ using Uniars.Client.Http;
 using Uniars.Client.UI.Pages.Flyout;
 using Uniars.Shared.Database;
 using Uniars.Shared.Database.Entity;
+using Uniars.Client.Core;
 
 namespace Uniars.Client.UI.Pages.Main
 {
@@ -196,8 +197,6 @@ namespace Uniars.Client.UI.Pages.Main
 
             this.searchQuery = null;
             this.disableAutoRefresh = false;
-
-            model.Pages.Clear();
 
             this.LoadList();
         }

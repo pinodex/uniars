@@ -139,6 +139,7 @@
     </Compile>
     <Compile Include="Core\Collections\CollectionRepopulation.cs" />
     <Compile Include="Core\Config\BaseModel.cs" />
+    <Compile Include="Core\IPickable.cs" />
     <Compile Include="Core\TouchKeyboardProvider.cs" />
     <Compile Include="Http\ApiClient.cs" />
     <Compile Include="Http\ApiRequest.cs" />
@@ -147,6 +148,8 @@
     <Compile Include="Http\Url.cs" />
     <Compile Include="UI\Converter\BooleanInverter.cs" />
     <Compile Include="UI\Converter\BooleanToStringConverter.cs" />
+    <Compile Include="UI\Converter\BooleanToVisibilityMultiConverter.cs" />
+    <Compile Include="UI\Converter\BooleanToCollapseVisiblityConverter.cs" />
     <Compile Include="UI\Converter\InverseBooleanToVisiblityConverter.cs" />
     <Compile Include="UI\Converter\RoleToVisibilityConverter.cs" />
     <Compile Include="UI\LoginWindowModel.cs" />
@@ -160,13 +163,16 @@
     <Compile Include="UI\Pages\Flyout\AccountSettingsView.xaml.cs">
       <DependentUpon>AccountSettingsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Pages\Flyout\FlightView.xaml.cs">
+      <DependentUpon>FlightView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Pages\Flyout\UserView.xaml.cs">
       <DependentUpon>UserView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Pages\Flyout\PassengerView.xaml.cs">
       <DependentUpon>PassengerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Pages\IPollingList.cs" />
+    <Compile Include="Core\IPollingList.cs" />
     <Compile Include="UI\Pages\Main\Airlines.xaml.cs">
       <DependentUpon>Airlines.xaml</DependentUpon>
     </Compile>
@@ -175,6 +181,10 @@
       <DependentUpon>Airports.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Pages\Main\AirportModel.cs" />
+    <Compile Include="UI\Pages\Main\FlightsModel.cs" />
+    <Compile Include="UI\Pages\Main\Flights.xaml.cs">
+      <DependentUpon>Flights.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Pages\Main\Users.xaml.cs">
       <DependentUpon>Users.xaml</DependentUpon>
     </Compile>
@@ -214,6 +224,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Pages\Flyout\FlightView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Pages\Flyout\UserView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -227,6 +241,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Pages\Main\Airports.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Pages\Main\Flights.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

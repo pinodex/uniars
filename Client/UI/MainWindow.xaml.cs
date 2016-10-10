@@ -11,6 +11,7 @@ using MahApps.Metro.Controls.Dialogs;
 using Uniars.Client.UI.Pages;
 using Uniars.Client.Http;
 using Uniars.Client.UI.Pages.Flyout;
+using Uniars.Client.Core;
 
 namespace Uniars.Client.UI
 {
@@ -48,12 +49,73 @@ namespace Uniars.Client.UI
                 {"Passengers", new Pages.Main.Passengers(this)},
                 {"Airlines", new Pages.Main.Airlines(this)},
                 {"Airports", new Pages.Main.Airports(this)},
+                {"Flights", new Pages.Main.Flights(this)},
                 {"Users", new Pages.Main.Users(this)}
             };
 
             this.Loaded += OnLoaded;
             this.KeyDown += OnKeyDown;
         }
+
+        private void Logout()
+        {
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                this.IsEnabled = false;
+                App.Client.Logout();
+                this.Close();
+            }));
+        }
+
+        public T GetPage<T>(string name)
+        {
+            Page page;
+
+            map.TryGetValue(name, out page);
+
+            return (T)(object)page;
+        }
+
+        public void SetBigFlyoutContent(string header, Page content)
+        {
+            this.bigFlyout.Header = header;
+            this.bigFlyoutFrame.Content = content;
+        }
+
+        public void OpenBigFlyout()
+        {
+            this.bigFlyout.IsOpen = true;
+        }
+
+        public void CloseBigFlyout()
+        {
+            this.bigFlyout.IsOpen = false;
+            this.bigFlyoutFrame.Content = null;
+        }
+
+        public void SetFlyoutContent(string header, Page content)
+        {
+            this.mainFlyout.Header = header;
+            this.mainFlyoutFrame.Content = content;
+        }
+
+        public void OpenFlyout()
+        {
+            this.mainFlyout.IsOpen = true;
+        }
+
+        public void CloseFlyout()
+        {
+            this.mainFlyout.IsOpen = false;
+            this.mainFlyoutFrame.Content = null;
+        }
+
+        public void SetOpenPage(int index)
+        {
+            menu.SelectedIndex = index;
+        }
+
+        #region Events
 
         private void OnLoaded(object sender, EventArgs e)
         {
@@ -102,34 +164,6 @@ namespace Uniars.Client.UI
             }
 #endif
         }
-
-        private void Logout()
-        {
-            this.Dispatcher.Invoke(new Action(() =>
-            {
-                this.IsEnabled = false;
-                App.Client.Logout();
-                this.Close();
-            }));
-        }
-
-        public void SetFlyoutContent(string header, Page content)
-        {
-            this.mainFlyout.Header = header;
-            this.mainFlyoutFrame.Content = content;
-        }
-
-        public void OpenFlyout()
-        {
-            this.mainFlyout.IsOpen = true;
-        }
-
-        public void CloseFlyout()
-        {
-            this.mainFlyout.IsOpen = false;
-        }
-
-        #region Events
 
         private void TouchKeyboardButtonClicked(object sender, RoutedEventArgs e)
         {

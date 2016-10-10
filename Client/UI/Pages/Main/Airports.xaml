@@ -16,8 +16,18 @@
         <converter:BooleanInverter x:Key="BooleanInverter" />
     </Page.Resources>
 
-    <Controls:MetroContentControl>
+    <Controls:MetroContentControl ClipToBounds="True">
         <Grid>
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPickerMode}" Value="True">
+                            <Setter Property="Margin" Value="0,-40,0,0" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            
             <TabControl Name="tabs" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <TabItem Header="Airports">
                     <Grid Margin="15">
@@ -72,6 +82,15 @@
                                 </StackPanel>
                             </GroupBox>
                         </StackPanel>
+
+                        <Grid HorizontalAlignment="Right" Margin="5,0,5,5" Visibility="{Binding IsPickerMode, Converter={StaticResource BooleanToVisibilityConverter}}" VerticalAlignment="Bottom" Grid.Column="1">
+                            <Button Name="selectButton" FontSize="16">
+                                <Grid>
+                                    <TextBlock Text="Select Airport" Margin="0,0,15,0" />
+                                    <fa:FontAwesome Icon="ChevronRight" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                </Grid>
+                            </Button>
+                        </Grid>
                     </Grid>
                 </TabItem>
 

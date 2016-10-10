@@ -7,7 +7,7 @@ using Uniars.Shared.Database.Entity;
 
 namespace Uniars.Client.UI.Pages.Main
 {
-    public class AirportsModel : INotifyPropertyChanged
+    public class FlightsModel : INotifyPropertyChanged
     {
         public const string P_IS_LOADING_ACTIVE = "IsLoadingActive";
 
@@ -15,11 +15,11 @@ namespace Uniars.Client.UI.Pages.Main
 
         public const string P_IS_EDIT_MODE = "IsEditMode";
 
-        public const string P_IS_PICKER_MODE = "IsPickerMode";
+        public const string P_FLIGHT_LIST = "FlightList";
+
+        public const string P_AIRLINE_LIST = "AirlineList";
 
         public const string P_AIRPORT_LIST = "AirportList";
-
-        public const string P_COUNTRY_LIST = "CountryList";
 
         public const string P_LAST_UPDATE_TIME = "LastUpdateTime";
 
@@ -37,11 +37,11 @@ namespace Uniars.Client.UI.Pages.Main
 
         private bool _isEditMode = false;
 
-        private bool _isPickerMode = false;
+        private BindingList<Flight> _flightList = new BindingList<Flight>();
+
+        private BindingList<Airline> _airlineList = new BindingList<Airline>();
 
         private BindingList<Airport> _airportList = new BindingList<Airport>();
-
-        private List<Country> _countryList = new List<Country>();
 
         private DateTime _lastUpdateTime = DateTime.Now;
 
@@ -49,7 +49,7 @@ namespace Uniars.Client.UI.Pages.Main
 
         private int _currentPage = 1;
 
-        private Airport _editorModel;
+        private Flight _editorModel;
 
         public bool IsLoadingActive
         {
@@ -96,18 +96,33 @@ namespace Uniars.Client.UI.Pages.Main
             }
         }
 
-        public bool IsPickerMode
+        public BindingList<Flight> FlightList
         {
             get
             {
-                return _isPickerMode;
+                return _flightList;
             }
 
             set
             {
-                _isPickerMode = value;
+                _flightList = value;
 
-                OnPropertyChanged(P_IS_PICKER_MODE);
+                OnPropertyChanged(P_FLIGHT_LIST);
+            }
+        }
+
+        public BindingList<Airline> AirlineList
+        {
+            get
+            {
+                return _airlineList;
+            }
+
+            set
+            {
+                _airlineList = value;
+
+                OnPropertyChanged(P_AIRLINE_LIST);
             }
         }
 
@@ -123,21 +138,6 @@ namespace Uniars.Client.UI.Pages.Main
                 _airportList = value;
 
                 OnPropertyChanged(P_AIRPORT_LIST);
-            }
-        }
-
-        public List<Country> CountryList
-        {
-            get
-            {
-                return _countryList;
-            }
-
-            set
-            {
-                _countryList = value;
-
-                OnPropertyChanged(P_COUNTRY_LIST);
             }
         }
 
@@ -186,7 +186,7 @@ namespace Uniars.Client.UI.Pages.Main
             }
         }
 
-        public Airport EditorModel
+        public Flight EditorModel
         {
             get
             {

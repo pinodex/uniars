@@ -1,4 +1,4 @@
-﻿<Page x:Class="Uniars.Client.UI.Pages.Main.Airlines"
+﻿<Page x:Class="Uniars.Client.UI.Pages.Main.Flights"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,31 +6,20 @@
       xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
       xmlns:converter="clr-namespace:Uniars.Client.UI.Converter"
       xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
-      mc:Ignorable="d" Title="Airlines" d:DesignHeight="564" d:DesignWidth="880"
+      mc:Ignorable="d" Title="Flights" d:DesignHeight="564" d:DesignWidth="880"
       x:Name="Root">
 
     <Page.Resources>
         <converter:BooleanToStringConverter x:Key="BooleanToStringConverter" />
         <converter:RoleToVisibilityConverter x:Key="RoleToVisibilityConverter" />
         <converter:InverseBooleanToVisiblityConverter x:Key="InverseBooleanToVisiblityConverter" />
-        <converter:BooleanToVisibilityMultiConverter x:Key="BooleanToVisibilityMultiConverter" />
         <converter:BooleanInverter x:Key="BooleanInverter" />
     </Page.Resources>
 
-    <Controls:MetroContentControl ClipToBounds="True">
+    <Controls:MetroContentControl>
         <Grid>
-            <Grid.Style>
-                <Style TargetType="{x:Type Grid}">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsPickerMode}" Value="True">
-                            <Setter Property="Margin" Value="0,-40,0,0" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Grid.Style>
-            
             <TabControl Name="tabs" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <TabItem Header="Airlines">
+                <TabItem Header="Flights">
                     <Grid Margin="15">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
@@ -44,11 +33,12 @@
                                 </GroupBox.Header>
                                 
                                 <Grid>
-                                    <DataGrid Name="table" IsEnabled="{Binding IsLoadingActive, Converter={StaticResource BooleanInverter}}" AutoGenerateColumns="False" ItemsSource="{Binding AirlineList}" ColumnHeaderHeight="50" CanUserResizeRows="False" MinRowHeight="30" RowHeight="30" SelectionMode="Single" CanUserResizeColumns="False" Focusable="False" Margin="-5" MouseDoubleClick="ListRowDoubleClick" PreviewKeyDown="ListKeyDown">
+                                    <DataGrid Name="table" IsEnabled="{Binding IsLoadingActive, Converter={StaticResource BooleanInverter}}" AutoGenerateColumns="False" ItemsSource="{Binding FlightList}" ColumnHeaderHeight="50" CanUserResizeRows="False" MinRowHeight="30" RowHeight="30" SelectionMode="Single" CanUserResizeColumns="False" Focusable="False" Margin="-5" MouseDoubleClick="ListRowDoubleClick" PreviewKeyDown="ListKeyDown">
                                         <DataGrid.Columns>
-                                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" IsReadOnly="True" />
-                                            <DataGridTextColumn Header="Callsign" Binding="{Binding Callsign}" Width="*" IsReadOnly="True" />
-                                            <DataGridTextColumn Header="Country" Binding="{Binding Country}" Width="*" IsReadOnly="True" CanUserSort="True" />
+                                            <DataGridTextColumn Header="Code" Binding="{Binding Code}" Width="*" IsReadOnly="True" />
+                                            <DataGridTextColumn Header="Airline" Binding="{Binding Path=Airline.Name}" Width="*" IsReadOnly="True" />
+                                            <DataGridTextColumn Header="Source" Binding="{Binding Path=Source.Name}" Width="*" IsReadOnly="True" CanUserSort="True" />
+                                            <DataGridTextColumn Header="Destination" Binding="{Binding Path=Destination.Name}" Width="*" IsReadOnly="True" CanUserSort="True" />
                                         </DataGrid.Columns>
                                     </DataGrid>
                                     
@@ -65,14 +55,14 @@
                         <StackPanel Grid.Column="1" Orientation="Vertical">
                             <GroupBox Header="Search" VerticalAlignment="Top" IsEnabled="{Binding IsLoadingActive, Converter={StaticResource BooleanInverter}}">
                                 <StackPanel Margin="5">
-                                    <Label Content="Name" Padding="0,0,5,5" />
-                                    <TextBox Name="searchNameText" Tag="Search" FontSize="16" Controls:TextBoxHelper.Watermark="Foo Airline" KeyDown="SearchTextBoxKeyDown" />
+                                    <Label Content="Airline" Padding="0,0,5,5" Margin="0,10,0,0" />
+                                    <TextBox Name="searchAirlineText" FontSize="16" KeyDown="SearchTextBoxKeyDown" />
 
-                                    <Label Content="Callsign" Padding="0,0,5,5" Margin="0,10,0,0" />
-                                    <TextBox Name="searchCallsignText" Tag="Search" FontSize="16" Controls:TextBoxHelper.Watermark="FOOAIR" KeyDown="SearchTextBoxKeyDown" />
+                                    <Label Content="Source" Padding="0,0,5,5" Margin="0,10,0,0" />
+                                    <TextBox Name="searchSourceText" FontSize="16" KeyDown="SearchTextBoxKeyDown" />
 
-                                    <Label Content="Country" Padding="0,0,5,5" Margin="0,10,0,0" />
-                                    <ComboBox Name="searchCountryText" Tag="Search" ItemsSource="{Binding CountryList}" FontSize="16" KeyDown="SearchTextBoxKeyDown" SelectedValuePath="Name" DisplayMemberPath="Name" />
+                                    <Label Content="Destination" Padding="0,0,5,5" Margin="0,10,0,0" />
+                                    <TextBox Name="searchDestinationText" FontSize="16" KeyDown="SearchTextBoxKeyDown" />
 
                                     <StackPanel Orientation="Horizontal"  Margin="0,10,0,0" HorizontalAlignment="Right" >
                                         <Button Style="{StaticResource SquareButtonStyle}" Content="Clear" Click="ClearSearchButtonClicked" Margin="0,0,10,0" Padding="10,6" />
@@ -87,19 +77,10 @@
                                 </StackPanel>
                             </GroupBox>
                         </StackPanel>
-
-                        <Grid HorizontalAlignment="Right" Margin="5,0,5,5" Visibility="{Binding IsPickerMode, Converter={StaticResource BooleanToVisibilityConverter}}" VerticalAlignment="Bottom" Grid.Column="1">
-                            <Button Name="selectButton" FontSize="16">
-                                <Grid>
-                                    <TextBlock Text="Select Airline" Margin="0,0,15,0" />
-                                    <fa:FontAwesome Icon="ChevronRight" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                                </Grid>
-                            </Button>
-                        </Grid>
                     </Grid>
                 </TabItem>
 
-                <TabItem DataContext="{Binding EditorModel}" Header="{Binding ElementName=Root, Path=DataContext.IsEditMode, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='Edit Airline|Add Airline'}" Visibility="{Binding Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter=admin}">
+                <TabItem Header="{Binding ElementName=Root, Path=DataContext.IsEditMode, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='Edit Flight|Add Flight'}" DataContext="{Binding EditorModel}" Visibility="{Binding Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter=admin}">
                     <Grid>
                         <Grid Margin="15" IsEnabled="{Binding ElementName=Root, Path=DataContext.IsEditorEnabled}">
                             <Grid.ColumnDefinitions>
@@ -112,78 +93,72 @@
                                     <TextBlock Text="information" FontWeight="Light" FontSize="24" />
                                     <Rectangle StrokeThickness="1" VerticalAlignment="Top" Stroke="Black" Margin="125,-12,0,0" />
 
-                                    <StackPanel Margin="0,10,0,0">
+                                    <StackPanel Grid.Column="0" Margin="0,10,0,0">
                                         <Label>
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="Name" />
+                                                <TextBlock Text="Airline" />
                                                 <TextBlock Text="(required)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
                                             </StackPanel>
                                         </Label>
-                                        <TextBox Text="{Binding Name}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="Foo Airlines" />
+
+                                        <TextBox Text="{Binding Path=Airline.Name}" FontSize="24" BorderThickness="0,0,0,2" IsReadOnly="True" Focusable="False" Tag="AirlineSearch" PreviewMouseDown="SearchTextBoxButtonClicked" />
                                     </StackPanel>
-
-                                    <StackPanel Margin="0,10,0,0">
-                                        <Label>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="Alias" />
-                                                <TextBlock Text="(optional)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
-                                            </StackPanel>
-                                        </Label>
-                                        <TextBox Text="{Binding Alias}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="FOOAIR" />
-                                    </StackPanel>
-
-                                    <StackPanel Margin="0,10,0,0">
-                                        <Label>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="Callsign" />
-                                                <TextBlock Text="(optional)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
-                                            </StackPanel>
-                                        </Label>
-                                        <TextBox Text="{Binding Callsign}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="FOOAIR" />
-                                    </StackPanel>
-
-                                    <Grid Margin="0,10,0,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-
-                                        <StackPanel Grid.Column="0">
-                                            <Label>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="IATA" />
-                                                    <TextBlock Text="(optional)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
-                                                </StackPanel>
-                                            </Label>
-                                            <TextBox Text="{Binding IATA}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="XXX" />
-                                        </StackPanel>
-
-                                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                                            <Label>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="ICAO" />
-                                                    <TextBlock Text="(optional)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
-                                                </StackPanel>
-                                            </Label>
-
-                                            <TextBox Text="{Binding GivenName}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="XXX" />
-                                        </StackPanel>
-                                    </Grid>
 
                                     <StackPanel Grid.Column="0" Margin="0,10,0,0">
                                         <Label>
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="Country" />
+                                                <TextBlock Text="Source" />
                                                 <TextBlock Text="(required)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
                                             </StackPanel>
                                         </Label>
-                                        <ComboBox FontSize="26" ItemsSource="{Binding ElementName=Root, Path=DataContext.CountryList}" SelectedValue="{Binding Country}" DisplayMemberPath="Name" SelectedValuePath="Name"></ComboBox>
+
+                                        <TextBox Text="{Binding Path=Source.Name}" FontSize="24" BorderThickness="0,0,0,2" IsReadOnly="True" Focusable="False" Tag="SourceSearch" PreviewMouseDown="SearchTextBoxButtonClicked" />
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="0" Margin="0,10,0,0">
+                                        <Label>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Destination" />
+                                                <TextBlock Text="(required)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
+                                            </StackPanel>
+                                        </Label>
+
+                                        <TextBox Text="{Binding Path=Destination.Name}" FontSize="24" BorderThickness="0,0,0,2" IsReadOnly="True" Focusable="False" Tag="DestinationSearch" PreviewMouseDown="SearchTextBoxButtonClicked" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid Margin="0,0,10,0" Grid.Column="1">
+                                <StackPanel>
+                                    <TextBlock Text="date" FontWeight="Light" FontSize="24" />
+                                    <Rectangle StrokeThickness="1" VerticalAlignment="Top" Stroke="Black" Margin="50,-12,0,0" />
+
+                                    <StackPanel Grid.Column="0" Margin="0,10,0,0">
+                                        <Label>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Departure Date" />
+                                                <TextBlock Text="(required)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
+                                            </StackPanel>
+                                        </Label>
+
+                                        <DatePicker SelectedDate="{Binding DepartureDate}" FontSize="22"></DatePicker>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="0" Margin="0,10,0,0">
+                                        <Label>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Return" />
+                                                <TextBlock Text="(required)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
+                                            </StackPanel>
+                                        </Label>
+
+                                        <DatePicker SelectedDate="{Binding ReturnDate}" FontSize="22"></DatePicker>
                                     </StackPanel>
                                 </StackPanel>
                             </Grid>
 
                             <StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal" Grid.Column="0">
-                                <Button Content="Delete Airline" FontSize="16" Click="EditorDeleteButtonClicked" Visibility="{Binding ElementName=Root, Path=DataContext.IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" Background="Firebrick" Foreground="White" />
+                                <Button Content="Delete Flight" FontSize="16" Click="EditorDeleteButtonClicked" Visibility="{Binding ElementName=Root, Path=DataContext.IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" Background="Firebrick" Foreground="White" />
                             </StackPanel>
 
                             <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" Grid.Column="1">
@@ -193,7 +168,7 @@
                                 <Button Click="EditorSaveButtonClicked">
                                     <Grid>
                                         <fa:FontAwesome Icon="Save" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                                        <TextBlock Text="{Binding ElementName=Root, Path=DataContext.IsEditMode, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='Save changes|Add airline'}" FontSize="16" Margin="24,0,0,0" />
+                                        <TextBlock Text="{Binding ElementName=Root, Path=DataContext.IsEditMode, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='Save changes|Add flight'}" FontSize="16" Margin="24,0,0,0" />
                                     </Grid>
                                 </Button>
                             </StackPanel>

@@ -29,6 +29,8 @@ namespace Uniars.Client.UI.Pages.Flyout
 
             this.DataContext = model;
             this.parent = parent;
+
+            controls.Visibility = parent.IsPickerEnabled() ? Visibility.Hidden : Visibility.Visible;
         }
 
         #region Events

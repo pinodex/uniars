@@ -43,7 +43,7 @@ namespace Uniars.Client.UI
 
 #if DEBUG
             txtUsername.Text = "admin";
-            txtPassword.Password = "admin";
+            txtPassword.Password = "password";
 
             btnLoginClick(null, null);
 #endif

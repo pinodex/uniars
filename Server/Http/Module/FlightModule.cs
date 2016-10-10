@@ -7,6 +7,7 @@ using Uniars.Server.Http.Auth;
 using Uniars.Server.Http.Response;
 using Uniars.Shared.Database;
 using Uniars.Shared.Database.Entity;
+using System;
 
 namespace Uniars.Server.Http.Module
 {
@@ -19,6 +20,7 @@ namespace Uniars.Server.Http.Module
 
             Get["/"] = Index;
             Get["/{id:int}"] = Single;
+            Get["/{id}"] = SingleCode;
             Get["/search"] = Search;
 
             Post["/"] = CreateModel;
@@ -61,44 +63,53 @@ namespace Uniars.Server.Http.Module
             }
         }
 
+        public object SingleCode(dynamic parameters)
+        {
+            using (Context context = new Context(App.ConnectionString))
+            {
+                string code = parameters.code;
+
+                Flight model = context.Flights
+                    .Include(m => m.Airline)
+                    .Include(m => m.Source)
+                    .Include(m => m.Destination)
+                    .FirstOrDefault(m => m.Code == code);
+
+                if (model == null)
+                {
+                    return new JsonErrorResponse(404, 404, "Flight not found");
+                }
+
+                return model;
+            }
+        }
+
         protected object Search(dynamic parameters)
         {
-            string code = this.Request.Query["code"];
-
-            int airlineId = 0;
-            int sourceId = 0;
-            int destinationId = 0;
-
-            try
-            {
-                airlineId = int.Parse(this.Request.Query["airline"]);
-                sourceId = int.Parse(this.Request.Query["source"]);
-                destinationId = int.Parse(this.Request.Query["destination"]);
-            }
-            catch { }
+            string airline = this.Request.Query["airline"];
+            string source = this.Request.Query["source"];
+            string destination = this.Request.Query["destination"];
 
             using (Context context = new Context(App.ConnectionString))
             {
-                IQueryable<Flight> db = context.Flights;
+                IQueryable<Flight> db = context.Flights
+                    .Include(m => m.Airline)
+                    .Include(m => m.Source)
+                    .Include(m => m.Destination);
 
-                if (code != null)
+                if (airline != null)
                 {
-                    db = db.Where(m => m.Code == code);
+                    db = db.Where(m => m.Airline.Name.Contains(airline));
                 }
 
-                if (airlineId != 0)
+                if (source != null)
                 {
-                    db = db.Where(m => m.AirlineId == airlineId);
+                    db = db.Where(m => m.Source.Name.Contains(source));
                 }
 
-                if (sourceId != 0)
+                if (destination != null)
                 {
-                    db = db.Where(m => m.SourceId == sourceId);
-                }
-
-                if (destinationId != 0)
-                {
-                    db = db.Where(m => m.DestinationId == destinationId);
+                    db = db.Where(m => m.Destination.Name.Contains(destination));
                 }
 
                 db = db.OrderBy(Airline => Airline.Id);
@@ -126,7 +137,11 @@ namespace Uniars.Server.Http.Module
                 context.Flights.Add(model);
                 context.SaveChanges();
 
-                return model;
+                return context.Flights
+                    .Include(m => m.Airline)
+                    .Include(m => m.Source)
+                    .Include(m => m.Destination)
+                    .FirstOrDefault(m => m.Id == model.Id);
             }
         }
 
@@ -155,7 +170,11 @@ namespace Uniars.Server.Http.Module
 
                 context.SaveChanges();
 
-                return model;
+                return context.Flights
+                    .Include(m => m.Airline)
+                    .Include(m => m.Source)
+                    .Include(m => m.Destination)
+                    .FirstOrDefault(m => m.Id == model.Id);
             }
         }
 

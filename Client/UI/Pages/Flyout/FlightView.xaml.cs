@@ -17,20 +17,18 @@ using Uniars.Client.UI.Pages.Main;
 namespace Uniars.Client.UI.Pages.Flyout
 {
     /// <summary>
-    /// Interaction logic for Passenger.xaml
+    /// Interaction logic for FlightView.xaml
     /// </summary>
-    public partial class AirlineView : Page
+    public partial class FlightView : Page
     {
-        private Airlines parent;
+        private Flights parent;
 
-        public AirlineView(Airlines parent, Airline model)
+        public FlightView(Flights parent, Flight model)
         {
             InitializeComponent();
 
             this.DataContext = model;
             this.parent = parent;
-
-            controls.Visibility = parent.IsPickerEnabled() ? Visibility.Hidden : Visibility.Visible;
         }
 
         #region Events
@@ -40,7 +38,7 @@ namespace Uniars.Client.UI.Pages.Flyout
             this.parent.parent.CloseFlyout();
 
             this.parent.model.IsEditMode = true;
-            this.parent.model.EditorModel = this.DataContext as Airline;
+            this.parent.model.EditorModel = this.DataContext as Flight;
 
             this.parent.SetActiveTab(1);
         }

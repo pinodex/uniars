@@ -42,6 +42,8 @@
             </StackPanel>
         </StackPanel>
 
-        <Button Style="{StaticResource AccentedSquareButtonStyle}" Content="Edit Airline" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Padding="10" Click="EditButtonClick" Visibility="{Binding Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter=admin}" />
+        <Grid Name="controls" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
+            <Button Style="{StaticResource AccentedSquareButtonStyle}" Content="Edit Airline" Padding="10" Click="EditButtonClick" Visibility="{Binding Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter=admin}" />
+        </Grid>
     </Grid>
 </Page>

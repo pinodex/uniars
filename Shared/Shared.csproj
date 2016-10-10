@@ -78,6 +78,7 @@
     <Compile Include="Foundation\Hash.cs" />
     <Compile Include="Foundation\Config\JsonConfig.cs" />
     <Compile Include="Foundation\Helper.cs" />
+    <Compile Include="Foundation\ObjectCloner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
