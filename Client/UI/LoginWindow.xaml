@@ -11,7 +11,9 @@
         ResizeMode="NoResize"
         WindowState="Maximized"
         IgnoreTaskbarOnMaximize="True"
-        UseNoneWindowStyle="True">
+        UseNoneWindowStyle="True"
+                      
+        Icon="/Client;component/Icon.ico">
     
     <Grid>
         <Rectangle Height="Auto" HorizontalAlignment="Stretch" Name="errorBox" Stroke="Tomato" VerticalAlignment="Stretch" Fill="Tomato" Opacity="0" />

@@ -2,6 +2,8 @@
 {
     public class Url
     {
+        public const string STATS = "stats";
+
         public const string PASSENGERS = "passengers";
 
         public const string COUNTRIES_ALL = "countries/all";

@@ -16,7 +16,7 @@
         Height="582"
         Width="1022"
                       
-        Icon="/UNIARS;component/Resources/IconMaskedWhite.ico">
+        Icon="/Client;component/Icon.ico">
 
     <Controls:MetroWindow.Flyouts>
         <Controls:FlyoutsControl>

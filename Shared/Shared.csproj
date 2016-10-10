@@ -80,6 +80,7 @@
     <Compile Include="Foundation\Helper.cs" />
     <Compile Include="Foundation\ObjectCloner.cs" />
     <Compile Include="Model\BookModel.cs" />
+    <Compile Include="Model\StatsModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

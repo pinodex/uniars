@@ -31,7 +31,6 @@ namespace Uniars.Server.UI
                 gridServerStatus.Visibility = Visibility.Visible;
 
                 txtStatusListening.Text = string.Format(txtStatusListening.Text, App.Server.Host, App.Server.Port);
-                txtStatusConnections.Text = string.Format(txtStatusConnections.Text, 0);
             });
 
             App.Server.OnStarting += new Http.ServerStartingEvent((object sender, EventArgs e) => {

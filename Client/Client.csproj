@@ -189,6 +189,7 @@
       <DependentUpon>Booking.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Pages\Main\BookingModel.cs" />
+    <Compile Include="UI\Pages\Main\OverviewModel.cs" />
     <Compile Include="UI\Pages\Main\FlightsModel.cs" />
     <Compile Include="UI\Pages\Main\Flights.xaml.cs">
       <DependentUpon>Flights.xaml</DependentUpon>
@@ -332,7 +333,6 @@
       <Name>Shared</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
