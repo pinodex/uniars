@@ -109,7 +109,7 @@
                         <fa:FontAwesome Icon="User" Foreground="White" FontSize="48" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15" />
                         <fa:FontAwesome Icon="AngleUp" Foreground="SteelBlue" FontSize="48" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="15" Name="userAreaAngleIcon" />
                     
-                        <TextBlock Text="{Binding Username}" FontSize="20" Margin="60,25,15,0" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="White" />
+                        <TextBlock Text="{Binding Username}" FontSize="20" Margin="60,25,45,0" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="White" TextTrimming="CharacterEllipsis" />
                     
                         <Grid Background="#50000000" Margin="0,80,0,0">
                             <StackPanel>

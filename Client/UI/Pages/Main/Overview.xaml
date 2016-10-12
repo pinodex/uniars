@@ -4,15 +4,20 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
+      xmlns:converter="clr-namespace:Uniars.Client.UI.Converter"
       xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
       mc:Ignorable="d" Title="Overview" d:DesignHeight="770" d:DesignWidth="830">
+
+    <Page.Resources>
+        <converter:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+    </Page.Resources>
 
     <Controls:MetroContentControl>
         <Grid>
             <fa:FontAwesome Icon="Plane" FontSize="512" Foreground="Lavender" HorizontalAlignment="Right" VerticalAlignment="Bottom" Panel.ZIndex="-99" FlipOrientation="Horizontal" Margin="-50" />
             
-            <StackPanel>
-                <StackPanel Margin="0,50,0,0" HorizontalAlignment="Center" VerticalAlignment="Top">
+            <StackPanel VerticalAlignment="Center">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top">
                     <TextBlock Text="{Binding Greeting}" FontFamily="Segoe UI" FontWeight="Light" FontSize="52" TextAlignment="Center" />
                     <TextBlock Text="Here is some statistics for you" FontSize="16" TextAlignment="Center" />
                 </StackPanel>
@@ -24,7 +29,7 @@
                         </GroupBox.Header>
 
                         <Grid>
-                            <TextBlock Text="{Binding Path=Stats.AirlineCount}" FontSize="36" TextAlignment="Center" />
+                            <TextBlock Text="{Binding Path=Stats.AirlineCount, TargetNullValue='...'}" FontSize="36" TextAlignment="Center" />
                         </Grid>
                     </GroupBox>
 
@@ -34,7 +39,7 @@
                         </GroupBox.Header>
 
                         <Grid>
-                            <TextBlock Text="{Binding Path=Stats.AirportCount}" FontSize="36" TextAlignment="Center" />
+                            <TextBlock Text="{Binding Path=Stats.AirportCount, TargetNullValue='...'}" FontSize="36" TextAlignment="Center" />
                         </Grid>
                     </GroupBox>
 
@@ -44,7 +49,7 @@
                         </GroupBox.Header>
 
                         <Grid>
-                            <TextBlock Text="{Binding Path=Stats.FlightCount}" FontSize="36" TextAlignment="Center" />
+                            <TextBlock Text="{Binding Path=Stats.FlightCount, TargetNullValue='...'}" FontSize="36" TextAlignment="Center" />
                         </Grid>
                     </GroupBox>
 
@@ -54,7 +59,7 @@
                         </GroupBox.Header>
 
                         <Grid>
-                            <TextBlock Text="{Binding Path=Stats.PassengerCount}" FontSize="36" TextAlignment="Center" />
+                            <TextBlock Text="{Binding Path=Stats.PassengerCount, TargetNullValue='...'}" FontSize="36" TextAlignment="Center" />
                         </Grid>
                     </GroupBox>
                 </StackPanel>
@@ -65,7 +70,7 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0">
+                    <Grid Grid.Row="0" Visibility="{Binding Path=Stats.LatestFlight, Converter={StaticResource NullToVisibilityConverter}}">
                         <StackPanel>
                             <TextBlock Text="latest flight" FontFamily="Segoe UI" FontWeight="Light" FontSize="32" />
 
@@ -80,13 +85,9 @@
                                 </StackPanel>
                             </Grid>
                         </StackPanel>
-
-                        <Grid Grid.Column="0" Margin="0,50,0,0">
-                            
-                        </Grid>
                     </Grid>
 
-                    <Grid Grid.Row="1" Margin="0,15,0,0">
+                    <Grid Grid.Row="1" Margin="0,15,0,0" Visibility="{Binding Path=Stats.LatestPassenger, Converter={StaticResource NullToVisibilityConverter}}">
                         <StackPanel>
                             <TextBlock Text="new passenger" FontFamily="Segoe UI" FontWeight="Light" FontSize="32" />
 
@@ -97,10 +98,6 @@
                                 </StackPanel>
                             </Grid>
                         </StackPanel>
-
-                        <Grid Grid.Column="0" Margin="0,50,0,0">
-
-                        </Grid>
                     </Grid>
                 </Grid>
             </StackPanel>

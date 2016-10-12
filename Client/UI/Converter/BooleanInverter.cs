@@ -13,7 +13,7 @@ namespace Uniars.Client.UI.Converter
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return !(bool)value;
+            throw new NotImplementedException();
         }
     }
 }

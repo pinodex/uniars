@@ -93,7 +93,7 @@
                                                 <TextBlock Text="(required)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
                                             </StackPanel>
                                         </Label>
-                                        <TextBox Text="{Binding Name}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="Foo Airport" />
+                                        <TextBox Text="{Binding Name}" FontSize="24" BorderThickness="0,0,0,2" />
                                     </StackPanel>
 
                                     <StackPanel Margin="0,10,0,0">
@@ -103,7 +103,7 @@
                                                 <TextBlock Text="(required)" FontSize="10" Margin="5,0,0,0" Foreground="Gray" />
                                             </StackPanel>
                                         </Label>
-                                        <TextBox Text="{Binding Username}" FontSize="24" BorderThickness="0,0,0,2" Controls:TextBoxHelper.Watermark="FOOAIR" />
+                                        <TextBox Text="{Binding Username}" FontSize="24" BorderThickness="0,0,0,2" />
                                     </StackPanel>
 
                                     <StackPanel Margin="0,10,0,0">

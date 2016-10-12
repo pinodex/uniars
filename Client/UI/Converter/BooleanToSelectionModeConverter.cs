@@ -20,12 +20,7 @@ namespace Uniars.Client.UI.Converter
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if ((SelectionMode)value == SelectionMode.Extended)
-            {
-                return true;
-            }
-
-            return false;
+            throw new NotImplementedException();
         }
     }
 }

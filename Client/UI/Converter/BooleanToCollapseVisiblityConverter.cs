@@ -19,12 +19,7 @@ namespace Uniars.Client.UI.Converter
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if ((Visibility)value == Visibility.Collapsed)
-            {
-                return true;
-            }
-
-            return false;
+            throw new NotImplementedException();
         }
     }
 }

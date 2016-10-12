@@ -21,14 +21,7 @@ namespace Uniars.Client.UI.Converter
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Visibility visibility = (Visibility)value;
-
-            if (App.Client != null && App.Client.CurrentUser != null && visibility == Visibility.Visible)
-            {
-                return App.Client.CurrentUser.Role;
-            }
-
-            return parameter;
+            throw new NotImplementedException();
         }
     }
 }

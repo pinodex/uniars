@@ -36,7 +36,8 @@ namespace Uniars.Server.Http.Module
             using (Context context = new Context(App.ConnectionString))
             {
                 IQueryable<Passenger> db = context.Passengers
-                    .Include(m => m.Contacts);
+                    .Include(m => m.Contacts)
+                    .Include(m => m.Contacts.Select(c => c.Country));
 
                 if (givenName != null)
                 {
@@ -72,6 +73,7 @@ namespace Uniars.Server.Http.Module
             {
                 Passenger model = context.Passengers
                     .Include(m => m.Contacts)
+                    .Include(m => m.Contacts.Select(c => c.Country))
                     .FirstOrDefault(m => m.Id == id);
 
                 if (model == null)
@@ -91,6 +93,7 @@ namespace Uniars.Server.Http.Module
             {
                 Passenger model = context.Passengers
                     .Include(m => m.Contacts)
+                    .Include(m => m.Contacts.Select(c => c.Country))
                     .FirstOrDefault(m => m.Code == code);
 
                 if (model == null)
@@ -116,7 +119,10 @@ namespace Uniars.Server.Http.Module
                 context.Passengers.Add(model);
                 context.SaveChanges();
 
-                return model;
+                return context.Passengers
+                    .Include(m => m.Contacts)
+                    .Include(m => m.Contacts.Select(c => c.Country))
+                    .FirstOrDefault(m => m.Id == model.Id);
             }
         }
 
@@ -142,7 +148,10 @@ namespace Uniars.Server.Http.Module
 
                 context.SaveChanges();
 
-                return passenger;
+                return context.Passengers
+                    .Include(m => m.Contacts)
+                    .Include(m => m.Contacts.Select(c => c.Country))
+                    .FirstOrDefault(m => m.Id == id);
             }
         }
 
@@ -155,6 +164,7 @@ namespace Uniars.Server.Http.Module
             using (Context context = new Context(App.ConnectionString))
             {
                 Passenger model = context.Passengers.FirstOrDefault(m => m.Id == id);
+                IQueryable<PassengerContact> contacts = context.PassengerContacts.Where(m => m.PassengerId == id);
 
                 if (model == null)
                 {
@@ -162,6 +172,8 @@ namespace Uniars.Server.Http.Module
                 }
 
                 context.Passengers.Remove(model);
+                context.PassengerContacts.RemoveRange(contacts);
+
                 context.SaveChanges();
             }
 

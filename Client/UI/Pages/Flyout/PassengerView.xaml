@@ -10,11 +10,7 @@
 	Title="Passenger">
 
     <Grid Margin="10">
-        <Grid Height="100" Width="100" HorizontalAlignment="Right" VerticalAlignment="Top" Background="LightGray">
-            <fa:FontAwesome Icon="User" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="72" Foreground="White" />
-        </Grid>
-
-        <StackPanel Margin="0,0,110,0" VerticalAlignment="Top">
+        <StackPanel VerticalAlignment="Top">
             <TextBlock Text="{Binding DisplayName, TargetNullValue='Not Found'}" ToolTip="{Binding DisplayName}" FontSize="28" FontWeight="Bold" VerticalAlignment="Top" TextTrimming="CharacterEllipsis" />
             <TextBlock Text="{Binding Code, TargetNullValue='Passenger Not Found'}" Margin="0,0,0,10" />
             
@@ -89,7 +85,7 @@
 
                             <StackPanel Orientation="Vertical" Grid.Column="0">
                                 <TextBlock Text="Country" Foreground="Gray" FontSize="11" />
-                                <TextBlock Text="{Binding CountryId, TargetNullValue='N/A'}" FontSize="14" />
+                                <TextBlock Text="{Binding Path=Country.Name, TargetNullValue='N/A'}" FontSize="14" />
                             </StackPanel>
 
                             <StackPanel Orientation="Vertical" Grid.Column="1">
