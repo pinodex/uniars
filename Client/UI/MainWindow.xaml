@@ -80,7 +80,7 @@
                         </Grid>
                     </ListBoxItem>
 
-                    <ListBoxItem FontSize="14" Tag="Flights" Visibility="{Binding Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter=admin}">
+                    <ListBoxItem FontSize="14" Tag="Flights">
                         <Grid>
                             <fa:FontAwesome Icon="Plane" HorizontalAlignment="Left" VerticalAlignment="Center" />
                             <TextBlock Text="Flights" Margin="24,0,0,0" />

@@ -42,31 +42,32 @@ namespace Uniars.Server.Http.Module
                     .Include(m => m.Flight.Destination)
                     .Include(m => m.Passengers);
 
-                if (flight != null)
+                if (flight != null && flight != string.Empty)
                 {
                     db = db.Where(m => m.Flight.Code == flight);
                 }
 
-                if (airline != null)
+                if (airline != null && airline != string.Empty)
                 {
                     db = db.Where(m => m.Flight.Airline.Name.Contains(airline));
                 }
 
-                if (source != null)
+                if (source != null && source != string.Empty)
                 {
                     db = db.Where(m => m.Flight.Source.Name.Contains(source));
                 }
 
-                if (destination != null)
+                if (destination != null && destination != string.Empty)
                 {
                     db = db.Where(m => m.Flight.Destination.Name.Contains(destination));
                 }
 
-                if (passengerId != null)
+                if (passengerId != null && passengerId != string.Empty)
                 {
                     try
                     {
-                        db = db.Where(m => m.Passengers.Any(p => p.Id == int.Parse(passengerId)));
+                        int id = int.Parse(passengerId);
+                        db = db.Where(m => m.Passengers.Any(p => p.Id == id));
                     }
                     catch { }
                 }
@@ -159,7 +160,13 @@ namespace Uniars.Server.Http.Module
 
                 context.SaveChanges();
 
-                return model;
+                return context.Books
+                    .Include(m => m.Flight)
+                    .Include(m => m.Flight.Airline)
+                    .Include(m => m.Flight.Source)
+                    .Include(m => m.Flight.Destination)
+                    .Include(m => m.Passengers)
+                    .FirstOrDefault(m => m.Id == model.Id);
             }
         }
 

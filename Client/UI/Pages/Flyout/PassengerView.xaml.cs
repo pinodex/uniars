@@ -34,6 +34,15 @@ namespace Uniars.Client.UI.Pages.Flyout
             this.parent.SetActiveTab(1);
         }
 
+        private void ViewBookingsButtonClick(object sender, RoutedEventArgs e)
+        {
+            this.parent.parent.CloseFlyout();
+            this.parent.parent.SetOpenPage(2);
+
+            this.parent.parent.GetPage<Booking>("Booking")
+                .SearchByPassenger(this.DataContext as Passenger);
+        }
+
         #endregion
     }
 }

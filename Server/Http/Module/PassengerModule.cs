@@ -39,22 +39,22 @@ namespace Uniars.Server.Http.Module
                     .Include(m => m.Contacts)
                     .Include(m => m.Contacts.Select(c => c.Country));
 
-                if (givenName != null)
+                if (givenName != null && givenName != string.Empty)
                 {
                     db = db.Where(m => m.GivenName.Contains(givenName));
                 }
 
-                if (familyName != null)
+                if (familyName != null && familyName != string.Empty)
                 {
                     db = db.Where(m => m.FamilyName.Contains(familyName));
                 }
 
-                if (middleName != null)
+                if (middleName != null && middleName != string.Empty)
                 {
                     db = db.Where(m => m.MiddleName.Contains(middleName));
                 }
 
-                if (displayName != null)
+                if (displayName != null && displayName != string.Empty)
                 {
                     db = db.Where(m => m.DisplayName.Contains(displayName));
                 }

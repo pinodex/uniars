@@ -34,17 +34,17 @@ namespace Uniars.Server.Http.Module
             {
                 IQueryable<Airline> db = context.Airlines;
 
-                if (name != null)
+                if (name != null && name != string.Empty)
                 {
                     db = db.Where(Flyer => Flyer.Name.Contains(name));
                 }
 
-                if (callsign != null)
+                if (callsign != null && callsign != string.Empty)
                 {
                     db = db.Where(Flyer => Flyer.Callsign.Contains(callsign));
                 }
 
-                if (country != null)
+                if (country != null && country != string.Empty)
                 {
                     db = db.Where(Flyer => Flyer.Country.Contains(country));
                 }

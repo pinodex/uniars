@@ -40,17 +40,17 @@ namespace Uniars.Server.Http.Module
                     .Include(m => m.Source)
                     .Include(m => m.Destination);
 
-                if (airline != null)
+                if (airline != null && airline != string.Empty)
                 {
                     db = db.Where(m => m.Airline.Name.Contains(airline));
                 }
 
-                if (source != null)
+                if (source != null && source != string.Empty)
                 {
                     db = db.Where(m => m.Source.Name.Contains(source));
                 }
 
-                if (destination != null)
+                if (destination != null && destination != string.Empty)
                 {
                     db = db.Where(m => m.Destination.Name.Contains(destination));
                 }

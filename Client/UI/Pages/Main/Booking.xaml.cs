@@ -168,7 +168,37 @@ namespace Uniars.Client.UI.Pages.Main
             this.SetActiveTab(0);
         }
 
+        /// <summary>
+        /// Search by passenger object
+        /// </summary>
+        /// <param name="passenger">Passenger object</param>
+        public void SearchByPassenger(Passenger passenger)
+        {
+            this.ClearSearchButtonClicked(this, null);
+
+            searchPassengerText.Text = passenger.DisplayName;
+            searchPassengerIdText.Text = passenger.Id.ToString();
+
+            this.SearchButtonClicked(this, null);
+        }
+
         #region Events
+
+        private void SearchPassengerTextButtonClicked(object sender, MouseButtonEventArgs e)
+        {
+            Passengers passengersPage = new Passengers(this.parent);
+
+            passengersPage.EnablePicker((Passenger result) =>
+            {
+                searchPassengerText.Text = result.DisplayName;
+                searchPassengerIdText.Text = result.Id.ToString();
+
+                parent.CloseBigFlyout();
+            });
+
+            parent.SetBigFlyoutContent("Passenger", passengersPage);
+            parent.OpenBigFlyout();
+        }
 
         private void SearchTextBoxKeyDown(object sender, KeyEventArgs e)
         {
@@ -189,6 +219,8 @@ namespace Uniars.Client.UI.Pages.Main
             searchAirlineText.Text = string.Empty;
             searchSourceText.Text = string.Empty;
             searchDestinationText.Text = string.Empty;
+            searchPassengerText.Text = string.Empty;
+            searchPassengerIdText.Text = string.Empty;
 
             this.searchQuery = null;
             this.disableAutoRefresh = false;
@@ -202,6 +234,7 @@ namespace Uniars.Client.UI.Pages.Main
             string airline = searchAirlineText.Text;
             string source = searchSourceText.Text;
             string destination = searchDestinationText.Text;
+            string passengerId = searchPassengerIdText.Text;
 
             model.IsLoadingActive = true;
             this.disableAutoRefresh = true;
@@ -211,7 +244,8 @@ namespace Uniars.Client.UI.Pages.Main
                 {"flight", flight},
                 {"airline", airline},
                 {"source", source},
-                {"destination", destination}
+                {"destination", destination},
+                {"passenger_id", passengerId}
             };
 
             this.LoadList();

@@ -98,8 +98,9 @@
             </StackPanel>
         </ScrollViewer>
 
-        <Grid Name="controls" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
+        <StackPanel Name="controls" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
+            <Button Style="{StaticResource SquareButtonStyle}" Content="View Booked Flights" Padding="10" Margin="0,0,0,10" Click="ViewBookingsButtonClick" />
             <Button Style="{StaticResource AccentedSquareButtonStyle}" Content="Edit Passenger" Padding="10" Click="EditButtonClick" />
-        </Grid>
+        </StackPanel>
     </Grid>
 </Page>

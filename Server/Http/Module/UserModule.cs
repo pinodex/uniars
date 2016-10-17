@@ -34,12 +34,12 @@ namespace Uniars.Server.Http.Module
             {
                 IQueryable<User> db = context.Users;
 
-                if (username != null)
+                if (username != null && username != string.Empty)
                 {
                     db = context.Users.Where(User => User.Username.Contains(username));
                 }
 
-                if (name != null)
+                if (name != null && name != string.Empty)
                 {
                     db = context.Users.Where(User => User.Name.Contains(name));
                 }
@@ -110,7 +110,7 @@ namespace Uniars.Server.Http.Module
 
                 context.SaveChanges();
 
-                return model;
+                return context.Users.Find((int)parameters.id);
             }
         }
 

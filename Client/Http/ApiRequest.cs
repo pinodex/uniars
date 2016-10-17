@@ -32,7 +32,7 @@ namespace Uniars.Client.Http
             {
                 foreach (KeyValuePair<string, string> query in paramList)
                 {
-                    request.AddQueryParameter(query.Key, query.Value);
+                    request.AddParameter(query.Key, query.Value);
                 }
             }
 
@@ -60,7 +60,7 @@ namespace Uniars.Client.Http
             {
                 foreach (KeyValuePair<string, string> query in queries)
                 {
-                    request.AddQueryParameter(query.Key, query.Value);
+                    request.AddParameter(query.Key, query.Value);
                 }
             }
 
@@ -90,7 +90,7 @@ namespace Uniars.Client.Http
             {
                 foreach (KeyValuePair<string, string> query in queries)
                 {
-                    request.AddQueryParameter(query.Key, query.Value);
+                    request.AddParameter(query.Key, query.Value);
                 }
             }
 
@@ -110,7 +110,7 @@ namespace Uniars.Client.Http
             {
                 foreach (KeyValuePair<string, string> query in queries)
                 {
-                    request.AddQueryParameter(query.Key, query.Value);
+                    request.AddParameter(query.Key, query.Value);
                 }
             }
 

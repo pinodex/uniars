@@ -35,17 +35,17 @@ namespace Uniars.Server.Http.Module
             {
                 IQueryable<Airport> db = context.Airports;
 
-                if (name != null)
+                if (name != null && name != string.Empty)
                 {
                     db = db.Where(Model => Model.Name.Contains(name));
                 }
 
-                if (country != null)
+                if (country != null && country != string.Empty)
                 {
                     db = db.Where(Model => Model.Country.Contains(country));
                 }
 
-                if (city != null)
+                if (city != null && city != string.Empty)
                 {
                     db = db.Where(Model => Model.City.Contains(city));
                 }

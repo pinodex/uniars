@@ -178,18 +178,31 @@ namespace Uniars.Client.UI.Pages.Main
             this.disableAutoRefresh = true;
             model.IsPickerMode = true;
 
+            table.SelectionMode = DataGridSelectionMode.Extended;
+
             selectButton.Click += (sender, e) =>
             {
                 result(table.SelectedItems.OfType<Passenger>().ToList());
 
                 this.disableAutoRefresh = false;
                 model.IsPickerMode = false;
+
+                table.SelectionMode = DataGridSelectionMode.Single;
             };
         }
 
         public void EnablePicker(Action<Passenger> result)
         {
-            throw new NotImplementedException();
+            this.disableAutoRefresh = true;
+            model.IsPickerMode = true;
+
+            selectButton.Click += (sender, e) =>
+            {
+                result(table.SelectedItem as Passenger);
+
+                this.disableAutoRefresh = false;
+                model.IsPickerMode = false;
+            };
         }
 
         public bool IsPickerEnabled()
@@ -288,11 +301,12 @@ namespace Uniars.Client.UI.Pages.Main
 
         private void SearchNameButtonClicked(object sender, RoutedEventArgs e)
         {
+            string displayName = searchDisplayNameText.Text;
             string givenName = searchGivenNameText.Text;
             string familyName = searchFamilyNameText.Text;
             string middleName = searchMiddleNameText.Text;
 
-            if (givenName == string.Empty && familyName == string.Empty && middleName == string.Empty)
+            if (displayName == string.Empty && givenName == string.Empty && familyName == string.Empty && middleName == string.Empty)
             {
                 parent.ShowMessageAsync("Error", "Please fill at least one search criteria.");
                 return;
@@ -301,20 +315,15 @@ namespace Uniars.Client.UI.Pages.Main
             model.IsLoadingActive = true;
             this.disableAutoRefresh = true;
 
-            Dictionary<string, string> query = new Dictionary<string, string>
+            this.searchQuery = new Dictionary<string, string>
             {
+                {"display_name", displayName},
                 {"given_name", givenName},
                 {"family_name", familyName},
                 {"middle_name", middleName}
             };
 
-            ApiRequest.ExecuteParams<PaginatedResult<Passenger>>(Url.PASSENGERS, query, result => this.Dispatcher.Invoke(new Action(() =>
-                {
-                    model.PassengerList.Repopulate<Passenger>(result.Data);
-                    
-                    model.IsLoadingActive = false;
-                }))
-            );
+            this.LoadList();
         }
 
         private void ClearSearchButtonClicked(object sender, RoutedEventArgs e)
@@ -323,7 +332,9 @@ namespace Uniars.Client.UI.Pages.Main
             searchFamilyNameText.Text = string.Empty;
             searchMiddleNameText.Text = string.Empty;
 
+            this.searchQuery = null;
             this.disableAutoRefresh = false;
+
             this.LoadList();
         }
 
